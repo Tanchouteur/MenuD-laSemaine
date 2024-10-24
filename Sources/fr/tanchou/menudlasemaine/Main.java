@@ -1,11 +1,10 @@
 package fr.tanchou.menudlasemaine;
 
-import fr.tanchou.menudlasemaine.utils.PlatComposeFactory;
+import fr.tanchou.menudlasemaine.utils.MenuService;
 
 public class Main {
     public static void main(String[] args) {
-        ModelPrincipal modelPrincipal = new ModelPrincipal();
 
-        System.out.println(PlatComposeFactory.getRandomPlatCompose(100));
+        MenuService.printTableMenu(MenuService.buildMenu());
     }
 }

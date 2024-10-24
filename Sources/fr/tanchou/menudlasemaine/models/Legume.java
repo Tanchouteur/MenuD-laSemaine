@@ -1,20 +1,12 @@
 package fr.tanchou.menudlasemaine.models;
 
 public class Legume {
-    private int legumeId;
     private String legumeNom;
 
-    public Legume(int legumeId, String legumeNom) {
-        this.legumeId = legumeId;
+    public Legume(String legumeNom) {
         this.legumeNom = legumeNom;
     }
 
-    public int getLegumeId() {
-        return legumeId;
-    }
-    public void setLegumeId(int legumeId) {
-        this.legumeId = legumeId;
-    }
     public String getLegumeNom() {
         return legumeNom;
     }

@@ -6,9 +6,9 @@ import fr.tanchou.menudlasemaine.models.*;
 import java.util.List;
 import java.util.Random;
 
-public class PlatComposeFactory extends PlatFactory {
+public class PlatComposeFactory{
 
-    public static Plat getRandomPlatCompose(float poids) {
+    public static Plat getRandomPlatCompose() {
         List<Viande> viandes = new ViandeDAO().getAllViandes();
         Random random = new Random();
 
@@ -16,6 +16,6 @@ public class PlatComposeFactory extends PlatFactory {
 
         Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement();
 
-        return new PlatCompose(poids, viande, randomAccompagnement);
+        return new PlatCompose(1, viande, randomAccompagnement);
     }
 }

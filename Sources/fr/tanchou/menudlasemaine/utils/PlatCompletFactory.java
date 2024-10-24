@@ -6,7 +6,7 @@ import fr.tanchou.menudlasemaine.models.PlatComplet;
 import java.util.List;
 import java.util.Random;
 
-public class PlatCompletFactory extends PlatFactory {
+public class PlatCompletFactory {
 
     public static PlatComplet getRandomPlatComplet() {
         List<PlatComplet> platsComplets = new PlatCompletDAO().getAllPlatsComplets();

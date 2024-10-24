@@ -15,29 +15,20 @@ public class FeculentDAO {
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, feculent.getFeculentName());
             pstmt.executeUpdate();
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    feculent.setFeculentId(generatedKeys.getInt(1)); // Mettre à jour l'ID
-                }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public Feculent getFeculentById(int feculentId) {
-        String sql = "SELECT * FROM Feculent WHERE feculent_id = ?";
+    public Feculent getFeculentByName(String feculentName) {
+        String sql = "SELECT * FROM Legume WHERE nom_legume = ?";
         Feculent feculent = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, feculentId);
+            pstmt.setString(1, feculentName);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                feculent = new Feculent(
-                        rs.getInt("feculent_id"),
-                        rs.getString("nom_feculent")
-                );
+                feculent = new Feculent(rs.getString("nom_feculent"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,7 +44,6 @@ public class FeculentDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 feculents.add(new Feculent(
-                        rs.getInt("feculent_id"),
                         rs.getString("nom_feculent")
                 ));
             }
@@ -63,7 +53,7 @@ public class FeculentDAO {
         return feculents;
     }
 
-    public void updateFeculent(Feculent feculent) {
+    /*public void updateFeculent(Feculent feculent) {
         String sql = "UPDATE Feculent SET nom_feculent = ? WHERE feculent_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -73,13 +63,13 @@ public class FeculentDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    public void deleteFeculent(int feculentId) {
-        String sql = "DELETE FROM Feculent WHERE feculent_id = ?";
+    public void deleteFeculent(String feculentName) {
+        String sql = "DELETE FROM Feculent WHERE nom_feculent = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, feculentId);
+            pstmt.setString(1, feculentName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

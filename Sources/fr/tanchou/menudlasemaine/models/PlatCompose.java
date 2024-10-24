@@ -8,7 +8,7 @@ public class PlatCompose extends Plat {
     private final String nomPlat;
 
     // Constructeur
-    public PlatCompose(float poids, Viande viande, Accompagnement accompagnement) {
+    public PlatCompose(int poids, Viande viande, Accompagnement accompagnement) {
         super(poids, TypePlat.COMPOSE);
         this.viande = viande;
         this.accompagnement = accompagnement;

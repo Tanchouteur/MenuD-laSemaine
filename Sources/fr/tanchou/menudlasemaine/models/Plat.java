@@ -4,10 +4,10 @@ import fr.tanchou.menudlasemaine.enums.TypePlat;
 
 public abstract class Plat {
     private final TypePlat typePlat; // Utilisation de l'enum
-    private float poids;
+    private int poids;
     private final String nomPlat;
 
-    public Plat(float poids, TypePlat typePlat) {
+    public Plat(int poids, TypePlat typePlat) {
         this.poids = poids;
         this.typePlat = typePlat;
         this.nomPlat = getNomPlat();
@@ -19,11 +19,11 @@ public abstract class Plat {
         return typePlat;
     }
 
-    public float getPoids() {
+    public int getPoids() {
         return poids;
     }
 
-    public void setPoids(float poids) {
+    public void setPoids(int poids) {
         this.poids = poids;
     }
 

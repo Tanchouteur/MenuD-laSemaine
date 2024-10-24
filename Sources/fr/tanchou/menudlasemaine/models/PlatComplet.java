@@ -5,7 +5,7 @@ import fr.tanchou.menudlasemaine.enums.TypePlat;
 public class PlatComplet extends Plat {
     private final String nomPlat;
 
-    public PlatComplet(float poids, String nomPlat) {
+    public PlatComplet(int poids, String nomPlat) {
         super(poids, TypePlat.COMPLET);
         this.nomPlat = nomPlat;
     }

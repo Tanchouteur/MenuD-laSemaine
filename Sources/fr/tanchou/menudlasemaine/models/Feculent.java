@@ -1,21 +1,10 @@
 package fr.tanchou.menudlasemaine.models;
 
 public class Feculent {
-    private int feculentId;
     private String feculentName;
 
-    public Feculent(int feculentId, String feculentName) {
-        this.feculentId = feculentId;
+    public Feculent(String feculentName) {
         this.feculentName = feculentName;
-    }
-
-
-    public int getFeculentId() {
-        return feculentId;
-    }
-
-    public void setFeculentId(int feculentId) {
-        this.feculentId = feculentId;
     }
 
     public String getFeculentName() {

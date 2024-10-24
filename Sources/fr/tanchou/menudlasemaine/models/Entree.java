@@ -1,20 +1,10 @@
 package fr.tanchou.menudlasemaine.models;
 
 public class Entree {
-    private int entreeId;
     private String nomEntree;
 
-    public Entree(int entreeId, String nomEntree) {
-        this.entreeId = entreeId;
+    public Entree(String nomEntree) {
         this.nomEntree = nomEntree;
-    }
-
-    public int getEntreeId() {
-        return entreeId;
-    }
-
-    public void setEntreeId(int entreeId) {
-        this.entreeId = entreeId;
     }
 
     public String getNomEntree() {
