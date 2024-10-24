@@ -51,7 +51,7 @@ public class MenuService {
         // Bordure supérieure du tableau
         System.out.print("+" + "-".repeat(20));
         for (int i = 0; i < joursSemaine.length; i++) {
-            System.out.print("+" + "-".repeat(30)); // Largeur de 30 pour chaque jour
+            System.out.print("+" + "-".repeat(40)); // Largeur de 30 pour chaque jour
         }
         System.out.println("+");
 
@@ -76,8 +76,11 @@ public class MenuService {
                 Repas repas = menu.getRepasParJour()[j][m];
                 String repasText = "";
 
+
                 if (repas.getEntree() != null) {
                     repasText += repas.getEntree().getNomEntree();
+                }else {
+                    repasText += "pas d'entrée ";
                 }
                 repasText += " - " + repas.getPlat().getNomPlat();
 
