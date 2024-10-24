@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.utils;
 
+import fr.tanchou.menudlasemaine.dao.PlatCompletDAO;
 import fr.tanchou.menudlasemaine.models.PlatComplet;
 
 import java.util.List;
@@ -8,16 +9,11 @@ import java.util.Random;
 public class PlatCompletFactory extends PlatFactory {
     private final List<PlatComplet> platsComplets;
 
-    public PlatCompletFactory(List<PlatComplet> platsComplets) {
-        this.platsComplets = platsComplets;
+    public PlatCompletFactory(PlatCompletDAO platCompletDAO) {
+        this.platsComplets = platCompletDAO.getAllPlatsComplets();
     }
 
-    @Override
-    public PlatComplet createPlat() {
-        return getRandomPlatComplet();
-    }
-
-    private PlatComplet getRandomPlatComplet() {
+    public PlatComplet getRandomPlatComplet() {
         if (platsComplets.isEmpty()) {
             throw new IllegalStateException("La liste de plats complets est vide.");
         }

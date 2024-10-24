@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.enums;
 
 public enum TypePlat {
-    COMPOSE("composé"),
+    COMPOSE("compose"),
     COMPLET("complet");
 
     private final String label;

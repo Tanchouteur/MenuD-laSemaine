@@ -15,7 +15,6 @@ public class PlatComposeFactory extends PlatFactory {
         this.poids = poids;
     }
 
-    @Override
     public Plat createPlat() {
         return createPlatCompose(viande, accompagnement, poids);
     }

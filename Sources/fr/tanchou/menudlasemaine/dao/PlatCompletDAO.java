@@ -11,19 +11,16 @@ import java.util.List;
 public class PlatCompletDAO {
 
     public void ajouterPlatComplet(PlatComplet platComplet) {
-        String sql = "INSERT INTO Plat (type_plat, poids) VALUES (?, ?)";
+        String sql = "{CALL AjouterPlatComplet(?, ?)}"; // Utilisation de la procédure
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, platComplet.getTypePlat().name());
-            pstmt.setFloat(2, platComplet.getPoids());
-            pstmt.executeUpdate();
+             CallableStatement cstmt = conn.prepareCall(sql)) {
 
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int platId = generatedKeys.getInt(1);
-                    ajouterPlatCompletDetails(platId, platComplet);
-                }
-            }
+            // Remplir les paramètres de la procédure
+            cstmt.setFloat(1, platComplet.getPoids());
+            cstmt.setString(2, platComplet.getNomPlat()); // Supposons que tu as une méthode getNomPlat() dans PlatComplet
+
+            // Exécuter la procédure
+            cstmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,13 +59,13 @@ public class PlatCompletDAO {
 
     public List<PlatComplet> getAllPlatsComplets() {
         List<PlatComplet> platsComplets = new ArrayList<>();
-        String sql = "SELECT p.*, pc.nom_plat FROM Plat p JOIN PlatComplet pc ON p.plat_id = pc.plat_id";
+        String sql = "SELECT p.*, pc.nom_plat FROM Plat p JOIN PlatComplet pc ON p.plat_id = pc.plat_id WHERE p.type_plat = 'complet'";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int platId = rs.getInt("plat_id");
-                TypePlat typePlat = TypePlat.valueOf(rs.getString("type_plat"));
+                TypePlat typePlat = TypePlat.fromString("complet");
                 float poids = rs.getFloat("poids");
                 String nomPlat = rs.getString("nom_plat");
                 platsComplets.add(new PlatComplet(platId, typePlat, poids, nomPlat));
