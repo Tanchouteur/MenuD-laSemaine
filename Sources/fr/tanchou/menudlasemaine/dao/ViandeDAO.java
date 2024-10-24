@@ -6,7 +6,6 @@ import fr.tanchou.menudlasemaine.models.Viande;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ViandeDAO {
 
@@ -16,29 +15,20 @@ public class ViandeDAO {
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, viande.getNomViande());
             pstmt.executeUpdate();
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    viande.setViandeId(generatedKeys.getInt(1)); // Mettre à jour l'ID
-                }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public Viande getViandeById(int viandeId) {
-        String sql = "SELECT * FROM Viande WHERE viande_id = ?";
+    public Viande getViandeByName(String nomViande) {
+        String sql = "SELECT * FROM Viande WHERE nom_viande = ?";
         Viande viande = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, viandeId);
+            pstmt.setString(1, nomViande);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                viande = new Viande(
-                        rs.getInt("viande_id"),
-                        rs.getString("nom_viande")
-                );
+                viande = new Viande(rs.getString("nom_viande"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,10 +43,7 @@ public class ViandeDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                viandes.add(new Viande(
-                        rs.getInt("viande_id"),
-                        rs.getString("nom_viande")
-                ));
+                viandes.add(new Viande(rs.getString("nom_viande")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -64,32 +51,26 @@ public class ViandeDAO {
         return viandes;
     }
 
-    public void updateViande(Viande viande) {
-        String sql = "UPDATE Viande SET nom_viande = ? WHERE viande_id = ?";
+    public void updateViande(Viande viande, String newNomViande) {
+        String sql = "UPDATE Viande SET nom_viande = ? WHERE nom_viande = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, viande.getNomViande());
-            pstmt.setInt(2, viande.getViandeId());
+            pstmt.setString(2, newNomViande);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteViande(int viandeId) {
-        String sql = "DELETE FROM Viande WHERE viande_id = ?";
+    public void deleteViande(String nomViande) {
+        String sql = "DELETE FROM Viande WHERE nom_viande = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, viandeId);
+            pstmt.setString(1, nomViande);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public Viande getRandomViande() {
-        Random random = new Random();
-        List<Viande> viandes = getAllViandes();
-        return viandes.get(random.nextInt(viandes.size()));
     }
 }

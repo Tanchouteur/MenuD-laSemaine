@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.dao;
 
+import fr.tanchou.menudlasemaine.models.Feculent;
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Legume;
 
@@ -16,36 +17,9 @@ public class LegumeDAO {
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, legume.getLegumeNom());
             pstmt.executeUpdate();
-
-            // Récupérer l'ID généré
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    legume.setLegumeId(generatedKeys.getInt(1)); // Mettre à jour l'ID
-                }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    // Méthode pour récupérer un légume par ID
-    public Legume getLegumeById(int legumeId) {
-        String sql = "SELECT * FROM Legume WHERE legume_id = ?";
-        Legume legume = null;
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, legumeId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                legume = new Legume(
-                        rs.getInt("legume_id"),
-                        rs.getString("nom_legume")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return legume;
     }
 
     // Méthode pour récupérer tous les légumes
@@ -57,7 +31,6 @@ public class LegumeDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 legumes.add(new Legume(
-                        rs.getInt("legume_id"),
                         rs.getString("nom_legume")
                 ));
             }
@@ -67,13 +40,31 @@ public class LegumeDAO {
         return legumes;
     }
 
+    public Legume getLegumeByName(String legumeName) {
+        String sql = "SELECT * FROM Legume WHERE nom_legume = ?";
+        Legume legume = null;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, legumeName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                legume = new Legume(
+                        rs.getString("nom_feculent")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return legume;
+    }
+
     // Méthode pour mettre à jour un légume
-    public void updateLegume(Legume legume) {
-        String sql = "UPDATE Legume SET nom_legume = ? WHERE legume_id = ?";
+    public void updateLegume(Legume legume, String newLegumeName) {
+        String sql = "UPDATE Legume SET nom_legume = ? WHERE nom_legume = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, legume.getLegumeNom());
-            pstmt.setInt(2, legume.getLegumeId());
+            pstmt.setString(2, newLegumeName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -81,11 +72,11 @@ public class LegumeDAO {
     }
 
     // Méthode pour supprimer un légume
-    public void deleteLegume(int legumeId) {
-        String sql = "DELETE FROM Legume WHERE legume_id = ?";
+    public void deleteLegume(String legumeNom) {
+        String sql = "DELETE FROM Legume WHERE nom_legume = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, legumeId);
+            pstmt.setString(1, legumeNom);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
