@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.tables.Menu;
+package fr.tanchou.menudlasemaine.models;
 
 public class Plat {
     private int platId;

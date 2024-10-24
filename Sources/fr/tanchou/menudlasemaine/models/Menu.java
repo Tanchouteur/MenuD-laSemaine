@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.tables.Menu;
+package fr.tanchou.menudlasemaine.models;
 
 import java.util.HashMap;
 import java.util.Map;

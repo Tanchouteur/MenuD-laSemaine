@@ -1,6 +1,4 @@
-package fr.tanchou.menudlasemaine.tables.Poids;
-
-import fr.tanchou.menudlasemaine.tables.Menu.Plat;
+package fr.tanchou.menudlasemaine.models;
 
 public class PoidsFamille {
     private int poidsFamilleId;

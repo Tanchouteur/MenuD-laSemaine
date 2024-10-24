@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.tables.Poids;
+package fr.tanchou.menudlasemaine.enums;
 
 public enum Saison {
     HIVER,

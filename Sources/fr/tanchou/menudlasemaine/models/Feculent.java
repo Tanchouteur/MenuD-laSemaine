@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.tables.Menu;
+package fr.tanchou.menudlasemaine.models;
 
 public class Feculent {
     private int feculentId;

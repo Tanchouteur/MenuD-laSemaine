@@ -1,6 +1,6 @@
-package fr.tanchou.menudlasemaine.tables.Poids;
+package fr.tanchou.menudlasemaine.models;
 
-import fr.tanchou.menudlasemaine.tables.Menu.Plat;
+import fr.tanchou.menudlasemaine.enums.Saison;
 
 public class PoidSaison {
     private int poidId;

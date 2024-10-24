@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.Vue;
+package fr.tanchou.menudlasemaine.models;
 
 public class VueMenuSemaine {
     private final int menuId;

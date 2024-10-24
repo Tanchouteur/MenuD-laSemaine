@@ -1,19 +1,20 @@
-package fr.tanchou.menudlasemaine.tables.Poids;
+package fr.tanchou.menudlasemaine.models;
 
-import fr.tanchou.menudlasemaine.tables.Menu.Plat;
+import fr.tanchou.menudlasemaine.enums.MomentJournee;
 
-public class PoidsMomentSemaine {
+public class PoidsMomentJournee {
     private int poidsId;
     private Plat plat;
-    private MomentSemaine momentSemaine; //enum "lundi" à "dimanche"
+    private MomentJournee momentJournee; //enum "midi" ou "soir"
     private int poids;
 
-    public PoidsMomentSemaine(int poidsId, Plat plat, MomentSemaine momentSemaine, int poids) {
+    public PoidsMomentJournee(int poidsId, Plat plat, MomentJournee momentJournee, int poids) {
         this.poidsId = poidsId;
         this.plat = plat;
-        this.momentSemaine = momentSemaine;
+        this.momentJournee = momentJournee;
         this.poids = poids;
     }
+
 
     public int getPoidsId() {
         return poidsId;
@@ -31,12 +32,12 @@ public class PoidsMomentSemaine {
         this.plat = plat;
     }
 
-    public MomentSemaine getMomentSemaine() {
-        return momentSemaine;
+    public MomentJournee getMomentJournee() {
+        return momentJournee;
     }
 
-    public void setMomentSemaine(MomentSemaine momentSemaine) {
-        this.momentSemaine = momentSemaine;
+    public void setMomentJournee(MomentJournee momentJournee) {
+        this.momentJournee = momentJournee;
     }
 
     public int getPoids() {

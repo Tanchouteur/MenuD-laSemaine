@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.Vue;
+package fr.tanchou.menudlasemaine.models;
 
 public class VuePoidsPlats {
     private final int platId;
@@ -8,7 +8,6 @@ public class VuePoidsPlats {
     private final int poidsMomentJournee;
     private final int poidsMomentSemaine;
 
-    // Constructeur
     public VuePoidsPlats(int platId, String nomPlat, int poidsFamille,
                          int poidsSaison, int poidsMomentJournee, int poidsMomentSemaine) {
         this.platId = platId;
