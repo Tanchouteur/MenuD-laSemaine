@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Menu;

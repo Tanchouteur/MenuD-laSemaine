@@ -1,11 +1,18 @@
 package fr.tanchou.menudlasemaine.utils;
 
-import fr.tanchou.menudlasemaine.models.Accompagnement;
-import fr.tanchou.menudlasemaine.models.Plat;
-import fr.tanchou.menudlasemaine.models.Viande;
+import fr.tanchou.menudlasemaine.enums.TypePlat;
+import fr.tanchou.menudlasemaine.models.*;
 
-public class PlatFactory {
-    public static Plat createPlat(Viande viande, Accompagnement accompagnement, boolean toutEnUn, String nomPlat) {
-        return new Plat(0, viande, accompagnement, toutEnUn, nomPlat);
+public abstract class PlatFactory {
+
+    public abstract Plat createPlat();
+
+    public static PlatComplet createPlatComplet(String nomPlat, float poids) {
+        return new PlatComplet(0, TypePlat.COMPLET, poids, nomPlat);
+    }
+
+    public static PlatCompose createPlatCompose(Viande viande, Accompagnement accompagnement, float poids) {
+        // Crée et retourne un PlatCompose
+        return new PlatCompose(0, TypePlat.COMPOSE, poids, viande, accompagnement);
     }
 }

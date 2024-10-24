@@ -3,36 +3,50 @@ package fr.tanchou.menudlasemaine.models;
 public class VueMenuSemaine {
     private final int menuId;
 
+    // Lundi
     private final String lundiMidiEntree;
     private final String lundiMidiPlat;
     private final String lundiSoirEntree;
     private final String lundiSoirPlat;
+
+    // Mardi
     private final String mardiMidiEntree;
     private final String mardiMidiPlat;
     private final String mardiSoirEntree;
     private final String mardiSoirPlat;
+
+    // Mercredi
     private final String mercrediMidiEntree;
     private final String mercrediMidiPlat;
     private final String mercrediSoirEntree;
     private final String mercrediSoirPlat;
+
+    // Jeudi
     private final String jeudiMidiEntree;
     private final String jeudiMidiPlat;
     private final String jeudiSoirEntree;
     private final String jeudiSoirPlat;
+
+    // Vendredi
     private final String vendrediMidiEntree;
     private final String vendrediMidiPlat;
     private final String vendrediSoirEntree;
     private final String vendrediSoirPlat;
+
+    // Samedi
     private final String samediMidiEntree;
     private final String samediMidiPlat;
     private final String samediSoirEntree;
     private final String samediSoirPlat;
+
+    // Dimanche
     private final String dimancheMidiEntree;
     private final String dimancheMidiPlat;
     private final String dimancheSoirEntree;
     private final String dimancheSoirPlat;
 
-    public VueMenuSemaine(int menuId, String lundiMidiEntree, String lundiMidiPlat,
+    public VueMenuSemaine(int menuId,
+                          String lundiMidiEntree, String lundiMidiPlat,
                           String lundiSoirEntree, String lundiSoirPlat,
                           String mardiMidiEntree, String mardiMidiPlat,
                           String mardiSoirEntree, String mardiSoirPlat,
@@ -53,33 +67,39 @@ public class VueMenuSemaine {
         this.lundiMidiPlat = lundiMidiPlat;
         this.lundiSoirEntree = lundiSoirEntree;
         this.lundiSoirPlat = lundiSoirPlat;
+
         this.mardiMidiEntree = mardiMidiEntree;
         this.mardiMidiPlat = mardiMidiPlat;
         this.mardiSoirEntree = mardiSoirEntree;
         this.mardiSoirPlat = mardiSoirPlat;
+
         this.mercrediMidiEntree = mercrediMidiEntree;
         this.mercrediMidiPlat = mercrediMidiPlat;
         this.mercrediSoirEntree = mercrediSoirEntree;
         this.mercrediSoirPlat = mercrediSoirPlat;
+
         this.jeudiMidiEntree = jeudiMidiEntree;
         this.jeudiMidiPlat = jeudiMidiPlat;
         this.jeudiSoirEntree = jeudiSoirEntree;
         this.jeudiSoirPlat = jeudiSoirPlat;
+
         this.vendrediMidiEntree = vendrediMidiEntree;
         this.vendrediMidiPlat = vendrediMidiPlat;
         this.vendrediSoirEntree = vendrediSoirEntree;
         this.vendrediSoirPlat = vendrediSoirPlat;
+
         this.samediMidiEntree = samediMidiEntree;
         this.samediMidiPlat = samediMidiPlat;
         this.samediSoirEntree = samediSoirEntree;
         this.samediSoirPlat = samediSoirPlat;
+
         this.dimancheMidiEntree = dimancheMidiEntree;
         this.dimancheMidiPlat = dimancheMidiPlat;
         this.dimancheSoirEntree = dimancheSoirEntree;
         this.dimancheSoirPlat = dimancheSoirPlat;
     }
 
-    // Getters et Setters
+    // Getters
     public int getMenuId() {
         return menuId;
     }

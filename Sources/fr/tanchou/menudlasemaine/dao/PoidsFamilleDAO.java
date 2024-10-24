@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Plat;
@@ -35,11 +35,26 @@ public class PoidsFamilleDAO {
             pstmt.setInt(1, poidsFamilleId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Plat plat = new PlatDAO().getPlatById(rs.getInt("plat_id"));
-                poidsFamille = new PoidsFamille(poidsFamilleId, plat, rs.getInt("membre"), rs.getInt("poids"));
+                int platId = rs.getInt("plat_id");
+                Plat plat;
+
+                // Utiliser une instance de PlatCompletDAO ou PlatComposeDAO pour récupérer le plat
+                String typePlat = rs.getString("type_plat"); // Assurez-vous que ce champ est présent dans votre table
+                if (typePlat.equals("complet")) {
+                    PlatCompletDAO platCompletDAO = new PlatCompletDAO();
+                    plat = platCompletDAO.getPlatCompletById(platId);
+                } else {
+                    PlatComposeDAO platComposeDAO = new PlatComposeDAO();
+                    plat = platComposeDAO.getPlatComposeById(platId);
+                }
+
+                // Récupérer les autres informations du poids de famille
+                int membre = rs.getInt("membre");
+                int poids = rs.getInt("poids");
+                poidsFamille = new PoidsFamille(poidsFamilleId, plat, membre, poids);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de la récupération du poids de famille : " + e.getMessage());
         }
         return poidsFamille;
     }

@@ -1,59 +1,52 @@
 package fr.tanchou.menudlasemaine.models;
 
-public class Plat {
-    private int platId;
-    private Viande viande;
-    private Accompagnement accompagnement;
-    private boolean toutEnUn;
-    private String nomPlat;
+import fr.tanchou.menudlasemaine.enums.TypePlat;
 
-    public Plat(int platId, Viande viande, Accompagnement accompagnement, boolean toutEnUn, String nomPlat) {
+public abstract class Plat {
+    private int platId;
+    private TypePlat typePlat; // Utilisation de l'enum
+    private float poids;
+
+    // Constructeur
+    public Plat(int platId, TypePlat typePlat, float poids) {
         this.platId = platId;
-        this.viande = viande;
-        this.accompagnement = accompagnement;
-        this.toutEnUn = toutEnUn;
-        this.nomPlat = nomPlat;
+        this.typePlat = typePlat;
+        this.poids = poids;
     }
 
-    // Getters
+    // Getters et setters
     public int getPlatId() {
         return platId;
     }
 
-    public Viande getViande() {
-        return viande;
-    }
-
-    public Accompagnement getAccompagnement() {
-        return accompagnement;
-    }
-
-    public boolean isToutEnUn() {
-        return toutEnUn;
-    }
-
-    public String getNomPlat() {
-        return nomPlat;
-    }
-
-    // Setters
     public void setPlatId(int platId) {
         this.platId = platId;
     }
 
-    public void setViande(Viande viande) {
-        this.viande = viande;
+    public TypePlat getTypePlat() {
+        return typePlat;
     }
 
-    public void setAccompagnement(Accompagnement accompagnement) {
-        this.accompagnement = accompagnement;
+    public void setTypePlat(TypePlat typePlat) {
+        this.typePlat = typePlat;
     }
 
-    public void setToutEnUn(boolean toutEnUn) {
-        this.toutEnUn = toutEnUn;
+    public float getPoids() {
+        return poids;
     }
 
-    public void setNomPlat(String nomPlat) {
-        this.nomPlat = nomPlat;
+    public void setPoids(float poids) {
+        this.poids = poids;
+    }
+
+    public abstract String getNomPlat(); // Méthode abstraite pour obtenir le nom du plat
+
+    @Override
+    public String toString() {
+        return "Plat{" +
+                "platId=" + platId +
+                ", typePlat=" + typePlat.getLabel() +
+                ", poids=" + poids +
+                '}';
     }
 }

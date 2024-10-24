@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Plat;
@@ -36,8 +36,20 @@ public class PoidsMomentJourneeDAO {
             pstmt.setInt(1, poidsId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Plat plat = new PlatDAO().getPlatById(rs.getInt("plat_id"));
-                MomentJournee momentJournee = MomentJournee.valueOf(rs.getString("moment")); // String to Enum
+                int platId = rs.getInt("plat_id");
+                Plat plat;
+
+                // Déterminer le type de plat
+                String typePlat = rs.getString("type_plat"); // Assurez-vous que cette colonne existe
+                if (typePlat.equals("complet")) {
+                    PlatCompletDAO platCompletDAO = new PlatCompletDAO();
+                    plat = platCompletDAO.getPlatCompletById(platId);
+                } else {
+                    PlatComposeDAO platComposeDAO = new PlatComposeDAO();
+                    plat = platComposeDAO.getPlatComposeById(platId);
+                }
+
+                MomentJournee momentJournee = MomentJournee.valueOf(rs.getString("moment"));
                 poidsMomentJournee = new PoidsMomentJournee(poidsId, plat, momentJournee, rs.getInt("poids"));
             }
         } catch (SQLException e) {
@@ -45,6 +57,7 @@ public class PoidsMomentJourneeDAO {
         }
         return poidsMomentJournee;
     }
+
 
     public void updatePoidsMomentJournee(PoidsMomentJournee poidsMomentJournee) {
         String sql = "UPDATE PoidsMomentJournee SET plat_id = ?, moment = ?, poids = ? WHERE poids_id = ?";

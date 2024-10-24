@@ -34,4 +34,8 @@ public class Accompagnement {
     public void setFeculent(Feculent feculent) {
         this.feculent = feculent;
     }
+
+    public String getNomAccompagnement() {
+        return legume.getLegumeNom() + " " + feculent.getFeculentName();
+    }
 }

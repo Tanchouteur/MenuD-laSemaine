@@ -1,26 +1,24 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
-import fr.tanchou.menudlasemaine.models.Legume;
+import fr.tanchou.menudlasemaine.models.Viande;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LegumeDAO {
+public class ViandeDAO {
 
-    // Méthode pour ajouter un nouveau légume
-    public void ajouterLegume(Legume legume) {
-        String sql = "INSERT INTO Legume (nom_legume) VALUES (?)";
+    public void ajouterViande(Viande viande) {
+        String sql = "INSERT INTO Viande (nom_viande) VALUES (?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, legume.getLegumeNom());
+            pstmt.setString(1, viande.getNomViande());
             pstmt.executeUpdate();
 
-            // Récupérer l'ID généré
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    legume.setLegumeId(generatedKeys.getInt(1)); // Mettre à jour l'ID
+                    viande.setViandeId(generatedKeys.getInt(1)); // Mettre à jour l'ID
                 }
             }
         } catch (SQLException e) {
@@ -28,64 +26,60 @@ public class LegumeDAO {
         }
     }
 
-    // Méthode pour récupérer un légume par ID
-    public Legume getLegumeById(int legumeId) {
-        String sql = "SELECT * FROM Legume WHERE legume_id = ?";
-        Legume legume = null;
+    public Viande getViandeById(int viandeId) {
+        String sql = "SELECT * FROM Viande WHERE viande_id = ?";
+        Viande viande = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, legumeId);
+            pstmt.setInt(1, viandeId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                legume = new Legume(
-                        rs.getInt("legume_id"),
-                        rs.getString("nom_legume")
+                viande = new Viande(
+                        rs.getInt("viande_id"),
+                        rs.getString("nom_viande")
                 );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return legume;
+        return viande;
     }
 
-    // Méthode pour récupérer tous les légumes
-    public List<Legume> getAllLegumes() {
-        List<Legume> legumes = new ArrayList<>();
-        String sql = "SELECT * FROM Legume";
+    public List<Viande> getAllViandes() {
+        List<Viande> viandes = new ArrayList<>();
+        String sql = "SELECT * FROM Viande";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                legumes.add(new Legume(
-                        rs.getInt("legume_id"),
-                        rs.getString("legume_nom")
+                viandes.add(new Viande(
+                        rs.getInt("viande_id"),
+                        rs.getString("nom_viande")
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return legumes;
+        return viandes;
     }
 
-    // Méthode pour mettre à jour un légume
-    public void updateLegume(Legume legume) {
-        String sql = "UPDATE Legume SET nom_legume = ? WHERE legume_id = ?";
+    public void updateViande(Viande viande) {
+        String sql = "UPDATE Viande SET nom_viande = ? WHERE viande_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, legume.getLegumeNom());
-            pstmt.setInt(2, legume.getLegumeId());
+            pstmt.setString(1, viande.getNomViande());
+            pstmt.setInt(2, viande.getViandeId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Méthode pour supprimer un légume
-    public void deleteLegume(int legumeId) {
-        String sql = "DELETE FROM Legume WHERE legume_id = ?";
+    public void deleteViande(int viandeId) {
+        String sql = "DELETE FROM Viande WHERE viande_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, legumeId);
+            pstmt.setInt(1, viandeId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

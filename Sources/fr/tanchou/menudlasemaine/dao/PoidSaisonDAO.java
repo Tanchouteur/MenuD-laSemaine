@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Plat;
@@ -9,6 +9,7 @@ import java.sql.*;
 
 public class PoidSaisonDAO {
 
+    // Ajouter un Poids de Saison
     public void ajouterPoidSaison(PoidSaison poidSaison) {
         String sql = "INSERT INTO PoidsSaison (plat_id, saison, poids) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -24,7 +25,7 @@ public class PoidSaisonDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de l'ajout du poids de saison : " + e.getMessage());
         }
     }
 
@@ -36,12 +37,23 @@ public class PoidSaisonDAO {
             pstmt.setInt(1, poidId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Plat plat = new PlatDAO().getPlatById(rs.getInt("plat_id"));
+                int platId = rs.getInt("plat_id");
+                Plat plat;
+
+                // Utiliser une instance de PlatCompletDAO ou PlatComposeDAO pour récupérer le plat
+                if (rs.getString("type_plat").equals("complet")) {
+                    PlatCompletDAO platCompletDAO = new PlatCompletDAO();
+                    plat = platCompletDAO.getPlatCompletById(platId);
+                } else {
+                    PlatComposeDAO platComposeDAO = new PlatComposeDAO();
+                    plat = platComposeDAO.getPlatComposeById(platId);
+                }
+
                 Saison saison = Saison.valueOf(rs.getString("saison"));
                 poidSaison = new PoidSaison(poidId, plat, saison, rs.getInt("poids"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de la récupération du poids de saison : " + e.getMessage());
         }
         return poidSaison;
     }

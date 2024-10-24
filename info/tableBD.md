@@ -1,7 +1,6 @@
 # SQL pour créer les tables de la base de données
 ```sql
 -- Table Menu
--- Table Menu
 CREATE TABLE Menu (
                       menu_id INT AUTO_INCREMENT PRIMARY KEY,
                       lundi_midi_repas_id INT,
@@ -53,11 +52,25 @@ CREATE TABLE Entree (
 -- Table Plat
 CREATE TABLE Plat (
                       plat_id INT AUTO_INCREMENT PRIMARY KEY,
-                      viande_id INT,
-                      accompagnement_id INT,
-                      tout_en_un BOOLEAN DEFAULT FALSE,
-                      FOREIGN KEY (viande_id) REFERENCES Viande(viande_id),
-                      FOREIGN KEY (accompagnement_id) REFERENCES Accompagnement(accompagnement_id)
+                      type_plat ENUM('composé', 'complet') NOT NULL, -- Type de plat (composé ou complet)
+                      poids FLOAT DEFAULT 0 -- Poids par défaut, à ajuster plus tard
+);
+
+-- Table PlatCompose
+CREATE TABLE PlatCompose (
+                             plat_id INT PRIMARY KEY, -- Assurez-vous que plat_id est la clé primaire ici
+                             viande_id INT,
+                             accompagnement_id INT,
+                             FOREIGN KEY (plat_id) REFERENCES Plat(plat_id), -- FK vers la table Plat
+                             FOREIGN KEY (viande_id) REFERENCES Viande(viande_id),
+                             FOREIGN KEY (accompagnement_id) REFERENCES Accompagnement(accompagnement_id)
+);
+
+-- Table PlatComplet
+CREATE TABLE PlatComplet (
+                             plat_id INT PRIMARY KEY, -- Assurez-vous que plat_id est la clé primaire ici
+                             nom_plat VARCHAR(255) NOT NULL, -- Nom du plat complet
+                             FOREIGN KEY (plat_id) REFERENCES Plat(plat_id) -- FK vers la table Plat
 );
 
 -- Table Viande
@@ -123,7 +136,7 @@ CREATE TABLE PoidsMomentSemaine (
                                     FOREIGN KEY (plat_id) REFERENCES Plat(plat_id)
 );
 
--- Table Incompatibiliter
+-- Table Incompatibilite
 CREATE TABLE Incompatibilite (
                                  incompatibilite_id INT AUTO_INCREMENT PRIMARY KEY,
                                  viande_id INT, -- Peut être NULL si l'incompatibilité concerne uniquement des accompagnements
@@ -133,6 +146,7 @@ CREATE TABLE Incompatibilite (
                                  FOREIGN KEY (legume_id) REFERENCES Legume(legume_id),
                                  FOREIGN KEY (feculent_id) REFERENCES Feculent(feculent_id)
 );
+
 ```
 
 ## SQL exemple d'insertion de données

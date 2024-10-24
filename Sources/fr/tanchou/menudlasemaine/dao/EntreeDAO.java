@@ -1,24 +1,23 @@
-package fr.tanchou.menudlasemaine.DAO;
-
+package fr.tanchou.menudlasemaine.dao;
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
-import fr.tanchou.menudlasemaine.models.Feculent;
+import fr.tanchou.menudlasemaine.models.Entree;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeculentDAO {
+public class EntreeDAO {
 
-    public void ajouterFeculent(Feculent feculent) {
-        String sql = "INSERT INTO Feculent (nom_feculent) VALUES (?)";
+    public void ajouterEntree(Entree entree) {
+        String sql = "INSERT INTO Entree (nom_entree) VALUES (?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, feculent.getFeculentName());
+            pstmt.setString(1, entree.getNomEntree());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    feculent.setFeculentId(generatedKeys.getInt(1)); // Mettre à jour l'ID
+                    entree.setEntreeId(generatedKeys.getInt(1)); // Mettre à jour l'ID
                 }
             }
         } catch (SQLException e) {
@@ -26,63 +25,64 @@ public class FeculentDAO {
         }
     }
 
-    public Feculent getFeculentById(int feculentId) {
-        String sql = "SELECT * FROM Feculent WHERE feculent_id = ?";
-        Feculent feculent = null;
+    public Entree getEntreeById(int entreeId) {
+        String sql = "SELECT * FROM Entree WHERE entree_id = ?";
+        Entree entree = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, feculentId);
+            pstmt.setInt(1, entreeId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                feculent = new Feculent(
-                        rs.getInt("feculent_id"),
-                        rs.getString("nom_feculent")
+                entree = new Entree(
+                        rs.getInt("entree_id"),
+                        rs.getString("nom_entree")
                 );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return feculent;
+        return entree;
     }
 
-    public List<Feculent> getAllFeculents() {
-        List<Feculent> feculents = new ArrayList<>();
-        String sql = "SELECT * FROM Feculent";
+    public List<Entree> getAllEntrees() {
+        List<Entree> entrees = new ArrayList<>();
+        String sql = "SELECT * FROM Entree";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                feculents.add(new Feculent(
-                        rs.getInt("feculent_id"),
-                        rs.getString("nom_feculent")
+                entrees.add(new Entree(
+                        rs.getInt("entree_id"),
+                        rs.getString("nom_entree")
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return feculents;
+        return entrees;
     }
 
-    public void updateFeculent(Feculent feculent) {
-        String sql = "UPDATE Feculent SET nom_feculent = ? WHERE feculent_id = ?";
+    public void updateEntree(Entree entree) {
+        String sql = "UPDATE Entree SET nom_entree = ? WHERE entree_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, feculent.getFeculentName());
-            pstmt.setInt(2, feculent.getFeculentId());
+            pstmt.setString(1, entree.getNomEntree());
+            pstmt.setInt(2, entree.getEntreeId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteFeculent(int feculentId) {
-        String sql = "DELETE FROM Feculent WHERE feculent_id = ?";
+    public void deleteEntree(int entreeId) {
+        String sql = "DELETE FROM Entree WHERE entree_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, feculentId);
+            pstmt.setInt(1, entreeId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 }
+

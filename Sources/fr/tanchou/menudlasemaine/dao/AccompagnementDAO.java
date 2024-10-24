@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Accompagnement;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class AccompagnementDAO {
 
-    public void ajouterAccompagnement(Accompagnement accompagnement) {
+    public void insertAccompagnement(Accompagnement accompagnement) {
         String sql = "INSERT INTO Accompagnement (legume_id, feculent_id) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
