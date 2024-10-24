@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.VueMenuSemaine;
@@ -11,7 +11,7 @@ public class VueMenuSemaineDAO {
 
     public List<VueMenuSemaine> getAllMenus() {
         List<VueMenuSemaine> menus = new ArrayList<>();
-        String sql = "SELECT * FROM VueMenuSemaine";
+        String sql = "SELECT * FROM VueMenuSemaine"; // Assurez-vous que ce soit le nom correct de la vue
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);

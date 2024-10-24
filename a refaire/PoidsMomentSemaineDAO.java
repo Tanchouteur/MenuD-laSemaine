@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Plat;
@@ -36,8 +36,20 @@ public class PoidsMomentSemaineDAO {
             pstmt.setInt(1, poidsId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Plat plat = new PlatDAO().getPlatById(rs.getInt("plat_id"));
-                MomentSemaine momentSemaine = MomentSemaine.valueOf(rs.getString("semaine_weekend")); // String to Enum
+                int platId = rs.getInt("plat_id");
+                Plat plat;
+
+                // Déterminer le type de plat
+                String typePlat = rs.getString("type_plat"); // Assurez-vous que cette colonne existe
+                if (typePlat.equals("complet")) {
+                    PlatCompletDAO platCompletDAO = new PlatCompletDAO();
+                    plat = platCompletDAO.getPlatCompletById(platId);
+                } else {
+                    PlatComposeDAO platComposeDAO = new PlatComposeDAO();
+                    plat = platComposeDAO.getPlatComposeById(platId);
+                }
+
+                MomentSemaine momentSemaine = MomentSemaine.valueOf(rs.getString("semaine_weekend"));
                 poidsMomentSemaine = new PoidsMomentSemaine(poidsId, plat, momentSemaine, rs.getInt("poids"));
             }
         } catch (SQLException e) {

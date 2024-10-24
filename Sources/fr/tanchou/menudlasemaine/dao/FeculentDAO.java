@@ -1,24 +1,24 @@
-package fr.tanchou.menudlasemaine.DAO;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
-import fr.tanchou.menudlasemaine.models.Viande;
+import fr.tanchou.menudlasemaine.models.Feculent;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViandeDAO {
+public class FeculentDAO {
 
-    public void ajouterViande(Viande viande) {
-        String sql = "INSERT INTO Viande (nom_viande) VALUES (?)";
+    public void ajouterFeculent(Feculent feculent) {
+        String sql = "INSERT INTO Feculent (nom_feculent) VALUES (?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, viande.getNom());
+            pstmt.setString(1, feculent.getFeculentName());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    viande.setViandeId(generatedKeys.getInt(1)); // Mettre à jour l'ID
+                    feculent.setFeculentId(generatedKeys.getInt(1)); // Mettre à jour l'ID
                 }
             }
         } catch (SQLException e) {
@@ -26,60 +26,60 @@ public class ViandeDAO {
         }
     }
 
-    public Viande getViandeById(int viandeId) {
-        String sql = "SELECT * FROM Viande WHERE viande_id = ?";
-        Viande viande = null;
+    public Feculent getFeculentById(int feculentId) {
+        String sql = "SELECT * FROM Feculent WHERE feculent_id = ?";
+        Feculent feculent = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, viandeId);
+            pstmt.setInt(1, feculentId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                viande = new Viande(
-                        rs.getInt("viande_id"),
-                        rs.getString("nom_viande")
+                feculent = new Feculent(
+                        rs.getInt("feculent_id"),
+                        rs.getString("nom_feculent")
                 );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return viande;
+        return feculent;
     }
 
-    public List<Viande> getAllViandes() {
-        List<Viande> viandes = new ArrayList<>();
-        String sql = "SELECT * FROM Viande";
+    public List<Feculent> getAllFeculents() {
+        List<Feculent> feculents = new ArrayList<>();
+        String sql = "SELECT * FROM Feculent";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                viandes.add(new Viande(
-                        rs.getInt("viande_id"),
-                        rs.getString("nom_viande")
+                feculents.add(new Feculent(
+                        rs.getInt("feculent_id"),
+                        rs.getString("nom_feculent")
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return viandes;
+        return feculents;
     }
 
-    public void updateViande(Viande viande) {
-        String sql = "UPDATE Viande SET nom_viande = ? WHERE viande_id = ?";
+    public void updateFeculent(Feculent feculent) {
+        String sql = "UPDATE Feculent SET nom_feculent = ? WHERE feculent_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, viande.getNom());
-            pstmt.setInt(2, viande.getViandeId());
+            pstmt.setString(1, feculent.getFeculentName());
+            pstmt.setInt(2, feculent.getFeculentId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteViande(int viandeId) {
-        String sql = "DELETE FROM Viande WHERE viande_id = ?";
+    public void deleteFeculent(int feculentId) {
+        String sql = "DELETE FROM Feculent WHERE feculent_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, viandeId);
+            pstmt.setInt(1, feculentId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

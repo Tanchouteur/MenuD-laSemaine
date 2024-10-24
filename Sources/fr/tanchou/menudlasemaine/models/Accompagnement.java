@@ -1,22 +1,21 @@
 package fr.tanchou.menudlasemaine.models;
 
 public class Accompagnement {
-    private int accompagnementId;
     private Legume legume;
     private Feculent feculent;
 
-    public Accompagnement(int accompagnementId, Legume legume, Feculent feculent) {
-        this.accompagnementId = accompagnementId;
+    public Accompagnement(Legume legume, Feculent feculent) {
         this.legume = legume;
         this.feculent = feculent;
     }
 
-    public int getAccompagnementId() {
-        return accompagnementId;
+    public Accompagnement(Feculent feculent) {
+        this.legume = null;
+        this.feculent = feculent;
     }
-
-    public void setAccompagnementId(int accompagnementId) {
-        this.accompagnementId = accompagnementId;
+    public Accompagnement(Legume legume) {
+        this.legume = null;
+        this.feculent = feculent;
     }
 
     public Legume getLegume() {
@@ -33,5 +32,16 @@ public class Accompagnement {
 
     public void setFeculent(Feculent feculent) {
         this.feculent = feculent;
+    }
+
+    public String getNomAccompagnement() {
+        String nomAccompagnement = "";
+        if (legume != null) {
+            nomAccompagnement += legume.getLegumeNom();
+        }
+        if (feculent != null) {
+            nomAccompagnement += " " + feculent.getFeculentName();
+        }
+        return nomAccompagnement;
     }
 }

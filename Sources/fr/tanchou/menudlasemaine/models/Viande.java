@@ -17,11 +17,11 @@ public class Viande {
         this.viandeId = viandeId;
     }
 
-    public String getNom() {
+    public String getNomViande() {
         return nom;
     }
 
-    public void setNom(String nom) {
+    public void setNomViande(String nom) {
         this.nom = nom;
     }
 }
