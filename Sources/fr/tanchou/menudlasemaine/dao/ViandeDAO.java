@@ -6,6 +6,7 @@ import fr.tanchou.menudlasemaine.models.Viande;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ViandeDAO {
 
@@ -84,5 +85,11 @@ public class ViandeDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Viande getRandomViande() {
+        Random random = new Random();
+        List<Viande> viandes = getAllViandes();
+        return viandes.get(random.nextInt(viandes.size()));
     }
 }

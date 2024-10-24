@@ -1,21 +1,21 @@
 package fr.tanchou.menudlasemaine.utils;
 
-import fr.tanchou.menudlasemaine.models.Accompagnement;
-import fr.tanchou.menudlasemaine.models.Plat;
-import fr.tanchou.menudlasemaine.models.Viande;
+import fr.tanchou.menudlasemaine.dao.ViandeDAO;
+import fr.tanchou.menudlasemaine.models.*;
+
+import java.util.List;
+import java.util.Random;
 
 public class PlatComposeFactory extends PlatFactory {
-    private final Viande viande;
-    private final Accompagnement accompagnement;
-    private final float poids;
 
-    public PlatComposeFactory(Viande viande, Accompagnement accompagnement, float poids) {
-        this.viande = viande;
-        this.accompagnement = accompagnement;
-        this.poids = poids;
-    }
+    public static Plat getRandomPlatCompose(float poids) {
+        List<Viande> viandes = new ViandeDAO().getAllViandes();
+        Random random = new Random();
 
-    public Plat createPlat() {
-        return createPlatCompose(viande, accompagnement, poids);
+        Viande viande = viandes.get(random.nextInt(viandes.size()));
+
+        Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement();
+
+        return new PlatCompose(poids, viande, randomAccompagnement);
     }
 }

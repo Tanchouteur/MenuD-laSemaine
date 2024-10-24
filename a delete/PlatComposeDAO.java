@@ -52,11 +52,11 @@ public class PlatComposeDAO {
             pstmt.setInt(1, platId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                TypePlat typePlat = TypePlat.valueOf(rs.getString("type_plat"));
+                //TypePlat typePlat = TypePlat.valueOf(rs.getString("type_plat"));
                 float poids = rs.getFloat("poids");
                 Viande viande = new ViandeDAO().getViandeById(rs.getInt("viande_id"));
                 Accompagnement accompagnement = new AccompagnementDAO().getAccompagnementById(rs.getInt("accompagnement_id"));
-                platCompose = new PlatCompose(platId, typePlat, poids, viande, accompagnement);
+                platCompose = new PlatCompose(platId, poids, viande, accompagnement);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -76,7 +76,7 @@ public class PlatComposeDAO {
                 float poids = rs.getFloat("poids");
                 Viande viande = new ViandeDAO().getViandeById(rs.getInt("viande_id"));
                 Accompagnement accompagnement = new AccompagnementDAO().getAccompagnementById(rs.getInt("accompagnement_id"));
-                platsComposes.add(new PlatCompose(platId, typePlat, poids, viande, accompagnement));
+                platsComposes.add(new PlatCompose(platId, poids, viande, accompagnement));
             }
         } catch (SQLException e) {
             e.printStackTrace();

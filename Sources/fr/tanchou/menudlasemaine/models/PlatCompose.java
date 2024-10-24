@@ -8,8 +8,8 @@ public class PlatCompose extends Plat {
     private final String nomPlat;
 
     // Constructeur
-    public PlatCompose(int platId, TypePlat typePlat, float poids, Viande viande, Accompagnement accompagnement) {
-        super(platId, typePlat, poids);
+    public PlatCompose(float poids, Viande viande, Accompagnement accompagnement) {
+        super(poids, TypePlat.COMPOSE);
         this.viande = viande;
         this.accompagnement = accompagnement;
         this.nomPlat = getNomPlat();
@@ -40,10 +40,9 @@ public class PlatCompose extends Plat {
 
     @Override
     public String toString() {
-        return "PlatCompose{" +
-                "platId=" + getPlatId() +
-                ", typePlat=" + getTypePlat().getLabel() +
-                ", poids=" + getPoids() +
+        return "PlatCompose{ " +
+                "nomPlat='" + nomPlat + '\'' +
+                " , poids=" + getPoids() +
                 ", viande=" + (viande != null ? viande.getNomViande() : "Aucune") +
                 ", accompagnement=" + (accompagnement != null ? accompagnement.getNomAccompagnement() : "Aucun") +
                 '}';

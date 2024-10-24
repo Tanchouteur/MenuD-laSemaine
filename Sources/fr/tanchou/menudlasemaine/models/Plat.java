@@ -3,32 +3,20 @@ package fr.tanchou.menudlasemaine.models;
 import fr.tanchou.menudlasemaine.enums.TypePlat;
 
 public abstract class Plat {
-    private int platId;
-    private TypePlat typePlat; // Utilisation de l'enum
+    private final TypePlat typePlat; // Utilisation de l'enum
     private float poids;
+    private final String nomPlat;
 
-    // Constructeur
-    public Plat(int platId, TypePlat typePlat, float poids) {
-        this.platId = platId;
-        this.typePlat = typePlat;
+    public Plat(float poids, TypePlat typePlat) {
         this.poids = poids;
+        this.typePlat = typePlat;
+        this.nomPlat = getNomPlat();
     }
 
     // Getters et setters
-    public int getPlatId() {
-        return platId;
-    }
-
-    public void setPlatId(int platId) {
-        this.platId = platId;
-    }
 
     public TypePlat getTypePlat() {
         return typePlat;
-    }
-
-    public void setTypePlat(TypePlat typePlat) {
-        this.typePlat = typePlat;
     }
 
     public float getPoids() {
@@ -44,7 +32,6 @@ public abstract class Plat {
     @Override
     public String toString() {
         return "Plat{" +
-                "platId=" + platId +
                 ", typePlat=" + typePlat.getLabel() +
                 ", poids=" + poids +
                 '}';

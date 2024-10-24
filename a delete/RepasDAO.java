@@ -140,7 +140,7 @@ public class RepasDAO {
                 Plat plat = getPlatById(platId); // On récupère le plat qui contient le type et le poids
                 Viande viande = new ViandeDAO().getViandeById(rs.getInt("viande_id"));
                 Accompagnement accompagnement = new AccompagnementDAO().getAccompagnementById(rs.getInt("accompagnement_id"));
-                platCompose = new PlatCompose(plat.getPlatId(), plat.getTypePlat(), plat.getPoids(), viande, accompagnement);
+                platCompose = new PlatCompose(plat.getPlatId(), plat.getPoids(), viande, accompagnement);
             }
         } catch (SQLException e) {
             e.printStackTrace();

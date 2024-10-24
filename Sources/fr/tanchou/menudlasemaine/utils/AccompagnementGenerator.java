@@ -1,6 +1,5 @@
 package fr.tanchou.menudlasemaine.utils;
 
-import fr.tanchou.menudlasemaine.dao.AccompagnementDAO;
 import fr.tanchou.menudlasemaine.dao.FeculentDAO;
 import fr.tanchou.menudlasemaine.dao.LegumeDAO;
 import fr.tanchou.menudlasemaine.models.Accompagnement;
@@ -11,38 +10,29 @@ import java.util.List;
 import java.util.Random;
 
 public class AccompagnementGenerator {
-    private final Random random = new Random();
-    private final LegumeDAO legumeDAO;
-    private final FeculentDAO feculentDAO;
-    private final AccompagnementDAO accompagnementDAO;
+    public static Accompagnement generateAccompagnement() {
+        Random random = new Random();
+        LegumeDAO legumeDAO = new LegumeDAO();
+        FeculentDAO feculentDAO = new FeculentDAO();
 
-    public AccompagnementGenerator(LegumeDAO legumeDAO, FeculentDAO feculentDAO, AccompagnementDAO accompagnementDAO) {
-        this.legumeDAO = legumeDAO;
-        this.feculentDAO = feculentDAO;
-        this.accompagnementDAO = accompagnementDAO;
-    }
-
-    public Accompagnement generateAndInsertAccompagnement() {
         List<Legume> legumes = legumeDAO.getAllLegumes();
         List<Feculent> feculents = feculentDAO.getAllFeculents();
 
         Legume selectedLegume = legumes.get(random.nextInt(legumes.size()));
         Feculent selectedFeculent = feculents.get(random.nextInt(feculents.size()));
 
-        Accompagnement nouvelAccompagnement = new Accompagnement(0, selectedLegume, selectedFeculent);
-        accompagnementDAO.insertAccompagnement(nouvelAccompagnement);
+        int probaOneEmpty = random.nextInt(100);
+        Accompagnement nouvelAccompagnement = null;
 
-        return nouvelAccompagnement;
-    }
-
-    public Accompagnement generateAccompagnement() {
-        List<Legume> legumes = legumeDAO.getAllLegumes();
-        List<Feculent> feculents = feculentDAO.getAllFeculents();
-
-        Legume selectedLegume = legumes.get(random.nextInt(legumes.size()));
-        Feculent selectedFeculent = feculents.get(random.nextInt(feculents.size()));
-
-        Accompagnement nouvelAccompagnement = new Accompagnement(0, selectedLegume, selectedFeculent);
+        if (probaOneEmpty > 70){
+            if (random.nextBoolean()){//legume empty
+                nouvelAccompagnement = new Accompagnement(selectedFeculent);
+            }else {//feculent empty
+                nouvelAccompagnement = new Accompagnement(selectedLegume);
+            }
+        }else {
+            nouvelAccompagnement = new Accompagnement( selectedLegume, selectedFeculent);
+        }
 
         return nouvelAccompagnement;
     }
