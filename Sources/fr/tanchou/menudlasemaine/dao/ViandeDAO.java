@@ -84,7 +84,7 @@ public class ViandeDAO {
             pstmt.setString(1, nomViande);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Date date = rs.getDate("last_used");
+                Date date = rs.getDate("date_last_use");
                 lastUsed = date.toLocalDate(); // Conversion de Date à LocalDate
             }
         } catch (SQLException e) {
