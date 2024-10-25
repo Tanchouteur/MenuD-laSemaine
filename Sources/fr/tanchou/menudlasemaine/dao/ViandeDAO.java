@@ -1,25 +1,31 @@
 package fr.tanchou.menudlasemaine.dao;
 
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Viande;
+import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViandeDAO {
 
+    // Méthode pour ajouter une viande avec son nom et poids, et initialiser l'historique d'utilisation
     public void ajouterViande(Viande viande) {
-        String sql = "INSERT INTO Viande (nom_viande) VALUES (?)";
+        String sql = "INSERT INTO Viande (nom_viande, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, viande.getNomViande());
+            pstmt.setInt(2, viande.getPoids());
             pstmt.executeUpdate();
+
+            initialiserHistorique(viande.getNomViande()); // Initialise la date d'utilisation pour cette viande
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    // Récupère une viande par son nom, incluant le poids et la dernière utilisation
     public Viande getViandeByName(String nomViande) {
         String sql = "SELECT * FROM Viande WHERE nom_viande = ?";
         Viande viande = null;
@@ -28,7 +34,9 @@ public class ViandeDAO {
             pstmt.setString(1, nomViande);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                viande = new Viande(rs.getString("nom_viande"));
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(nomViande);
+                viande = new Viande(nomViande, poids, derniereUtilisation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,6 +44,7 @@ public class ViandeDAO {
         return viande;
     }
 
+    // Récupère toutes les viandes avec leurs poids et dates de dernière utilisation
     public List<Viande> getAllViandes() {
         List<Viande> viandes = new ArrayList<>();
         String sql = "SELECT * FROM Viande";
@@ -43,7 +52,10 @@ public class ViandeDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                viandes.add(new Viande(rs.getString("nom_viande")));
+                String nomViande = rs.getString("nom_viande");
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(nomViande);
+                viandes.add(new Viande(nomViande, poids, derniereUtilisation));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,23 +63,43 @@ public class ViandeDAO {
         return viandes;
     }
 
-    public void updateViande(Viande viande, String newNomViande) {
-        String sql = "UPDATE Viande SET nom_viande = ? WHERE nom_viande = ?";
+    // Supprime une viande par son nom
+    public void deleteViande(String nomViande) {
+        String sql = "DELETE FROM Viande WHERE nom_viande = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, viande.getNomViande());
-            pstmt.setString(2, newNomViande);
+            pstmt.setString(1, nomViande);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteViande(String nomViande) {
-        String sql = "DELETE FROM Viande WHERE nom_viande = ?";
+    // Récupère la dernière date d'utilisation d'une viande depuis ProduitLastUse
+    private LocalDate getDerniereUtilisation(String nomViande) {
+        String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ?";
+        LocalDate lastUsed = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomViande);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Date date = rs.getDate("last_used");
+                lastUsed = date.toLocalDate(); // Conversion de Date à LocalDate
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lastUsed;
+    }
+
+    // Initialisation de l'historique d'utilisation pour une nouvelle viande
+    private void initialiserHistorique(String nomViande) {
+        String sql = "INSERT INTO ProduitLastUse (nom_produit, date_last_use) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nomViande);
+            pstmt.setDate(2, Date.valueOf(LocalDate.now())); // Initialisé avec la date actuelle
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,24 +1,31 @@
 package fr.tanchou.menudlasemaine.dao;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
+
 import fr.tanchou.menudlasemaine.models.Entree;
+import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntreeDAO {
 
+    // Ajoute une nouvelle entrée avec son nom et poids, et initialise l'historique d'utilisation
     public void ajouterEntree(Entree entree) {
-        String sql = "INSERT INTO Entree (nom_entree) VALUES (?)";
+        String sql = "INSERT INTO Entree (nom_entree, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, entree.getNomEntree());
+            pstmt.setInt(2, entree.getPoids());
             pstmt.executeUpdate();
+
+            initialiserHistorique(entree.getNomEntree()); // Initialise la date d'utilisation pour cette entrée
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    // Récupère une entrée par son nom avec son poids et dernière utilisation
     public Entree getEntreeByName(String entreeName) {
         String sql = "SELECT * FROM Entree WHERE nom_entree = ?";
         Entree entree = null;
@@ -27,9 +34,10 @@ public class EntreeDAO {
             pstmt.setString(1, entreeName);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                entree = new Entree(
-                        rs.getString("nom_entree")
-                );
+                String nomEntree = rs.getString("nom_entree");
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(nomEntree);
+                entree = new Entree(nomEntree, poids, derniereUtilisation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -37,6 +45,7 @@ public class EntreeDAO {
         return entree;
     }
 
+    // Récupère toutes les entrées avec leurs poids et dates d'utilisation
     public List<Entree> getAllEntrees() {
         List<Entree> entrees = new ArrayList<>();
         String sql = "SELECT * FROM Entree";
@@ -44,9 +53,10 @@ public class EntreeDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                entrees.add(new Entree(
-                        rs.getString("nom_entree")
-                ));
+                String nomEntree = rs.getString("nom_entree");
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(nomEntree);
+                entrees.add(new Entree(nomEntree, poids, derniereUtilisation));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,18 +64,7 @@ public class EntreeDAO {
         return entrees;
     }
 
-    /*public void updateEntree(Entree entree) {
-        String sql = "UPDATE Entree SET nom_entree = ? WHERE entree_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, entree.getNomEntree());
-            pstmt.setInt(2, entree.getEntreeId());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }*/
-
+    // Supprime une entrée par son nom
     public void deleteEntree(String entreeName) {
         String sql = "DELETE FROM Entree WHERE nom_entree = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -76,5 +75,35 @@ public class EntreeDAO {
             e.printStackTrace();
         }
     }
-}
 
+    // Méthode privée pour récupérer la dernière utilisation d'une entrée à partir de la table ProduitLastUse
+    private LocalDate getDerniereUtilisation(String nomEntree) {
+        String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ?";
+        LocalDate lastUsed = null;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nomEntree);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Date date = rs.getDate("last_used");
+                lastUsed = date.toLocalDate(); // Conversion de Date à LocalDate
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lastUsed;
+    }
+
+    // Méthode pour initialiser l'historique de la date d'utilisation dans ProduitLastUse
+    private void initialiserHistorique(String nomEntree) {
+        String sql = "INSERT INTO ProduitLastUse (nom_produit, date_last_use) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nomEntree);
+            pstmt.setDate(2, Date.valueOf(LocalDate.now())); // Initialise avec la date actuelle
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}

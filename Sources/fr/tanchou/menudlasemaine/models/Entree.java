@@ -1,13 +1,13 @@
 package fr.tanchou.menudlasemaine.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Entree {
     private String nomEntree;
     private int poids;
-    private Date lastUsed;
+    private LocalDate lastUsed;
 
-    public Entree(String nomEntree, int poids, Date lastUsed) {
+    public Entree(String nomEntree, int poids, LocalDate lastUsed) {
         this.nomEntree = nomEntree;
         this.poids = poids;
         this.lastUsed = lastUsed;
@@ -29,11 +29,11 @@ public class Entree {
         this.poids = poids;
     }
 
-    public Date getLastUsed() {
+    public LocalDate getLastUsed() {
         return lastUsed;
     }
 
-    public void setLastUsed(Date lastUsed) {
+    public void setLastUsed(LocalDate lastUsed) {
         this.lastUsed = lastUsed;
     }
 }
