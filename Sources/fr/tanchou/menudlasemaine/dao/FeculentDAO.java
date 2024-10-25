@@ -4,28 +4,38 @@ import fr.tanchou.menudlasemaine.models.Feculent;
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 
 public class FeculentDAO {
 
-    // Ajoute un féculent avec un poids initial et une date d’utilisation nulle
+    // Méthode pour ajouter un féculent et initialiser son historique dans ProduitLastUse
     public void ajouterFeculent(Feculent feculent) {
-        String sql = "INSERT INTO Feculent (nom_feculent, poids, last_used) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Feculent (nom_feculent, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, feculent.getFeculentName());
-            pstmt.setFloat(2, feculent.getPoids()); // poids initial
-            pstmt.setDate(3, null); // dernière utilisation initiale
+            pstmt.setInt(2, feculent.getPoids());
             pstmt.executeUpdate();
+
+            // Récupérer l'ID généré et initialiser l'historique de la dernière utilisation
+            if (pstmt.getGeneratedKeys().next()) {
+                initialiserHistorique(feculent.getFeculentName(), "Feculent");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Récupère un féculent par son nom
+    // Méthode pour initialiser l'enregistrement de la dernière utilisation
+    private void initialiserHistorique(String nomProduit, String typeProduit) {
+        ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
+        produitLastUseDAO.upsertProduitLastUse(nomProduit, typeProduit);
+    }
+
+    // Méthode pour récupérer un féculent par son nom
     public Feculent getFeculentByName(String feculentName) {
         String sql = "SELECT * FROM Feculent WHERE nom_feculent = ?";
         Feculent feculent = null;
@@ -34,9 +44,9 @@ public class FeculentDAO {
             pstmt.setString(1, feculentName);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                feculent = new Feculent(rs.getString("nom_feculent"),
-                        rs.getInt("poids"),
-                        rs.getDate("last_used"));
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(feculentName);
+                feculent = new Feculent(feculentName, poids, derniereUtilisation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -44,19 +54,18 @@ public class FeculentDAO {
         return feculent;
     }
 
-    // Récupère tous les féculents avec une priorité aux poids élevés
+    // Méthode pour récupérer tous les féculents
     public List<Feculent> getAllFeculents() {
         List<Feculent> feculents = new ArrayList<>();
-        String sql = "SELECT * FROM Feculent ORDER BY poids DESC";
+        String sql = "SELECT * FROM Feculent";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                feculents.add(new Feculent(
-                        rs.getString("nom_feculent"),
-                        rs.getInt("poids"),
-                        rs.getDate("last_used")
-                ));
+                String name = rs.getString("nom_feculent");
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(name);
+                feculents.add(new Feculent(name, poids, derniereUtilisation));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -64,46 +73,10 @@ public class FeculentDAO {
         return feculents;
     }
 
-    // Sélectionne un féculent aléatoire avec une priorité au poids
-    public Feculent getFeculentAleatoire() {
-        String sql = "SELECT * FROM Feculent ORDER BY poids DESC LIMIT 1"; // Poids élevé priorisé
-        Feculent feculent = null;
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                feculent = new Feculent(rs.getString("nom_feculent"),
-                        rs.getInt("poids"),
-                        rs.getDate("last_used"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return feculent;
-    }
-
-    // Met à jour le poids et la date d’utilisation après sélection d’un féculent
-    public void updatePoidsEtLastUsed(Feculent feculent) {
-        String sql = "UPDATE Feculent SET poids = poids - 1, last_used = ? WHERE nom_feculent = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setDate(1, new java.sql.Date(new Date().getTime())); // Dernière utilisation actuelle
-            pstmt.setString(2, feculent.getFeculentName());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Supprime un féculent par son nom
-    public void deleteFeculent(String feculentName) {
-        String sql = "DELETE FROM Feculent WHERE nom_feculent = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, feculentName);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    // Méthode pour obtenir la dernière utilisation d'un produit
+    private LocalDate getDerniereUtilisation(String nomProduit) {
+        ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
+        Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, "Feculent");
+        return lastUseDate.map(Date::toLocalDate).orElse(null);
     }
 }
