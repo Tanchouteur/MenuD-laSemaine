@@ -14,8 +14,8 @@ public class Accompagnement {
         this.feculent = feculent;
     }
     public Accompagnement(Legume legume) {
-        this.legume = null;
-        this.feculent = feculent;
+        this.legume = legume;
+        this.feculent = null;
     }
 
     public Legume getLegume() {
@@ -37,11 +37,19 @@ public class Accompagnement {
     public String getNomAccompagnement() {
         String nomAccompagnement = "";
         if (legume != null) {
-            nomAccompagnement += legume.getLegumeNom();
+            nomAccompagnement += legume.getLegumeNom() + " ";
         }
         if (feculent != null) {
-            nomAccompagnement += " " + feculent.getFeculentName();
+            nomAccompagnement += feculent.getFeculentName();
         }
         return nomAccompagnement;
+    }
+
+    @Override
+    public String toString() {
+        return "Accompagnement{" +
+                "legume=" + legume +
+                ", feculent=" + feculent +
+                '}';
     }
 }
