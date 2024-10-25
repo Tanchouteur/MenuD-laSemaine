@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
+import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +15,22 @@ import java.util.Optional;
 
 public class ProduitLastUseDAO {
 
+    public void updateLastUseDate(String nomProduit) {
+        String sql = """
+            UPDATE ProduitLastUse 
+            SET date_last_use = CURRENT_DATE 
+            WHERE nom_produit = ?
+            """;
+
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nomProduit);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void upsertProduitLastUse(String nomProduit, String typeProduit) {
         String sql = """
                 INSERT INTO ProduitLastUse (nom_produit, type_produit, date_last_use) 
@@ -22,7 +38,7 @@ public class ProduitLastUseDAO {
                 ON DUPLICATE KEY UPDATE date_last_use = CURRENT_DATE
                 """;
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomProduit);
             pstmt.setString(2, typeProduit);
@@ -35,7 +51,7 @@ public class ProduitLastUseDAO {
     // Obtenir la dernière date d'utilisation d'un produit spécifique
     public Optional<Date> getLastUseDate(String nomProduit, String typeProduit) {
         String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ? AND type_produit = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomProduit);
             pstmt.setString(2, typeProduit);
@@ -53,7 +69,7 @@ public class ProduitLastUseDAO {
     // Supprimer un produit de la table ProduitLastUse
     public void deleteProduitLastUse(String nomProduit, String typeProduit) {
         String sql = "DELETE FROM ProduitLastUse WHERE nom_produit = ? AND type_produit = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomProduit);
             pstmt.setString(2, typeProduit);
@@ -101,7 +117,7 @@ public class ProduitLastUseDAO {
                 break;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, typeProduit.toString());
             ResultSet rs = pstmt.executeQuery();

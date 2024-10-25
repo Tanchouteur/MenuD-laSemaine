@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.models.Viande;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
+import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -13,7 +13,7 @@ public class ViandeDAO {
     // Méthode pour ajouter une viande avec son nom et poids, et initialiser l'historique d'utilisation
     public void ajouterViande(Viande viande) {
         String sql = "INSERT INTO Viande (nom_viande, poids) VALUES (?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, viande.getNomViande());
             pstmt.setInt(2, viande.getPoids());
@@ -29,7 +29,7 @@ public class ViandeDAO {
     public Viande getViandeByName(String nomViande) {
         String sql = "SELECT * FROM Viande WHERE nom_viande = ?";
         Viande viande = null;
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomViande);
             ResultSet rs = pstmt.executeQuery();
@@ -48,7 +48,7 @@ public class ViandeDAO {
     public List<Viande> getAllViandes() {
         List<Viande> viandes = new ArrayList<>();
         String sql = "SELECT * FROM Viande";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -66,7 +66,7 @@ public class ViandeDAO {
     // Supprime une viande par son nom
     public void deleteViande(String nomViande) {
         String sql = "DELETE FROM Viande WHERE nom_viande = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomViande);
             pstmt.executeUpdate();
@@ -79,7 +79,7 @@ public class ViandeDAO {
     private LocalDate getDerniereUtilisation(String nomViande) {
         String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ?";
         LocalDate lastUsed = null;
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomViande);
             ResultSet rs = pstmt.executeQuery();
@@ -96,7 +96,7 @@ public class ViandeDAO {
     // Initialisation de l'historique d'utilisation pour une nouvelle viande
     private void initialiserHistorique(String nomViande) {
         String sql = "INSERT INTO ProduitLastUse (nom_produit, date_last_use) VALUES (?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomViande);
             pstmt.setDate(2, Date.valueOf(LocalDate.now())); // Initialisé avec la date actuelle

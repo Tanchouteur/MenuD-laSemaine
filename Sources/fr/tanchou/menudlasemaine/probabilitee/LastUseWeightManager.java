@@ -26,8 +26,8 @@ public class LastUseWeightManager extends WeightManager {
             LocalDate lastUseDate = entry.getValue();
 
             int poids = computeWeight(lastUseDate, typeProduit);
-            System.out.print("Produit : " + produit);
-            System.out.println(" - Poids lastUsed : " + poids);
+            /*System.out.print("Produit : " + produit);
+            System.out.println(" - Poids lastUsed : " + poids);*/
             weights.put(produit, poids);
         }
         //System.out.println("Weights : " + weights);

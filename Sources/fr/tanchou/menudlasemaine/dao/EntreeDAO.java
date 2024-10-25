@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.models.Entree;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
+import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -13,7 +13,7 @@ public class EntreeDAO {
     // Ajoute une nouvelle entrée avec son nom et poids, et initialise l'historique d'utilisation
     public void ajouterEntree(Entree entree) {
         String sql = "INSERT INTO Entree (nom_entree, poids) VALUES (?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, entree.getNomEntree());
             pstmt.setInt(2, entree.getPoids());
@@ -29,7 +29,7 @@ public class EntreeDAO {
     public Entree getEntreeByName(String entreeName) {
         String sql = "SELECT * FROM Entree WHERE nom_entree = ?";
         Entree entree = null;
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, entreeName);
             ResultSet rs = pstmt.executeQuery();
@@ -49,7 +49,7 @@ public class EntreeDAO {
     public List<Entree> getAllEntrees() {
         List<Entree> entrees = new ArrayList<>();
         String sql = "SELECT * FROM Entree";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -67,7 +67,7 @@ public class EntreeDAO {
     // Supprime une entrée par son nom
     public void deleteEntree(String entreeName) {
         String sql = "DELETE FROM Entree WHERE nom_entree = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, entreeName);
             pstmt.executeUpdate();
@@ -80,7 +80,7 @@ public class EntreeDAO {
     private LocalDate getDerniereUtilisation(String nomEntree) {
         String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ?";
         LocalDate lastUsed = null;
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomEntree);
             ResultSet rs = pstmt.executeQuery();
@@ -97,7 +97,7 @@ public class EntreeDAO {
     // Méthode pour initialiser l'historique de la date d'utilisation dans ProduitLastUse
     private void initialiserHistorique(String nomEntree) {
         String sql = "INSERT INTO ProduitLastUse (nom_produit, date_last_use) VALUES (?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomEntree);
             pstmt.setDate(2, Date.valueOf(LocalDate.now())); // Initialise avec la date actuelle

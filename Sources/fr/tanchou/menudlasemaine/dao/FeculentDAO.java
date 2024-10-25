@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.models.Feculent;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
+import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ public class FeculentDAO {
     // Méthode pour ajouter un féculent et initialiser son historique dans ProduitLastUse
     public void ajouterFeculent(Feculent feculent) {
         String sql = "INSERT INTO Feculent (nom_feculent, poids) VALUES (?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, feculent.getFeculentName());
             pstmt.setInt(2, feculent.getPoids());
@@ -39,7 +39,7 @@ public class FeculentDAO {
     public Feculent getFeculentByName(String feculentName) {
         String sql = "SELECT * FROM Feculent WHERE nom_feculent = ?";
         Feculent feculent = null;
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, feculentName);
             ResultSet rs = pstmt.executeQuery();
@@ -58,7 +58,7 @@ public class FeculentDAO {
     public List<Feculent> getAllFeculents() {
         List<Feculent> feculents = new ArrayList<>();
         String sql = "SELECT * FROM Feculent";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {

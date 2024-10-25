@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.models.PlatComplet;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
+import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ public class PlatCompletDAO {
     // Méthode pour ajouter un plat complet avec la gestion du poids et de la dernière utilisation
     public void ajouterPlatComplet(PlatComplet platComplet) {
         String sql = "INSERT INTO PlatComplet (nom_plat, poids) VALUES (?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, platComplet.getNomPlat());
             pstmt.setInt(2, platComplet.getPoids());
@@ -39,7 +39,7 @@ public class PlatCompletDAO {
     public PlatComplet getPlatCompletByName(String platCompletName) {
         String sql = "SELECT * FROM PlatComplet WHERE nom_plat = ?";
         PlatComplet platComplet = null;
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, platCompletName);
             ResultSet rs = pstmt.executeQuery();
@@ -58,7 +58,7 @@ public class PlatCompletDAO {
     public List<PlatComplet> getAllPlatsComplets() {
         List<PlatComplet> platsComplets = new ArrayList<>();
         String sql = "SELECT * FROM PlatComplet";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {

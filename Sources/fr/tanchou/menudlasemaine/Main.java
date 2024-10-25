@@ -11,7 +11,7 @@ public class Main {
         //MenuService.printTableMenu(MenuService.buildMenu());
 
         for (int i = 0; i < 10; i++) {
-            AccompagnementGenerator.generateAccompagnement(MomentJournee.MIDI);
+            System.out.println(AccompagnementGenerator.generateAccompagnement(MomentJournee.MIDI));
         }
 
     }
