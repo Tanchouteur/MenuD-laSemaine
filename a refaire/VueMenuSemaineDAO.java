@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
-import fr.tanchou.menudlasemaine.models.VueMenuSemaine;
+import fr.tanchou.menudlasemaine.models.;
 
 import java.sql.*;
 import java.util.ArrayList;

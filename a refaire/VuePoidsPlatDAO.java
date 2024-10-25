@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.dao;
 
-import fr.tanchou.menudlasemaine.models.VuePoidsPlat;
+import fr.tanchou.menudlasemaine.models.;
 
 import java.sql.*;
 import java.util.ArrayList;
