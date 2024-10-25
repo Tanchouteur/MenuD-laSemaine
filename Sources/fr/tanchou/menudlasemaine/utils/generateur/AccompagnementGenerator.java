@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
+import fr.tanchou.menudlasemaine.dao.incompatibilitedao.IncompatibilitesAccompagnementDAO;
 import fr.tanchou.menudlasemaine.dao.produit.FeculentDAO;
 import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
@@ -15,24 +16,25 @@ import java.util.Map;
 import java.util.Random;
 
 public class AccompagnementGenerator {
+
     public static Accompagnement generateAccompagnement(MomentJournee momentJournee) {
         Random random = new Random();
 
-        // Instanciation des DAO
-        LegumeDAO legumeDAO = new LegumeDAO();
-        FeculentDAO feculentDAO = new FeculentDAO();
+        IncompatibilitesAccompagnementDAO incompatibilitesAccompagnementDAO = new IncompatibilitesAccompagnementDAO(); // DAO pour gérer les incompatibilités
 
         // Calcul des poids
         LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
         Map<Legume, Integer> lastUseLegumeWeights = lastUseWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
         Map<Feculent, Integer> lastUseFeculentWeights = lastUseWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
 
-        List<Legume> legumes = legumeDAO.getAllLegumes();
-        List<Feculent> feculents = feculentDAO.getAllFeculents();
+        List<Legume> legumes = LegumeDAO.getAllLegumes();
+        List<Feculent> feculents = FeculentDAO.getAllFeculents();
 
-        // Sélectionner le légume en fonction des poids
-        Legume selectedLegume = selectBasedOnWeights(legumes, lastUseLegumeWeights, random);
+        // Sélectionner le féculent en fonction des poids
         Feculent selectedFeculent = selectBasedOnWeights(feculents, lastUseFeculentWeights, random);
+
+        // Sélectionner le légume compatible avec le féculent sélectionné
+        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, lastUseLegumeWeights, incompatibilitesAccompagnementDAO, random);
 
         // Logique pour déterminer si l'accompagnement est vide
         int probaOneEmpty = random.nextInt(100);
@@ -48,6 +50,13 @@ public class AccompagnementGenerator {
             nouvelAccompagnement = new Accompagnement(selectedLegume, selectedFeculent);
         }
 
+        if (nouvelAccompagnement.getLegume() != null) {
+            ProduitLastUseDAO.updateLastUseDate(nouvelAccompagnement.getLegume().getLegumeNom());
+        }
+        if (nouvelAccompagnement.getFeculent() != null) {
+            ProduitLastUseDAO.updateLastUseDate(nouvelAccompagnement.getFeculent().getFeculentNom());
+        }
+
         return nouvelAccompagnement;
     }
 
@@ -60,21 +69,42 @@ public class AccompagnementGenerator {
         }
 
         int randomWeight = random.nextInt(totalWeight);
-        //System.out.println("Random Weight: " + randomWeight);
-
         int cumulativeWeight = 0;
+
         for (T item : items) {
             cumulativeWeight += weights.getOrDefault(item, 0);
-            //System.out.println("Item: " + item.hashCode() + ", Cumulative Weight: " + cumulativeWeight);
             if (cumulativeWeight > randomWeight) {
-                //System.out.println("Item non null : " + items.indexOf(item) + " : " + item.getClass());
                 return item;
-            }else if (item == null){
-                //System.out.println("Item null : " + items.indexOf(item));
             }
         }
         System.err.println("aucun élément selectionner " + cumulativeWeight);
         return null; // Si aucun élément n'est sélectionné
     }
 
+    // Méthode pour sélectionner un légume compatible avec le féculent choisi
+    private static Legume selectCompatibleLegume(List<Legume> legumes, Feculent feculent, Map<Legume, Integer> weights, IncompatibilitesAccompagnementDAO incompatibiliteDAO, Random random) {
+        int totalWeight = weights.values().stream().mapToInt(Integer::intValue).sum();
+
+        if (totalWeight <= 0) {
+            System.err.println("Total weight for legumes is zero or negative. No item can be selected.");
+            return null;
+        }
+
+        while (true) {
+            int randomWeight = random.nextInt(totalWeight);
+            int cumulativeWeight = 0;
+
+            for (Legume legume : legumes) {
+                cumulativeWeight += weights.getOrDefault(legume, 0);
+                if (cumulativeWeight > randomWeight) {
+                    // Vérifier la compatibilité
+                    if (!IncompatibilitesAccompagnementDAO.areIncompatible(legume.getLegumeNom(), feculent.getFeculentNom())) {
+                        return legume; // Retourner le légume compatible
+                    }
+                }
+            }
+            System.err.println("Aucun légume compatible trouvé avec les poids donnés.");
+            return null;
+        }
+    }
 }

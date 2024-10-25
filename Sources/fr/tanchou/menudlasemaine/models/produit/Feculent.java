@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class Feculent {
-    private String feculentName;
+    private String feculentNom;
     private int poids;
     private LocalDate lastUsed;
 
-    public Feculent(String feculentName, int poids, LocalDate lastUsed) {
-        this.feculentName = feculentName;
+    public Feculent(String feculentNom, int poids, LocalDate lastUsed) {
+        this.feculentNom = feculentNom;
         this.poids = poids;
         this.lastUsed = lastUsed;
     }
@@ -20,27 +20,27 @@ public class Feculent {
         if (obj == null || getClass() != obj.getClass()) return false; // Vérification du type
         Feculent feculent = (Feculent) obj; // Cast
         return poids == feculent.poids && // Vérification des attributs
-                Objects.equals(feculentName, feculent.feculentName) &&
+                Objects.equals(feculentNom, feculent.feculentNom) &&
                 Objects.equals(lastUsed, feculent.lastUsed);
     }
 
     // Redéfinition de hashCode
     @Override
     public int hashCode() {
-        return Objects.hash(feculentName, poids, lastUsed); // Utilisation d'Objects.hash pour simplifier
+        return Objects.hash(feculentNom, poids, lastUsed); // Utilisation d'Objects.hash pour simplifier
     }
 
     @Override
     public String toString() {
-        return "" + feculentName + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
+        return "" + feculentNom + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
     }
 
-    public String getFeculentName() {
-        return feculentName;
+    public String getFeculentNom() {
+        return feculentNom;
     }
 
-    public void setFeculentName(String feculentName) {
-        this.feculentName = feculentName;
+    public void setFeculentNom(String feculentNom) {
+        this.feculentNom = feculentNom;
     }
 
     public int getPoids() {

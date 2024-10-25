@@ -43,4 +43,27 @@ public class IncompatibilitesAccompagnementDAO {
 
         return incompatibilites;
     }
+
+    public static boolean areIncompatible(String legumeNom, String feculentNom) {
+        String sql = """
+                SELECT COUNT(*) FROM Incompatibilites_Accompagnement
+                WHERE legume_nom = ? AND feculent_nom = ?
+                """;
+
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, legumeNom);
+            pstmt.setString(2, feculentNom);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Si le compte est supérieur à 0, ils sont incompatibles
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false; // Par défaut, ils ne sont pas incompatibles
+    }
 }

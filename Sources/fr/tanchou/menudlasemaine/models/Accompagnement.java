@@ -43,7 +43,7 @@ public class Accompagnement {
             nomAccompagnement += legume.getLegumeNom() + " ";
         }
         if (feculent != null) {
-            nomAccompagnement += feculent.getFeculentName();
+            nomAccompagnement += feculent.getFeculentNom();
         }
         return nomAccompagnement;
     }

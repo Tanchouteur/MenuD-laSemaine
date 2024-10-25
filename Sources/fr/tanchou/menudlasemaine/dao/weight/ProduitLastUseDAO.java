@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class ProduitLastUseDAO {
 
-    public void updateLastUseDate(String nomProduit) {
+    public static void updateLastUseDate(String nomProduit) {
         String sql = """
             UPDATE ProduitLastUse 
             SET date_last_use = CURRENT_DATE 
@@ -31,7 +31,7 @@ public class ProduitLastUseDAO {
         }
     }
 
-    public void upsertProduitLastUse(String nomProduit, String typeProduit) {
+    public static void upsertProduitLastUse(String nomProduit, String typeProduit) {
         String sql = """
                 INSERT INTO ProduitLastUse (nom_produit, type_produit, date_last_use) 
                 VALUES (?, ?, CURRENT_DATE) 
@@ -49,7 +49,7 @@ public class ProduitLastUseDAO {
     }
 
     // Obtenir la dernière date d'utilisation d'un produit spécifique
-    public Optional<Date> getLastUseDate(String nomProduit, String typeProduit) {
+    public static Optional<Date> getLastUseDate(String nomProduit, String typeProduit) {
         String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ? AND type_produit = ?";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -67,7 +67,7 @@ public class ProduitLastUseDAO {
     }
 
     // Supprimer un produit de la table ProduitLastUse
-    public void deleteProduitLastUse(String nomProduit, String typeProduit) {
+    public static void deleteProduitLastUse(String nomProduit, String typeProduit) {
         String sql = "DELETE FROM ProduitLastUse WHERE nom_produit = ? AND type_produit = ?";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -84,7 +84,7 @@ public class ProduitLastUseDAO {
     *
     * @return une Map contenant les noms des produits et leurs dates de dernière utilisation.
     */
-    public <T> Map<T, LocalDate> getLastUseDatesForType(Class<T> produitClass, TypeProduit typeProduit) {
+    public static  <T> Map<T, LocalDate> getLastUseDatesForType(Class<T> produitClass, TypeProduit typeProduit) {
         Map<T, LocalDate> lastUseDates = new HashMap<>();
         String sql = "";
 

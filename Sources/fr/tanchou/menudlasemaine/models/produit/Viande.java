@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class Viande {
-    private String nomViande;
+    private String viandeNom;
     private int poids;
     private LocalDate lastUsed;
 
-    public Viande(String nomViande, int poids, LocalDate lastUsed) {
-        this.nomViande = nomViande;
+    public Viande(String viandeNom, int poids, LocalDate lastUsed) {
+        this.viandeNom = viandeNom;
         this.poids = poids;
         this.lastUsed = lastUsed;
     }
@@ -20,26 +20,26 @@ public class Viande {
         if (obj == null || getClass() != obj.getClass()) return false;
         Viande viande = (Viande) obj;
         return poids == viande.poids &&
-                Objects.equals(nomViande, viande.nomViande) &&
+                Objects.equals(viandeNom, viande.viandeNom) &&
                 Objects.equals(lastUsed, viande.lastUsed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nomViande, poids, lastUsed);
+        return Objects.hash(viandeNom, poids, lastUsed);
     }
 
     @Override
     public String toString() {
-        return "" + nomViande + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
+        return "" + viandeNom + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
     }
 
-    public String getNomViande() {
-        return nomViande;
+    public String getViandeNom() {
+        return viandeNom;
     }
 
-    public void setNomViande(String nom) {
-        this.nomViande = nom;
+    public void setViandeNom(String nom) {
+        this.viandeNom = nom;
     }
 
     public int getPoids() {
