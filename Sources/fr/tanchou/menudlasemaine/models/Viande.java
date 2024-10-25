@@ -1,24 +1,45 @@
 package fr.tanchou.menudlasemaine.models;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Viande {
-    private String nom;
+    private String nomViande;
     private int poids;
     private LocalDate lastUsed;
 
-    public Viande(String nom, int poids, LocalDate lastUsed) {
-        this.nom = nom;
+    public Viande(String nomViande, int poids, LocalDate lastUsed) {
+        this.nomViande = nomViande;
         this.poids = poids;
         this.lastUsed = lastUsed;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Viande viande = (Viande) obj;
+        return poids == viande.poids &&
+                Objects.equals(nomViande, viande.nomViande) &&
+                Objects.equals(lastUsed, viande.lastUsed);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nomViande, poids, lastUsed);
+    }
+
+    @Override
+    public String toString() {
+        return "" + nomViande + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
+    }
+
     public String getNomViande() {
-        return nom;
+        return nomViande;
     }
 
     public void setNomViande(String nom) {
-        this.nom = nom;
+        this.nomViande = nom;
     }
 
     public int getPoids() {

@@ -1,32 +1,10 @@
 package fr.tanchou.menudlasemaine.utils;
 
+import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.models.Menu;
 import fr.tanchou.menudlasemaine.models.Repas;
 
 public class MenuService {
-
-    public static void printListeMenu(Menu menu) {
-        String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
-
-        System.out.println("----- Menu de la Semaine -----");
-
-        for (int i = 0; i < menu.getRepasParJour().length; i++) {
-            System.out.println("\n" + joursSemaine[i] + " :");
-            System.out.println("-------------------------");
-
-            for (int j = 0; j < menu.getRepasParJour()[i].length; j++) {
-                Repas repas = menu.getRepasParJour()[i][j];
-                System.out.println((j == 0 ? "Midi : " : "Soir : "));
-                if (repas.getEntree() != null){
-                   System.out.print(repas.getEntree().getNomEntree());
-                }
-                System.out.println(" - " + repas.getPlat().getNomPlat());
-            }
-        }
-
-        System.out.println("\n------------------------------");
-    }
-
 
     public static Menu buildMenu() {
 
@@ -37,7 +15,7 @@ public class MenuService {
 
         for (int i = 0; i < jours.length; i++) {
             for (int j = 0; j < moments.length; j++) {
-                repasParJour[i][j] = RepasBuilder.buildRepa();
+                repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j].toUpperCase()));
             }
         }
 

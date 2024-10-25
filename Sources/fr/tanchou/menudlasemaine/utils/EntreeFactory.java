@@ -1,12 +1,13 @@
 package fr.tanchou.menudlasemaine.utils;
 
 import fr.tanchou.menudlasemaine.dao.EntreeDAO;
+import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.models.Entree;
 
 import java.util.List;
 
 public class EntreeFactory {
-    public static Entree getRandomEntree() {
+    public static Entree getRandomEntree(MomentJournee momentJournee) {
         List<Entree> entrees = new EntreeDAO().getAllEntrees();
 
         if (!entrees.isEmpty()) {

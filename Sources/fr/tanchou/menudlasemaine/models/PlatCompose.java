@@ -5,17 +5,13 @@ import fr.tanchou.menudlasemaine.enums.TypePlat;
 public class PlatCompose extends Plat {
     private Viande viande;
     private Accompagnement accompagnement;
-    private final String nomPlat;
 
-    // Constructeur
     public PlatCompose(int poids, Viande viande, Accompagnement accompagnement) {
         super(poids, TypePlat.COMPOSE);
         this.viande = viande;
         this.accompagnement = accompagnement;
-        this.nomPlat = getNomPlat();
     }
 
-    // Getters et setters
     public Viande getViande() {
         return viande;
     }
@@ -41,7 +37,7 @@ public class PlatCompose extends Plat {
     @Override
     public String toString() {
         return "PlatCompose{ " +
-                "nomPlat='" + nomPlat + '\'' +
+                "nomPlat='" + getNomPlat() + '\'' +
                 " , poids=" + getPoids() +
                 ", viande=" + (viande != null ? viande.getNomViande() : "Aucune") +
                 ", accompagnement=" + (accompagnement != null ? accompagnement.getNomAccompagnement() : "Aucun") +

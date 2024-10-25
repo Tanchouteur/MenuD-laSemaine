@@ -1,10 +1,9 @@
 package fr.tanchou.menudlasemaine.enums;
 
 public enum TypeProduit {
+    VIANDE,
     FECULENT,
     LEGUME,
-    PROTEINE,
     PLAT_COMPLET,
-    SAUCE,
-    DESSERT
+    ENTREE,
 }
