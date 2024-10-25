@@ -1,40 +1,71 @@
 package fr.tanchou.menudlasemaine.dao;
 
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.PlatComplet;
+import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class PlatCompletDAO {
 
+    // Méthode pour ajouter un plat complet avec la gestion du poids et de la dernière utilisation
     public void ajouterPlatComplet(PlatComplet platComplet) {
-        String sql = "INSERT INTO PlatComplet (nom_plat,poids) VALUES ('? , ?')"; // Utilisation de la procédure
+        String sql = "INSERT INTO PlatComplet (nom_plat, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement cstmt = conn.prepareCall(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, platComplet.getNomPlat());
+            pstmt.setInt(2, platComplet.getPoids());
+            pstmt.executeUpdate();
 
-            // Remplir les paramètres de la procédure
-            cstmt.setInt(1, platComplet.getPoids());
-            cstmt.setString(2, platComplet.getNomPlat()); // Supposons que tu as une méthode getNomPlat() dans PlatComplet
-
-            // Exécuter la procédure
-            cstmt.execute();
+            // Initialise l'enregistrement dans ProduitLastUse après insertion
+            if (pstmt.getGeneratedKeys().next()) {
+                initialiserHistorique(platComplet.getNomPlat(), "PlatComplet");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    // Méthode pour initialiser l'enregistrement de la dernière utilisation dans ProduitLastUse
+    private void initialiserHistorique(String nomProduit, String typeProduit) {
+        ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
+        produitLastUseDAO.upsertProduitLastUse(nomProduit, typeProduit);
+    }
+
+    // Méthode pour récupérer un plat complet par son nom
+    public PlatComplet getPlatCompletByName(String platCompletName) {
+        String sql = "SELECT * FROM PlatComplet WHERE nom_plat = ?";
+        PlatComplet platComplet = null;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, platCompletName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(platCompletName);
+                platComplet = new PlatComplet(platCompletName, poids, derniereUtilisation);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return platComplet;
+    }
+
+    // Méthode pour récupérer tous les plats complets
     public List<PlatComplet> getAllPlatsComplets() {
         List<PlatComplet> platsComplets = new ArrayList<>();
-        String sql = "SELECT pc.* FROM PlatComplet pc";
+        String sql = "SELECT * FROM PlatComplet";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
+                String name = rs.getString("nom_plat_complet");
                 int poids = rs.getInt("poids");
-                String nomPlat = rs.getString("nom_plat");
-                platsComplets.add(new PlatComplet(poids, nomPlat));
+                LocalDate derniereUtilisation = getDerniereUtilisation(name);
+                platsComplets.add(new PlatComplet(name, poids, derniereUtilisation));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -42,27 +73,10 @@ public class PlatCompletDAO {
         return platsComplets;
     }
 
-    public void updatePlatComplet(PlatComplet platComplet, String nomPlat) {
-        String sql = "UPDATE PlatComplet SET nom_plat = ?, poids = ? WHERE nom_plat = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, platComplet.getTypePlat().name());
-            pstmt.setFloat(2, platComplet.getPoids());
-            pstmt.setString(3, nomPlat);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deletePlatComplet(String nomPlat) {
-        String sql = "DELETE FROM PlatComplet WHERE nom_plat = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nomPlat);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    // Méthode pour obtenir la dernière utilisation d'un produit via ProduitLastUse
+    private LocalDate getDerniereUtilisation(String nomProduit) {
+        ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
+        Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, "PlatComplet");
+        return lastUseDate.map(Date::toLocalDate).orElse(null);
     }
 }
