@@ -6,6 +6,7 @@ import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.Entree;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
+import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
 import java.util.List;
 import java.util.Map;
@@ -27,33 +28,12 @@ public class EntreeFactory {
             return null; // Ou gérer le cas comme souhaité
         }
 
-        Entree selectedEntree = selectBasedOnWeights(entrees, lastUseEntreeWeights, random);
+        Entree selectedEntree = WeightManager.selectBasedOnWeights(entrees, lastUseEntreeWeights, random);
 
         if (selectedEntree != null) {
             produitLastUseDAO.updateLastUseDate(selectedEntree.getNomEntree()); // Assurez-vous d'avoir une méthode pour obtenir le nom
         }
 
         return selectedEntree;
-    }
-
-    private static <T> T selectBasedOnWeights(List<T> items, Map<T, Integer> weights, Random random) {
-        int totalWeight = weights.values().stream().mapToInt(Integer::intValue).sum();
-
-        if (totalWeight <= 0) {
-            System.err.println("Le poids total est zéro ou négatif. Aucun élément ne peut être sélectionné.");
-            return null;
-        }
-
-        int randomWeight = random.nextInt(totalWeight);
-        int cumulativeWeight = 0;
-
-        for (T item : items) {
-            cumulativeWeight += weights.getOrDefault(item, 0);
-            if (cumulativeWeight > randomWeight) {
-                return item;
-            }
-        }
-        System.err.println("Aucun élément sélectionné " + cumulativeWeight);
-        return null;
     }
 }
