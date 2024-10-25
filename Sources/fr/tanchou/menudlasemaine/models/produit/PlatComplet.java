@@ -1,6 +1,7 @@
-package fr.tanchou.menudlasemaine.models;
+package fr.tanchou.menudlasemaine.models.produit;
 
 import fr.tanchou.menudlasemaine.enums.TypePlat;
+import fr.tanchou.menudlasemaine.models.Plat;
 
 import java.time.LocalDate;
 import java.util.Objects;

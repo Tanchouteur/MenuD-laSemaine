@@ -1,7 +1,7 @@
-package fr.tanchou.menudlasemaine.utils;
+package fr.tanchou.menudlasemaine.utils.generateur;
 
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
-import fr.tanchou.menudlasemaine.models.Entree;
+import fr.tanchou.menudlasemaine.models.produit.Entree;
 import fr.tanchou.menudlasemaine.models.Plat;
 import fr.tanchou.menudlasemaine.models.Repas;
 

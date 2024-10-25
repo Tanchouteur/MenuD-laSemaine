@@ -1,15 +1,15 @@
-package fr.tanchou.menudlasemaine.models;
+package fr.tanchou.menudlasemaine.models.produit;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Feculent {
-    private String feculentName;
+public class Legume {
+    private String legumeNom;
     private int poids;
     private LocalDate lastUsed;
 
-    public Feculent(String feculentName, int poids, LocalDate lastUsed) {
-        this.feculentName = feculentName;
+    public Legume(String legumeNom, int poids, LocalDate lastUsed) {
+        this.legumeNom = legumeNom;
         this.poids = poids;
         this.lastUsed = lastUsed;
     }
@@ -18,29 +18,28 @@ public class Feculent {
     public boolean equals(Object obj) {
         if (this == obj) return true; // Vérification de la référence
         if (obj == null || getClass() != obj.getClass()) return false; // Vérification du type
-        Feculent feculent = (Feculent) obj; // Cast
-        return poids == feculent.poids && // Vérification des attributs
-                Objects.equals(feculentName, feculent.feculentName) &&
-                Objects.equals(lastUsed, feculent.lastUsed);
+        Legume legume = (Legume) obj; // Cast
+        return poids == legume.poids && // Vérification des attributs
+                Objects.equals(legumeNom, legume.legumeNom) &&
+                Objects.equals(lastUsed, legume.lastUsed);
     }
 
     // Redéfinition de hashCode
     @Override
     public int hashCode() {
-        return Objects.hash(feculentName, poids, lastUsed); // Utilisation d'Objects.hash pour simplifier
+        return Objects.hash(legumeNom, poids, lastUsed); // Utilisation d'Objects.hash pour simplifier
     }
 
     @Override
     public String toString() {
-        return "" + feculentName + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
+        return "" + legumeNom + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
     }
 
-    public String getFeculentName() {
-        return feculentName;
+    public String getLegumeNom() {
+        return legumeNom;
     }
-
-    public void setFeculentName(String feculentName) {
-        this.feculentName = feculentName;
+    public void setLegumeNom(String legumeNom) {
+        this.legumeNom = legumeNom;
     }
 
     public int getPoids() {

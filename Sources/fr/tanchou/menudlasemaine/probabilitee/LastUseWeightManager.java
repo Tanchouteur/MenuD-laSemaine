@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
-import fr.tanchou.menudlasemaine.dao.ProduitLastUseDAO;
+import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 
 import java.time.LocalDate;

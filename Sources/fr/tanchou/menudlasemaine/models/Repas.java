@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.models;
 
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
+import fr.tanchou.menudlasemaine.models.produit.Entree;
 
 public class Repas {
     private final Entree entree;

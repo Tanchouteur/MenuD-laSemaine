@@ -1,8 +1,8 @@
-package fr.tanchou.menudlasemaine.utils;
+package fr.tanchou.menudlasemaine.utils.generateur;
 
-import fr.tanchou.menudlasemaine.dao.PlatCompletDAO;
+import fr.tanchou.menudlasemaine.dao.produit.PlatCompletDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
-import fr.tanchou.menudlasemaine.models.PlatComplet;
+import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
 
 import java.util.List;
 import java.util.Random;

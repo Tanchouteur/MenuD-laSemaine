@@ -1,6 +1,7 @@
-package fr.tanchou.menudlasemaine.dao;
+package fr.tanchou.menudlasemaine.dao.produit;
 
-import fr.tanchou.menudlasemaine.models.PlatComplet;
+import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
+import fr.tanchou.menudlasemaine.models.produit.Feculent;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
@@ -9,75 +10,74 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PlatCompletDAO {
+public class FeculentDAO {
 
-    // Méthode pour ajouter un plat complet avec la gestion du poids et de la dernière utilisation
-    public void ajouterPlatComplet(PlatComplet platComplet) {
-        String sql = "INSERT INTO PlatComplet (nom_plat, poids) VALUES (?, ?)";
+    // Méthode pour ajouter un féculent et initialiser son historique dans ProduitLastUse
+    public void ajouterFeculent(Feculent feculent) {
+        String sql = "INSERT INTO Feculent (nom_feculent, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, platComplet.getNomPlat());
-            pstmt.setInt(2, platComplet.getPoids());
+            pstmt.setString(1, feculent.getFeculentName());
+            pstmt.setInt(2, feculent.getPoids());
             pstmt.executeUpdate();
 
-            // Initialise l'enregistrement dans ProduitLastUse après insertion
+            // Récupérer l'ID généré et initialiser l'historique de la dernière utilisation
             if (pstmt.getGeneratedKeys().next()) {
-                initialiserHistorique(platComplet.getNomPlat(), "PlatComplet");
+                initialiserHistorique(feculent.getFeculentName(), "Feculent");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Méthode pour initialiser l'enregistrement de la dernière utilisation dans ProduitLastUse
+    // Méthode pour initialiser l'enregistrement de la dernière utilisation
     private void initialiserHistorique(String nomProduit, String typeProduit) {
         ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
         produitLastUseDAO.upsertProduitLastUse(nomProduit, typeProduit);
     }
 
-    // Méthode pour récupérer un plat complet par son nom
-    public PlatComplet getPlatCompletByName(String platCompletName) {
-        String sql = "SELECT * FROM PlatComplet WHERE nom_plat = ?";
-        PlatComplet platComplet = null;
+    // Méthode pour récupérer un féculent par son nom
+    public Feculent getFeculentByName(String feculentName) {
+        String sql = "SELECT * FROM Feculent WHERE nom_feculent = ?";
+        Feculent feculent = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, platCompletName);
+            pstmt.setString(1, feculentName);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 int poids = rs.getInt("poids");
-                LocalDate derniereUtilisation = getDerniereUtilisation(platCompletName);
-                platComplet = new PlatComplet(platCompletName, poids, derniereUtilisation);
+                LocalDate derniereUtilisation = getDerniereUtilisation(feculentName);
+                feculent = new Feculent(feculentName, poids, derniereUtilisation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return platComplet;
+        return feculent;
     }
 
-    // Méthode pour récupérer tous les plats complets
-    public List<PlatComplet> getAllPlatsComplets() {
-        List<PlatComplet> platsComplets = new ArrayList<>();
-        String sql = "SELECT * FROM PlatComplet";
+    // Méthode pour récupérer tous les féculents
+    public List<Feculent> getAllFeculents() {
+        List<Feculent> feculents = new ArrayList<>();
+        String sql = "SELECT * FROM Feculent";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                String name = rs.getString("nom_plat");
+                String name = rs.getString("nom_feculent");
                 int poids = rs.getInt("poids");
                 LocalDate derniereUtilisation = getDerniereUtilisation(name);
-                platsComplets.add(new PlatComplet(name, poids, derniereUtilisation));
+                feculents.add(new Feculent(name, poids, derniereUtilisation));
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return platsComplets;
+        return feculents;
     }
 
-    // Méthode pour obtenir la dernière utilisation d'un produit via ProduitLastUse
+    // Méthode pour obtenir la dernière utilisation d'un produit
     private LocalDate getDerniereUtilisation(String nomProduit) {
         ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
-        Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, "PlatComplet");
+        Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, "Feculent");
         return lastUseDate.map(Date::toLocalDate).orElse(null);
     }
 }

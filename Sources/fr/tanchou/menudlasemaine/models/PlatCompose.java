@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.models;
 
 import fr.tanchou.menudlasemaine.enums.TypePlat;
+import fr.tanchou.menudlasemaine.models.produit.Viande;
 
 public class PlatCompose extends Plat {
     private Viande viande;

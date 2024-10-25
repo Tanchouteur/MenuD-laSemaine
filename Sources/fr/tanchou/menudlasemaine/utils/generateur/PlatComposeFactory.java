@@ -1,8 +1,9 @@
-package fr.tanchou.menudlasemaine.utils;
+package fr.tanchou.menudlasemaine.utils.generateur;
 
-import fr.tanchou.menudlasemaine.dao.ViandeDAO;
+import fr.tanchou.menudlasemaine.dao.produit.ViandeDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.models.*;
+import fr.tanchou.menudlasemaine.models.produit.Viande;
 
 import java.util.List;
 import java.util.Random;

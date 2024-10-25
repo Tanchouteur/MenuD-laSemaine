@@ -1,6 +1,6 @@
-package fr.tanchou.menudlasemaine.dao;
+package fr.tanchou.menudlasemaine.dao.produit;
 
-import fr.tanchou.menudlasemaine.models.Legume;
+import fr.tanchou.menudlasemaine.models.produit.Legume;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;

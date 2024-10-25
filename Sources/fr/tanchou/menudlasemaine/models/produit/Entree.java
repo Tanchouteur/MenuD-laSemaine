@@ -1,15 +1,15 @@
-package fr.tanchou.menudlasemaine.models;
+package fr.tanchou.menudlasemaine.models.produit;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Viande {
-    private String nomViande;
+public class Entree {
+    private String nomEntree;
     private int poids;
     private LocalDate lastUsed;
 
-    public Viande(String nomViande, int poids, LocalDate lastUsed) {
-        this.nomViande = nomViande;
+    public Entree(String nomEntree, int poids, LocalDate lastUsed) {
+        this.nomEntree = nomEntree;
         this.poids = poids;
         this.lastUsed = lastUsed;
     }
@@ -18,28 +18,28 @@ public class Viande {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        Viande viande = (Viande) obj;
-        return poids == viande.poids &&
-                Objects.equals(nomViande, viande.nomViande) &&
-                Objects.equals(lastUsed, viande.lastUsed);
+        Entree entree = (Entree) obj;
+        return poids == entree.poids &&
+                Objects.equals(nomEntree, entree.nomEntree) &&
+                Objects.equals(lastUsed, entree.lastUsed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nomViande, poids, lastUsed);
+        return Objects.hash(nomEntree, poids, lastUsed);
     }
 
     @Override
     public String toString() {
-        return "" + nomViande + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
+        return "" + nomEntree + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
     }
 
-    public String getNomViande() {
-        return nomViande;
+    public String getNomEntree() {
+        return nomEntree;
     }
 
-    public void setNomViande(String nom) {
-        this.nomViande = nom;
+    public void setNomEntree(String nomEntree) {
+        this.nomEntree = nomEntree;
     }
 
     public int getPoids() {

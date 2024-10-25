@@ -1,5 +1,8 @@
 package fr.tanchou.menudlasemaine.models;
 
+import fr.tanchou.menudlasemaine.models.produit.Feculent;
+import fr.tanchou.menudlasemaine.models.produit.Legume;
+
 public class Accompagnement {
     private Legume legume;
     private Feculent feculent;

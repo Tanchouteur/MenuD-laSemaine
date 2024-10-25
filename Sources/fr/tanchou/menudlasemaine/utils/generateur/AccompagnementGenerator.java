@@ -1,13 +1,13 @@
-package fr.tanchou.menudlasemaine.utils;
+package fr.tanchou.menudlasemaine.utils.generateur;
 
-import fr.tanchou.menudlasemaine.dao.FeculentDAO;
-import fr.tanchou.menudlasemaine.dao.LegumeDAO;
-import fr.tanchou.menudlasemaine.dao.ProduitLastUseDAO;
+import fr.tanchou.menudlasemaine.dao.produit.FeculentDAO;
+import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
+import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.Accompagnement;
-import fr.tanchou.menudlasemaine.models.Feculent;
-import fr.tanchou.menudlasemaine.models.Legume;
+import fr.tanchou.menudlasemaine.models.produit.Feculent;
+import fr.tanchou.menudlasemaine.models.produit.Legume;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
 import java.util.List;

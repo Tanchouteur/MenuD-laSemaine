@@ -1,9 +1,7 @@
 package fr.tanchou.menudlasemaine;
 
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
-import fr.tanchou.menudlasemaine.utils.AccompagnementGenerator;
-import fr.tanchou.menudlasemaine.utils.MenuService;
-import fr.tanchou.menudlasemaine.utils.RepasBuilder;
+import fr.tanchou.menudlasemaine.utils.generateur.AccompagnementGenerator;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,6 +11,5 @@ public class Main {
         for (int i = 0; i < 10; i++) {
             System.out.println(AccompagnementGenerator.generateAccompagnement(MomentJournee.MIDI));
         }
-
     }
 }

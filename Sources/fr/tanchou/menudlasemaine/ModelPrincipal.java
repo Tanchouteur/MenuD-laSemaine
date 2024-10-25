@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine;
 
-import fr.tanchou.menudlasemaine.utils.AccompagnementGenerator;
-import fr.tanchou.menudlasemaine.utils.PlatCompletFactory;
+import fr.tanchou.menudlasemaine.utils.generateur.AccompagnementGenerator;
+import fr.tanchou.menudlasemaine.utils.generateur.PlatCompletFactory;
 
 public class ModelPrincipal {
 

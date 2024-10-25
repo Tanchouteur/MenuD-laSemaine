@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.dao;
+package fr.tanchou.menudlasemaine.dao.weight;
 
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
