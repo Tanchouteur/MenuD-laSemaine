@@ -1,56 +1,42 @@
 package fr.tanchou.menudlasemaine.dao;
 
-import fr.tanchou.menudlasemaine.models.Feculent;
-import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 import fr.tanchou.menudlasemaine.models.Legume;
+import fr.tanchou.menudlasemaine.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LegumeDAO {
 
-    // Méthode pour ajouter un nouveau légume
+    // Ajoute un légume avec son nom et son poids, et initialise l'historique d'utilisation
     public void ajouterLegume(Legume legume) {
-        String sql = "INSERT INTO Legume (nom_legume) VALUES (?)";
+        String sql = "INSERT INTO Legume (nom_legume, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, legume.getLegumeNom());
+            pstmt.setInt(2, legume.getPoids());
             pstmt.executeUpdate();
+
+            initialiserHistorique(legume.getLegumeNom()); // Initialise la date d'utilisation pour ce légume
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Méthode pour récupérer tous les légumes
-    public List<Legume> getAllLegumes() {
-        List<Legume> legumes = new ArrayList<>();
-        String sql = "SELECT * FROM Legume";
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                legumes.add(new Legume(
-                        rs.getString("nom_legume")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return legumes;
-    }
-
-    public Legume getLegumeByName(String legumeName) {
+    // Récupère un légume par son nom, incluant le poids et la dernière utilisation
+    public Legume getLegumeByName(String nomLegume) {
         String sql = "SELECT * FROM Legume WHERE nom_legume = ?";
         Legume legume = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, legumeName);
+            pstmt.setString(1, nomLegume);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                legume = new Legume(
-                        rs.getString("nom_feculent")
-                );
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(nomLegume);
+                legume = new Legume(nomLegume, poids, derniereUtilisation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,25 +44,62 @@ public class LegumeDAO {
         return legume;
     }
 
-    // Méthode pour mettre à jour un légume
-    public void updateLegume(Legume legume, String newLegumeName) {
-        String sql = "UPDATE Legume SET nom_legume = ? WHERE nom_legume = ?";
+    // Récupère tous les légumes avec leurs poids et dates de dernière utilisation
+    public List<Legume> getAllLegumes() {
+        List<Legume> legumes = new ArrayList<>();
+        String sql = "SELECT * FROM Legume";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                String nomLegume = rs.getString("nom_legume");
+                int poids = rs.getInt("poids");
+                LocalDate derniereUtilisation = getDerniereUtilisation(nomLegume);
+                legumes.add(new Legume(nomLegume, poids, derniereUtilisation));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return legumes;
+    }
+
+    // Supprime un légume par son nom
+    public void deleteLegume(String nomLegume) {
+        String sql = "DELETE FROM Legume WHERE nom_legume = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, legume.getLegumeNom());
-            pstmt.setString(2, newLegumeName);
+            pstmt.setString(1, nomLegume);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Méthode pour supprimer un légume
-    public void deleteLegume(String legumeNom) {
-        String sql = "DELETE FROM Legume WHERE nom_legume = ?";
+    // Récupère la dernière date d'utilisation d'un légume depuis ProduitLastUse
+    private LocalDate getDerniereUtilisation(String nomLegume) {
+        String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ?";
+        LocalDate lastUsed = null;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, legumeNom);
+            pstmt.setString(1, nomLegume);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Date date = rs.getDate("last_used");
+                lastUsed = date.toLocalDate(); // Conversion de Date à LocalDate
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lastUsed;
+    }
+
+    // Initialise l'historique d'utilisation pour un nouveau légume
+    private void initialiserHistorique(String nomLegume) {
+        String sql = "INSERT INTO ProduitLastUse (nom_produit, date_last_use) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nomLegume);
+            pstmt.setDate(2, Date.valueOf(LocalDate.now())); // Initialisé avec la date actuelle
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

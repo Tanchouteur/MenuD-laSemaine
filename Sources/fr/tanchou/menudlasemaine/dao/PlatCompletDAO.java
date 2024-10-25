@@ -62,11 +62,12 @@ public class PlatCompletDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                String name = rs.getString("nom_plat_complet");
+                String name = rs.getString("nom_plat");
                 int poids = rs.getInt("poids");
                 LocalDate derniereUtilisation = getDerniereUtilisation(name);
                 platsComplets.add(new PlatComplet(name, poids, derniereUtilisation));
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
