@@ -8,11 +8,11 @@ public class MenuService {
     public static void printListeMenu(Menu menu) {
         String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
 
-        System.out.println("------- Menu de la Semaine -------");
+        System.out.println("----- Menu de la Semaine -----");
 
         for (int i = 0; i < menu.getRepasParJour().length; i++) {
             System.out.println("\n" + joursSemaine[i] + " :");
-            System.out.println("------------------------------");
+            System.out.println("-------------------------");
 
             for (int j = 0; j < menu.getRepasParJour()[i].length; j++) {
                 Repas repas = menu.getRepasParJour()[i][j];
@@ -24,7 +24,7 @@ public class MenuService {
             }
         }
 
-        System.out.println("\n----------------------------------");
+        System.out.println("\n------------------------------");
     }
 
 
@@ -49,7 +49,7 @@ public class MenuService {
         String[] momentsJournee = {"Midi", "Soir"};
 
         // Bordure supérieure du tableau
-        System.out.print("+" + "-".repeat(20));
+        System.out.print("+" + "-".repeat(30));
         for (int i = 0; i < joursSemaine.length; i++) {
             System.out.print("+" + "-".repeat(40)); // Largeur de 30 pour chaque jour
         }
@@ -63,9 +63,9 @@ public class MenuService {
         System.out.println("|");
 
         // Bordure entre les entêtes et les repas
-        System.out.print("+" + "-".repeat(20));
+        System.out.print("+" + "-".repeat(40));
         for (int i = 0; i < joursSemaine.length; i++) {
-            System.out.print("+" + "-".repeat(30));
+            System.out.print("+" + "-".repeat(40));
         }
         System.out.println("+");
 
@@ -85,16 +85,16 @@ public class MenuService {
                 repasText += " - " + repas.getPlat().getNomPlat();
 
                 // Limiter la longueur du texte pour ne pas déborder
-                repasText = repasText.length() > 28 ? repasText.substring(0, 28) + "..." : repasText;
+                repasText = repasText.length() > 35 ? repasText.substring(0,35) + "..." : repasText;
 
                 System.out.printf("| %-28s ", repasText);
             }
             System.out.println("|");
 
             // Ligne de séparation entre chaque moment de la journée
-            System.out.print("+" + "-".repeat(20));
+            System.out.print("+" + "-".repeat(40));
             for (int i = 0; i < joursSemaine.length; i++) {
-                System.out.print("+" + "-".repeat(30));
+                System.out.print("+" + "-".repeat(40));
             }
             System.out.println("+");
         }
