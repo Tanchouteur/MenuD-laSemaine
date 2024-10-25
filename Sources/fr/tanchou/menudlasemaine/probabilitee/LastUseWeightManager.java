@@ -18,7 +18,7 @@ public class LastUseWeightManager extends WeightManager {
 
     @Override
     public <T> Map<T, Integer> calculateWeights(Class<T> produitClass, TypeProduit typeProduit) {
-        Map<T, LocalDate> lastUseDates = produitLastUseDAO.getLastUseDatesForType(produitClass, typeProduit);
+        Map<T, LocalDate> lastUseDates = ProduitLastUseDAO.getLastUseDatesForType(produitClass, typeProduit);
         Map<T, Integer> weights = new HashMap<>();
 
         for (Map.Entry<T, LocalDate> entry : lastUseDates.entrySet()) {

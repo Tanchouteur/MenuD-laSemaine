@@ -28,6 +28,7 @@ public abstract class WeightManager {
                 return item;
             }
         }
+
         System.err.println("Aucun élément sélectionné " + cumulativeWeight);
         return null;
     }

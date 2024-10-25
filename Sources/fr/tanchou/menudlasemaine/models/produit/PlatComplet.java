@@ -19,19 +19,19 @@ public class PlatComplet extends Plat {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true; // Vérification de la référence
-        if (obj == null || getClass() != obj.getClass()) return false; // Vérification du type
-        PlatComplet platComplet = (PlatComplet) obj; // Cast
-        return poids == platComplet.poids && // Vérification des attributs
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PlatComplet platComplet = (PlatComplet) obj;
+        return poids == platComplet.poids &&
                 Objects.equals(nomPlat, platComplet.nomPlat) &&
                 Objects.equals(lastUsed, platComplet.lastUsed);
     }
 
-    // Redéfinition de hashCode
     @Override
     public int hashCode() {
-        return Objects.hash(nomPlat, poids, lastUsed); // Utilisation d'Objects.hash pour simplifier
+        return Objects.hash(nomPlat, poids, lastUsed);
     }
+
 
     @Override
     public String toString() {

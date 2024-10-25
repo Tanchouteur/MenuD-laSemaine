@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.dao.produit;
 
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
+import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
@@ -78,7 +79,7 @@ public class PlatCompletDAO {
     // Méthode pour obtenir la dernière utilisation d'un produit via ProduitLastUse
     private LocalDate getDerniereUtilisation(String nomProduit) {
         ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
-        Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, "PlatComplet");
+        Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, TypeProduit.PLAT_COMPLET);
         return lastUseDate.map(Date::toLocalDate).orElse(null);
     }
 }

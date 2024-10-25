@@ -49,12 +49,12 @@ public class ProduitLastUseDAO {
     }
 
     // Obtenir la dernière date d'utilisation d'un produit spécifique
-    public static Optional<Date> getLastUseDate(String nomProduit, String typeProduit) {
+    public static Optional<Date> getLastUseDate(String nomProduit, TypeProduit typeProduit) {
         String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ? AND type_produit = ?";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomProduit);
-            pstmt.setString(2, typeProduit);
+            pstmt.setString(2, String.valueOf(typeProduit));
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
