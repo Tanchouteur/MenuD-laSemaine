@@ -37,9 +37,6 @@ public class AccompagnementGenerator {
         List<Legume> legumes = LegumeDAO.getAllLegumes();
         List<Feculent> feculents = FeculentDAO.getAllFeculents();
 
-        Map<Legume, Integer> legumesWeights = WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights);
-
-
         // Sélectionner le féculent en fonction des poids
 
         Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, WeightManager.combineWeights(lastUseFeculentWeights,manuelFeculentWeights), random);
