@@ -3,6 +3,7 @@ package fr.tanchou.menudlasemaine.utils.generateur;
 import fr.tanchou.menudlasemaine.dao.produit.ViandeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
+import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.Accompagnement;
 import fr.tanchou.menudlasemaine.models.Plat;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class PlatComposeFactory {
-    public static PlatCompose getRandomPlatCompose(MomentJournee momentJournee) {
+    public static PlatCompose getRandomPlatCompose(MomentJournee momentJournee, MomentSemaine momentSemaine) {
         Random random = new Random();
         LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
 
@@ -25,7 +26,7 @@ public class PlatComposeFactory {
 
         Viande selectedViande = WeightManager.selectBasedOnWeights(viandes, lastUseViandeWeights, random);
 
-        Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement(momentJournee);
+        Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement(momentJournee, momentSemaine);
 
         if (selectedViande != null) {
             ProduitLastUseDAO.updateLastUseDate(selectedViande.getViandeNom());

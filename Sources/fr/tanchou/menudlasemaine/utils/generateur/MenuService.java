@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
+import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.models.Menu;
 import fr.tanchou.menudlasemaine.models.Repas;
 
@@ -15,7 +16,11 @@ public class MenuService {
 
         for (int i = 0; i < jours.length; i++) {
             for (int j = 0; j < moments.length; j++) {
-                repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j].toUpperCase()));
+                if (i < 6){
+                    repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j]), MomentSemaine.SEMAINE);
+                }else {
+                    repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j]), MomentSemaine.WEEKEND);
+                }
             }
         }
 

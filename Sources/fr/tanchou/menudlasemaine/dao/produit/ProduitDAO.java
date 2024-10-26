@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.dao.produit;
 
+import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.*;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
@@ -56,6 +57,92 @@ public class ProduitDAO {
         }
 
         return poids;
+    }
+
+    public static <T> List<T> getAllProduitByType(TypeProduit typeProduit){ //TypeProduit est un enum
+        List<T> produits = new ArrayList<>();
+        String query = "SELECT p.*, plu.last_used FROM " + typeProduit.name() + " p " +
+                "LEFT JOIN ProduitLastUse plu ON p.nom_legume = plu.nom_produit " +
+                "WHERE plu.type_produit = ?"; // Assurez-vous que le nom de la colonne est correct
+
+        try (Connection connection = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, String.valueOf(typeProduit)); // Type de produit
+
+            switch (typeProduit){
+                case LEGUME:
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            T produit = (T) new Legume(resultSet.getString("nom_legume"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            produits.add(produit);
+                        }
+                    }
+                    break;
+                case VIANDE:
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            T produit = (T) new Viande(resultSet.getString("nom_viande"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            produits.add(produit);
+                        }
+                    }
+                    break;
+                case FECULENT:
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            T produit = (T) new Feculent(resultSet.getString("nom_feculent"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            produits.add(produit);
+                        }
+                    }
+                    break;
+                case PLAT_COMPLET:
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            T produit = (T) new PlatComplet(resultSet.getString("nom_plat_complet"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            produits.add(produit);
+                        }
+                    }
+                    break;
+                case ENTREE:
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            T produit = (T) new Entree(resultSet.getString("nom_entree"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            produits.add(produit);
+                        }
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Gérer l'exception selon tes besoins
+        }
+
+        return produits;
+    }
+
+    public static <T> T getProduitByName(String nom_produit, TypeProduit typeProduit){ //TypeProduit est un enum
+        T produit = null;
+        switch (typeProduit){
+            case LEGUME:
+                produit = (T) LegumeDAO.getLegumeByName(nom_produit);
+                break;
+
+            case VIANDE:
+                produit = (T) ViandeDAO.getViandeByName(nom_produit);
+                break;
+
+            case FECULENT:
+                produit = (T) FeculentDAO.getFeculentByName(nom_produit);
+                break;
+
+            case PLAT_COMPLET:
+                produit = (T) PlatCompletDAO.getPlatCompletByName(nom_produit);
+                break;
+
+            case ENTREE:
+                produit = (T) EntreeDAO.getEntreeByName(nom_produit);
+                break;
+        }
+
+        return produit;
     }
 
     // Méthode pour créer un produit à partir d'un ResultSet

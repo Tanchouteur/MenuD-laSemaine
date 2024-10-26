@@ -26,7 +26,7 @@ public class EntreeDAO {
     }
 
     // Récupère une entrée par son nom avec son poids et dernière utilisation
-    public Entree getEntreeByName(String entreeName) {
+    public static Entree getEntreeByName(String entreeName) {
         String sql = "SELECT * FROM Entree WHERE nom_entree = ?";
         Entree entree = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();

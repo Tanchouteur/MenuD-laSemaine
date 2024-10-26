@@ -26,7 +26,7 @@ public class ViandeDAO {
     }
 
     // Récupère une viande par son nom, incluant le poids et la dernière utilisation
-    public Viande getViandeByName(String nomViande) {
+    public static Viande getViandeByName(String nomViande) {
         String sql = "SELECT * FROM Viande WHERE nom_viande = ?";
         Viande viande = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();

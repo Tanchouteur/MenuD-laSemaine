@@ -24,6 +24,16 @@ ba sa c'est simple, dans les tables des produit il y a un attribus "poids" qui e
 J'ai fait une table ProduitLastUsed qui représente la derniere date a laquel le produit a été selectionné. Il suffit de faire une requete pour avoir la date la plus récente
 
 on additionne le poids de chaque produit avec un le poid généré par la derniere utilisation qui diminue en fonction de la date
+Mais a voir si c'est pas mieux de multiplier plutot que d'additionner
 
-#### Moment de la journée
+#### Moment de la journée et de la semaine
+![TableMomentJournee.png](TableMomentJournee.png) 
 
+![TableMomentSemaine.png](TableMomentSemaine.png)
+
+```sql
+                     (nom du produit, type    , poid produit , poid midi, poid soir , poid semaine  , poid week-end);
+CALL ajouter_produit('Harricot-vert', 'Legume', 50           , 30       , 100       , 50            , 100          );
+```
+
+donc par exemple si on veux qu'un plat n'apparaisse pas le midi en semaine mais que le midi en weekend il puisse sortir alors il ne faut pas mettre le poid du midi a 0 mais le poids 

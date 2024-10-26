@@ -55,21 +55,20 @@ public abstract class WeightManager {
         return combinedWeights;
     }
 
-    // méthode pour multiplier les poids par leurs facteurs
     public static <T> Map<T, Integer> multiplyWeights(Map<T, Integer> weights, Map<T, Integer> weightsFactor) {
         Map<T, Integer> multipliedWeights = new HashMap<>();
 
-        // Ajouter les poids de la première map
-        multipliedWeights.putAll(weights);
-
-        // Combiner avec les poids de la seconde map
-        for (Map.Entry<T, Integer> entry : weightsFactor.entrySet()) {
+        // Itère sur chaque produit dans la map des poids
+        for (Map.Entry<T, Integer> entry : weights.entrySet()) {
             T produit = entry.getKey();
             int weight = entry.getValue();
 
-            // multiplier le poids avec le facteur correspondant de la liste
-            multipliedWeights.merge(produit, weight, (w1, w2) -> w1 * w2);
+            // Récupère le facteur de poids depuis weightsFactor, ou utilise 100 par défaut (aucun changement si absent)
+            int factor = weightsFactor.getOrDefault(produit, 100);
 
+            // Multiplie le poids avec le facteur et divise par 100 pour ajuster
+            int adjustedWeight = (int) (weight * (factor / 100.0));
+            multipliedWeights.put(produit, adjustedWeight);
         }
 
         return multipliedWeights;

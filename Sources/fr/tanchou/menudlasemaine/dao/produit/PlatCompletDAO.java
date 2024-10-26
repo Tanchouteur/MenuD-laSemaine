@@ -38,7 +38,7 @@ public class PlatCompletDAO {
     }
 
     // Méthode pour récupérer un plat complet par son nom
-    public PlatComplet getPlatCompletByName(String platCompletName) {
+    public static PlatComplet getPlatCompletByName(String platCompletName) {
         String sql = "SELECT * FROM PlatComplet WHERE nom_plat = ?";
         PlatComplet platComplet = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();

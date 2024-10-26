@@ -3,8 +3,10 @@ package fr.tanchou.menudlasemaine.utils.generateur;
 import fr.tanchou.menudlasemaine.dao.incompatibilitedao.IncompatibilitesAccompagnementDAO;
 import fr.tanchou.menudlasemaine.dao.produit.FeculentDAO;
 import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
+import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
+import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.Accompagnement;
 import fr.tanchou.menudlasemaine.models.produit.Feculent;
@@ -19,7 +21,7 @@ import java.util.Random;
 
 public class AccompagnementGenerator {
 
-    public static Accompagnement generateAccompagnement(MomentJournee momentJournee) {
+    public static Accompagnement generateAccompagnement(MomentJournee momentJournee, MomentSemaine momentSemaine) {
         Random random = new Random();
 
         IncompatibilitesAccompagnementDAO incompatibilitesAccompagnementDAO = new IncompatibilitesAccompagnementDAO(); // DAO pour gérer les incompatibilités
@@ -27,17 +29,23 @@ public class AccompagnementGenerator {
         // Calcul des poids
         LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
+        PoidsMomentJourneeDAO poidsMomentJourneeDAO = new PoidsMomentJourneeDAO();
 
+        // Calcul des poids pour les légumes
         Map<Legume, Integer> manuelLegumeWeights = manuelWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
         Map<Legume, Integer> lastUseLegumeWeights = lastUseWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
+        Map<Legume, Integer> combinedLegumeWeights = WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights);
+        Map<Legume, Integer> multipliedLegumeWeightsMoment = WeightManager.multiplyWeights(combinedLegumeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.LEGUME, momentJournee, momentSemaine));
 
+
+        // Calcul des poids pour les féculents
         Map<Feculent, Integer> manuelFeculentWeights = manuelWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
         Map<Feculent, Integer> lastUseFeculentWeights = lastUseWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
 
-        List<Legume> legumes = LegumeDAO.getAllLegumes();
-        List<Feculent> feculents = FeculentDAO.getAllFeculents();
+        List<Legume> legumes = LegumeDAO.getAllLegumes(); // Récupérer tous les légumes
+        List<Feculent> feculents = FeculentDAO.getAllFeculents(); // Récupérer tous les féculents
 
-        // Sélectionner le féculent en fonction des poids
+
 
         Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, WeightManager.combineWeights(lastUseFeculentWeights,manuelFeculentWeights), random);
 
