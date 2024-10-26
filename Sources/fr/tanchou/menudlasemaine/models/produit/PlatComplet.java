@@ -6,7 +6,7 @@ import fr.tanchou.menudlasemaine.models.Plat;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class PlatComplet extends Plat {
+public class PlatComplet extends Plat{
     private final String nomPlat;
     private int poids;
     private LocalDate lastUsed;

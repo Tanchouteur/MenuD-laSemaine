@@ -1,8 +1,9 @@
 package fr.tanchou.menudlasemaine.models;
 
 import fr.tanchou.menudlasemaine.enums.TypePlat;
+import fr.tanchou.menudlasemaine.models.produit.Poidsable;
 
-public abstract class Plat {
+public abstract class Plat implements Poidsable {
     private final TypePlat typePlat; // Utilisation de l'enum
     private int poids;
 
@@ -15,6 +16,7 @@ public abstract class Plat {
         return typePlat;
     }
 
+    @Override
     public int getPoids() {
         return poids;
     }

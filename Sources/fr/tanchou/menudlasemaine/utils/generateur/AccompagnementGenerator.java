@@ -10,6 +10,7 @@ import fr.tanchou.menudlasemaine.models.Accompagnement;
 import fr.tanchou.menudlasemaine.models.produit.Feculent;
 import fr.tanchou.menudlasemaine.models.produit.Legume;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
+import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
 import java.util.List;
@@ -25,17 +26,26 @@ public class AccompagnementGenerator {
 
         // Calcul des poids
         LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
+        ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
+
+        Map<Legume, Integer> manuelLegumeWeights = manuelWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
         Map<Legume, Integer> lastUseLegumeWeights = lastUseWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
+
+        Map<Feculent, Integer> manuelFeculentWeights = manuelWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
         Map<Feculent, Integer> lastUseFeculentWeights = lastUseWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
 
         List<Legume> legumes = LegumeDAO.getAllLegumes();
         List<Feculent> feculents = FeculentDAO.getAllFeculents();
 
+        Map<Legume, Integer> legumesWeights = WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights);
+
+
         // Sélectionner le féculent en fonction des poids
-        Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, lastUseFeculentWeights, random);
+
+        Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, WeightManager.combineWeights(lastUseFeculentWeights,manuelFeculentWeights), random);
 
         // Sélectionner le légume compatible avec le féculent sélectionné
-        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, lastUseLegumeWeights, incompatibilitesAccompagnementDAO, random);
+        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights), incompatibilitesAccompagnementDAO, random);
 
         // Logique pour déterminer si l'accompagnement est vide
         int probaOneEmpty = random.nextInt(100);

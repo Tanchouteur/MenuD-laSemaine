@@ -57,7 +57,7 @@ public class PlatCompletDAO {
     }
 
     // Méthode pour récupérer tous les plats complets
-    public List<PlatComplet> getAllPlatsComplets() {
+    public static List<PlatComplet> getAllPlatsComplets() {
         List<PlatComplet> platsComplets = new ArrayList<>();
         String sql = "SELECT * FROM PlatComplet";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
@@ -77,7 +77,7 @@ public class PlatCompletDAO {
     }
 
     // Méthode pour obtenir la dernière utilisation d'un produit via ProduitLastUse
-    private LocalDate getDerniereUtilisation(String nomProduit) {
+    private static LocalDate getDerniereUtilisation(String nomProduit) {
         ProduitLastUseDAO produitLastUseDAO = new ProduitLastUseDAO();
         Optional<Date> lastUseDate = produitLastUseDAO.getLastUseDate(nomProduit, TypeProduit.PLAT_COMPLET);
         return lastUseDate.map(Date::toLocalDate).orElse(null);

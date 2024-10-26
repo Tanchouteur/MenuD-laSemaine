@@ -12,8 +12,8 @@ public class Main {
 
         //MenuService.printTableMenu(MenuService.buildMenu());
 
-        for (int i = 0; i < 10; i++) {
-            System.out.println(PlatFactory.getRandomPlat(MomentJournee.MIDI));
+        for (int i = 0; i < 1; i++) {
+            System.out.println(AccompagnementGenerator.generateAccompagnement(MomentJournee.MIDI));
         }
     }
 }

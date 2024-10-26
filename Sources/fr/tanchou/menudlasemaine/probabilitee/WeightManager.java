@@ -2,6 +2,7 @@ package fr.tanchou.menudlasemaine.probabilitee;
 
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,4 +33,26 @@ public abstract class WeightManager {
         System.err.println("Aucun élément sélectionné " + cumulativeWeight);
         return null;
     }
+
+    // Méthode pour combiner les poids de deux sources
+    public static <T> Map<T, Integer> combineWeights(Map<T, Integer> weights1, Map<T, Integer> weights2) {
+        Map<T, Integer> combinedWeights = new HashMap<>();
+
+        // Ajouter les poids de la première map
+        for (Map.Entry<T, Integer> entry : weights1.entrySet()) {
+            combinedWeights.put(entry.getKey(), entry.getValue());
+        }
+
+        // Combiner avec les poids de la seconde map
+        for (Map.Entry<T, Integer> entry : weights2.entrySet()) {
+            T produit = entry.getKey();
+            int poids2 = entry.getValue();
+
+            // Ajouter le poids si le produit existe déjà, sinon l'ajouter directement
+            combinedWeights.merge(produit, poids2, Integer::sum);
+        }
+
+        return combinedWeights;
+    }
 }
+

@@ -46,7 +46,7 @@ public class EntreeDAO {
     }
 
     // Récupère toutes les entrées avec leurs poids et dates d'utilisation
-    public List<Entree> getAllEntrees() {
+    public static List<Entree> getAllEntrees() {
         List<Entree> entrees = new ArrayList<>();
         String sql = "SELECT * FROM Entree";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
@@ -77,7 +77,7 @@ public class EntreeDAO {
     }
 
     // Méthode privée pour récupérer la dernière utilisation d'une entrée à partir de la table ProduitLastUse
-    private LocalDate getDerniereUtilisation(String nomEntree) {
+    private static LocalDate getDerniereUtilisation(String nomEntree) {
         String sql = "SELECT date_last_use FROM ProduitLastUse WHERE nom_produit = ?";
         LocalDate lastUsed = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();

@@ -3,7 +3,7 @@ package fr.tanchou.menudlasemaine.models.produit;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Feculent {
+public class Feculent implements Poidsable {
     private String feculentNom;
     private int poids;
     private LocalDate lastUsed;
@@ -43,6 +43,7 @@ public class Feculent {
         this.feculentNom = feculentNom;
     }
 
+    @Override
     public int getPoids() {
         return poids;
     }
