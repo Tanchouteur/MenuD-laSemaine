@@ -1,6 +1,8 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
+import fr.tanchou.menudlasemaine.models.Accompagnement;
+import fr.tanchou.menudlasemaine.models.produit.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,33 @@ public abstract class WeightManager {
             cumulativeWeight += weights.getOrDefault(item, 0);
             if (cumulativeWeight > randomWeight) {
                 System.out.println("Element sélectionné " + item+ " avec un poids de " + weights.getOrDefault(item, 0));
-                return item;
+
+                switch (item.getClass().getSimpleName()) {
+                    case "Viande":
+                        Viande viandeSelected = (Viande) item;
+                        viandeSelected.setPoids(weights.getOrDefault(item, 0));
+                        return (T) viandeSelected;
+
+                    case "Legume":
+                        Legume legumeSelected = (Legume) item;
+                        legumeSelected.setPoids(weights.getOrDefault(item, 0));
+                        return (T) legumeSelected;
+
+                    case "Feculent":
+                        Feculent feculentSelected = (Feculent) item;
+                        feculentSelected.setPoids(weights.getOrDefault(item, 0));
+                        return (T) feculentSelected;
+
+                    case "PlatComplet":
+                        PlatComplet platCompletSelected = (PlatComplet) item;
+                        platCompletSelected.setPoids(weights.getOrDefault(item, 0));
+                        return (T) platCompletSelected;
+
+                    case "Entree":
+                        Entree entreeSelected = (Entree) item;
+                        entreeSelected.setPoids(weights.getOrDefault(item, 0));
+                        return (T) entreeSelected;
+                }
             }
         }
 

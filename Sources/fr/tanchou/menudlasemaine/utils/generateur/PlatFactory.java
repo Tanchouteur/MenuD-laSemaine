@@ -13,7 +13,7 @@ public class PlatFactory {
         Plat plat = null;
 
         if (probaPlatComplet > 70){
-            plat = PlatCompletFactory.getRandomPlatComplet(momentJournee);
+            plat = PlatCompletFactory.getRandomPlatComplet(momentJournee, momentSemaine);
         }else {
             plat = PlatComposeFactory.getRandomPlatCompose(momentJournee, momentSemaine);
         }

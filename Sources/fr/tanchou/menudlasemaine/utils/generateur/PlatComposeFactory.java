@@ -18,21 +18,12 @@ import java.util.Random;
 
 public class PlatComposeFactory {
     public static PlatCompose getRandomPlatCompose(MomentJournee momentJournee, MomentSemaine momentSemaine) {
-        Random random = new Random();
-        LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
 
-        Map<Viande, Integer> lastUseViandeWeights = lastUseWeightManager.calculateWeights(Viande.class, TypeProduit.VIANDE);
-        List<Viande> viandes = ViandeDAO.getAllViandes();
-
-        Viande selectedViande = WeightManager.selectBasedOnWeights(viandes, lastUseViandeWeights, random);
+        Viande selectedViande = ViandeFactory.getRandomViande(momentJournee, momentSemaine);
 
         Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement(momentJournee, momentSemaine);
 
-        if (selectedViande != null) {
-            ProduitLastUseDAO.updateLastUseDate(selectedViande.getViandeNom());
-        }
-
-        return new PlatCompose(1, selectedViande, randomAccompagnement);
+        return new PlatCompose(selectedViande.getPoids() + randomAccompagnement.getPoids() ,selectedViande, randomAccompagnement);
     }
 }
 

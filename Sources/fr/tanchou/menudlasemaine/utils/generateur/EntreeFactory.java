@@ -29,7 +29,7 @@ public class EntreeFactory {
         Map<Entree, Integer> lastUseEntreeWeights = lastUseWeightManager.calculateWeights(Entree.class, TypeProduit.ENTREE);
         Map<Entree, Integer> manuelEntreeWeight = manuelEntreeWeightManager.calculateWeights(Entree.class, TypeProduit.ENTREE);
         Map<Entree, Integer> combinedEntreeWeights = WeightManager.combineWeights(lastUseEntreeWeights, manuelEntreeWeight);
-        Map<Entree, Integer> multipliedEntreeWeightsMoment = WeightManager.multiplyWeights(combinedEntreeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.LEGUME, momentJournee, momentSemaine));
+        Map<Entree, Integer> multipliedEntreeWeightsMoment = WeightManager.multiplyWeights(combinedEntreeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.ENTREE, momentJournee, momentSemaine));
 
 
         List<Entree> entrees = entreeDAO.getAllEntrees();

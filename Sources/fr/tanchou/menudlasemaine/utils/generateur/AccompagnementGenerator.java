@@ -47,8 +47,7 @@ public class AccompagnementGenerator {
         List<Legume> legumes = LegumeDAO.getAllLegumes(); // Récupérer tous les légumes
         List<Feculent> feculents = FeculentDAO.getAllFeculents(); // Récupérer tous les féculents
 
-
-
+        // Sélectionner le féculent
         Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, multipliedFeculentWeightsMoment, random);
 
         // Sélectionner le légume compatible avec le féculent sélectionné

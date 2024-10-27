@@ -6,19 +6,23 @@ import fr.tanchou.menudlasemaine.models.produit.Legume;
 public class Accompagnement {
     private Legume legume;
     private Feculent feculent;
+    private int poids;
 
     public Accompagnement(Legume legume, Feculent feculent) {
         this.legume = legume;
         this.feculent = feculent;
+        this.poids = legume.getPoids() + feculent.getPoids();
     }
 
     public Accompagnement(Feculent feculent) {
         this.legume = null;
         this.feculent = feculent;
+        this.poids = feculent.getPoids();
     }
     public Accompagnement(Legume legume) {
         this.legume = legume;
         this.feculent = null;
+        this.poids = legume.getPoids();
     }
 
     public Legume getLegume() {
@@ -54,5 +58,13 @@ public class Accompagnement {
                 "legume=" + legume +
                 ", feculent=" + feculent +
                 '}';
+    }
+
+    public int getPoids() {
+        return poids;
+    }
+
+    public void setPoids(int poids) {
+        this.poids = poids;
     }
 }

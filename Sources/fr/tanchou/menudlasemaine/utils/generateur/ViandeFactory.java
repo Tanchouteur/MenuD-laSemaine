@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class ViandeFactory {
+    
     public static Viande getRandomViande(MomentJournee momentJournee, MomentSemaine momentSemaine) {
         Random random = new Random();
 
@@ -27,10 +28,10 @@ public class ViandeFactory {
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
 
         // Calcul des poids
-        Map<Viande, Integer> manuelViandeWeights = manuelWeightManager.calculateWeights(Viande.class, TypeProduit.LEGUME);
-        Map<Viande, Integer> lastUseViandeWeights = lastUseWeightManager.calculateWeights(Viande.class, TypeProduit.LEGUME);
+        Map<Viande, Integer> manuelViandeWeights = manuelWeightManager.calculateWeights(Viande.class, TypeProduit.VIANDE);
+        Map<Viande, Integer> lastUseViandeWeights = lastUseWeightManager.calculateWeights(Viande.class, TypeProduit.VIANDE);
         Map<Viande, Integer> combienedViandeWeights = WeightManager.combineWeights(lastUseViandeWeights, manuelViandeWeights);
-        Map<Viande, Integer> multipliedLegumeWeightsMoment = WeightManager.multiplyWeights(combienedViandeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.LEGUME, momentJournee, momentSemaine));
+        Map<Viande, Integer> multipliedLegumeWeightsMoment = WeightManager.multiplyWeights(combienedViandeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.VIANDE, momentJournee, momentSemaine));
 
         // Récupérer toutes les viandes
         List<Viande> viandes = viandeDAO.getAllViandes();

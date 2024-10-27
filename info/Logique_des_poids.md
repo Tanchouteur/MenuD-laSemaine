@@ -39,3 +39,4 @@ donc par exemple si on veux qu'un plat n'apparaisse pas le midi en semaine mais 
 
 pour rajouter un produit dans sa table il suffit de faire un appel a la procedure ajouter_produit
 
+Le poids calculer pour la selection baser sur le poids est désormais stocker dans l'atrtibut poids des chaque produit apres qu'il ais été séléctionné
