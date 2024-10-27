@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu de la Semaine</title>
+</head>
+<body>
+<h1>Menu de la Semaine</h1>
+<div id="menuContainer">Chargement du menu...</div>
+
+<script>
+    fetch("http://localhost:8090/menu/getMenu")
+        .then(response => response.text())
+        .then(xmlText => {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+            const menuContainer = document.getElementById("menuContainer");
+            menuContainer.innerHTML = "";
+
+            const jours = xmlDoc.getElementsByTagName("jour");
+
+            for (const jour of jours) {
+                const jourName = jour.getAttribute("nom");
+
+                // Créer un div pour chaque jour
+                const jourDiv = document.createElement("div");
+                jourDiv.innerHTML = `<h2>${jourName}</h2>`;
+
+                const midi = jour.getElementsByTagName("midi")[0];
+                const soir = jour.getElementsByTagName("soir")[0];
+
+                // Ajouter le repas de midi
+                const midiDiv = document.createElement("div");
+                const entreeMidi = midi.getElementsByTagName("entree")[0].textContent || "Aucune";
+                const platMidi = midi.getElementsByTagName("plat")[0].textContent || "Aucun";
+                midiDiv.innerHTML = `<strong>Midi :</strong> Entrée - ${entreeMidi}, Plat - ${platMidi}`;
+                jourDiv.appendChild(midiDiv);
+
+                // Ajouter le repas du soir
+                const soirDiv = document.createElement("div");
+                const entreeSoir = soir.getElementsByTagName("entree")[0].textContent || "Aucune";
+                const platSoir = soir.getElementsByTagName("plat")[0].textContent || "Aucun";
+                soirDiv.innerHTML = `<strong>Soir :</strong> Entrée - ${entreeSoir}, Plat - ${platSoir}`;
+                jourDiv.appendChild(soirDiv);
+
+                // Ajouter chaque jour au conteneur principal
+                menuContainer.appendChild(jourDiv);
+            }
+        })
+        .catch(error => {
+            document.getElementById("menuContainer").innerHTML = "Erreur lors de la récupération du menu.";
+            console.error("Erreur de traitement XML:", error);
+        });
+</script>
+</body>
+</html>
