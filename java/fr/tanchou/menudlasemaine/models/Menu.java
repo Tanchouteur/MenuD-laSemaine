@@ -1,7 +1,7 @@
 package fr.tanchou.menudlasemaine.models;
 
 public class Menu {
-    private Repas[][] repasParJour;
+    private final Repas[][] repasParJour;
 
     public Menu(Repas[][] repasParJour) {
         this.repasParJour = repasParJour;

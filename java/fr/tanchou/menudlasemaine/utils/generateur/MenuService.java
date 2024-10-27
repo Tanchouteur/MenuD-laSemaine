@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
+import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
@@ -7,6 +8,12 @@ import fr.tanchou.menudlasemaine.models.Menu;
 import fr.tanchou.menudlasemaine.models.Repas;
 
 public class MenuService {
+
+    public static void createAndInsertMenu() {
+        Menu menu = buildMenu();
+        MenuDAO menuDAO = new MenuDAO();
+        menuDAO.updateMenu(menu.getRepasParJour());
+    }
 
     public static Menu buildMenu() {
 
