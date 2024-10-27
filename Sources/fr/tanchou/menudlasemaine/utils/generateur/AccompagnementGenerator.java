@@ -4,9 +4,11 @@ import fr.tanchou.menudlasemaine.dao.incompatibilitedao.IncompatibilitesAccompag
 import fr.tanchou.menudlasemaine.dao.produit.FeculentDAO;
 import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
+import fr.tanchou.menudlasemaine.dao.weight.PoidsSaisonDAO;
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
+import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.Accompagnement;
 import fr.tanchou.menudlasemaine.models.produit.Feculent;
@@ -15,19 +17,20 @@ import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class AccompagnementGenerator {
 
-    public static Accompagnement generateAccompagnement(MomentJournee momentJournee, MomentSemaine momentSemaine) {
+    public static Accompagnement generateAccompagnement(MomentJournee momentJournee, MomentSemaine momentSemaine, Saison saison) {
         Random random = new Random();
 
         IncompatibilitesAccompagnementDAO incompatibilitesAccompagnementDAO = new IncompatibilitesAccompagnementDAO(); // DAO pour gérer les incompatibilités
 
         // Calcul des poids
-        LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
+        LastUseWeightManager lastUseWeightManager = new LastUseWeightManager();
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
 
         // Calcul des poids pour les légumes
@@ -35,23 +38,24 @@ public class AccompagnementGenerator {
         Map<Legume, Integer> lastUseLegumeWeights = lastUseWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
         Map<Legume, Integer> combinedLegumeWeights = WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights);
         Map<Legume, Integer> multipliedLegumeWeightsMoment = WeightManager.multiplyWeights(combinedLegumeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.LEGUME, momentJournee, momentSemaine));
-
+        Map<Legume, Integer> multipliedLegumeWeightsSaisons = WeightManager.multiplyWeights(multipliedLegumeWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.LEGUME ,saison));
 
         // Calcul des poids pour les féculents
         Map<Feculent, Integer> manuelFeculentWeights = manuelWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
         Map<Feculent, Integer> lastUseFeculentWeights = lastUseWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
         Map<Feculent, Integer> combinedFeculentWeights = WeightManager.combineWeights(lastUseFeculentWeights, manuelFeculentWeights);
         Map<Feculent, Integer> multipliedFeculentWeightsMoment = WeightManager.multiplyWeights(combinedFeculentWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.FECULENT, momentJournee, momentSemaine));
+        Map<Feculent, Integer> multipliedFeculentWeightsSaisons = WeightManager.multiplyWeights(multipliedFeculentWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.FECULENT, saison));
 
         // liste de la bd
         List<Legume> legumes = LegumeDAO.getAllLegumes(); // Récupérer tous les légumes
         List<Feculent> feculents = FeculentDAO.getAllFeculents(); // Récupérer tous les féculents
 
         // Sélectionner le féculent
-        Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, multipliedFeculentWeightsMoment, random);
+        Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, multipliedFeculentWeightsSaisons, random);
 
         // Sélectionner le légume compatible avec le féculent sélectionné
-        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, multipliedLegumeWeightsMoment, incompatibilitesAccompagnementDAO, random);
+        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, multipliedLegumeWeightsSaisons, incompatibilitesAccompagnementDAO, random);
 
         // Logique pour déterminer si l'accompagnement est vide
         int probaOneEmpty = random.nextInt(100);
@@ -96,7 +100,7 @@ public class AccompagnementGenerator {
 
                     // Vérifier la compatibilité
                     if (!IncompatibilitesAccompagnementDAO.areIncompatible(legume.getLegumeNom(), feculent.getFeculentNom())) {
-                        System.out.println("Legume sélectionné " + legume + " avec un poids de " + weights.getOrDefault(legume, 0));
+                        //System.out.println("Legume sélectionné " + legume + " avec un poids de " + weights.getOrDefault(legume, 0));
                         return legume; // Retourner le légume compatible
                     }
                 }

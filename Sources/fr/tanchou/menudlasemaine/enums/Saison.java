@@ -3,7 +3,7 @@ package fr.tanchou.menudlasemaine.enums;
 public enum Saison {
     HIVER("Hiver"),
     PRINTEMPS("Printemps"),
-    ETE("Été"),
+    ETE("Ete"),
     AUTOMNE("Automne");
 
     private final String description;

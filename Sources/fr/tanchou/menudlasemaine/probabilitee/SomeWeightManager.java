@@ -11,7 +11,7 @@ public class SomeWeightManager {
     private final ManuelWeightManager manuelWeightManager;
 
     public SomeWeightManager() {
-        lastUsedWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
+        lastUsedWeightManager = new LastUseWeightManager();
         manuelWeightManager = new ManuelWeightManager();
     }
 

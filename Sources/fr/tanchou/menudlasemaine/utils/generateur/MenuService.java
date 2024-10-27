@@ -2,6 +2,7 @@ package fr.tanchou.menudlasemaine.utils.generateur;
 
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
+import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.models.Menu;
 import fr.tanchou.menudlasemaine.models.Repas;
 
@@ -17,9 +18,9 @@ public class MenuService {
         for (int i = 0; i < jours.length; i++) {
             for (int j = 0; j < moments.length; j++) {
                 if (i < 6){
-                    repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j]), MomentSemaine.SEMAINE);
+                    repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j].toUpperCase()), MomentSemaine.SEMAINE, Saison.AUTOMNE);//recupere la saison en fonction du mois de maintenant
                 }else {
-                    repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j]), MomentSemaine.WEEKEND);
+                    repasParJour[i][j] = RepasBuilder.buildRepa(MomentJournee.valueOf(moments[j].toUpperCase()), MomentSemaine.WEEKEND, Saison.AUTOMNE);
                 }
             }
         }
