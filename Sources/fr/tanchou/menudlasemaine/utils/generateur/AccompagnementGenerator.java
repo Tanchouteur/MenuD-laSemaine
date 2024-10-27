@@ -41,16 +41,19 @@ public class AccompagnementGenerator {
         // Calcul des poids pour les féculents
         Map<Feculent, Integer> manuelFeculentWeights = manuelWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
         Map<Feculent, Integer> lastUseFeculentWeights = lastUseWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
+        Map<Feculent, Integer> combinedFeculentWeights = WeightManager.combineWeights(lastUseFeculentWeights, manuelFeculentWeights);
+        Map<Feculent, Integer> multipliedFeculentWeightsMoment = WeightManager.multiplyWeights(combinedFeculentWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.FECULENT, momentJournee, momentSemaine));
 
+        // liste de la bd
         List<Legume> legumes = LegumeDAO.getAllLegumes(); // Récupérer tous les légumes
         List<Feculent> feculents = FeculentDAO.getAllFeculents(); // Récupérer tous les féculents
 
 
 
-        Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, WeightManager.combineWeights(lastUseFeculentWeights,manuelFeculentWeights), random);
+        Feculent selectedFeculent = WeightManager.selectBasedOnWeights(feculents, multipliedFeculentWeightsMoment, random);
 
         // Sélectionner le légume compatible avec le féculent sélectionné
-        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights), incompatibilitesAccompagnementDAO, random);
+        Legume selectedLegume = selectCompatibleLegume(legumes, selectedFeculent, multipliedLegumeWeightsMoment, incompatibilitesAccompagnementDAO, random);
 
         // Logique pour déterminer si l'accompagnement est vide
         int probaOneEmpty = random.nextInt(100);
@@ -92,8 +95,10 @@ public class AccompagnementGenerator {
             for (Legume legume : legumes) {
                 cumulativeWeight += weights.getOrDefault(legume, 0);
                 if (cumulativeWeight > randomWeight) {
+
                     // Vérifier la compatibilité
                     if (!IncompatibilitesAccompagnementDAO.areIncompatible(legume.getLegumeNom(), feculent.getFeculentNom())) {
+                        System.out.println("Legume sélectionné " + legume + " avec un poids de " + weights.getOrDefault(legume, 0));
                         return legume; // Retourner le légume compatible
                     }
                 }

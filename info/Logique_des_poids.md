@@ -29,11 +29,13 @@ Mais a voir si c'est pas mieux de multiplier plutot que d'additionner
 #### Moment de la journée et de la semaine
 ![TableMomentJournee.png](TableMomentJournee.png) 
 
-![TableMomentSemaine.png](TableMomentSemaine.png)
 
 ```sql
                      (nom du produit, type    , poid produit , poid midi, poid soir , poid semaine  , poid week-end);
 CALL ajouter_produit('Harricot-vert', 'Legume', 50           , 30       , 100       , 50            , 100          );
 ```
 
-donc par exemple si on veux qu'un plat n'apparaisse pas le midi en semaine mais que le midi en weekend il puisse sortir alors il ne faut pas mettre le poid du midi a 0 mais le poids 
+donc par exemple si on veux qu'un plat n'apparaisse pas le midi en semaine mais que le midi en weekend il puisse sortir alors il faut mettre le poid du midi en semaine a 0
+
+pour rajouter un produit dans sa table il suffit de faire un appel a la procedure ajouter_produit
+

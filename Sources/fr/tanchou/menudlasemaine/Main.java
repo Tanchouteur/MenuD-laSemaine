@@ -14,7 +14,7 @@ public class Main {
         //MenuService.printTableMenu(MenuService.buildMenu());
 
         for (int i = 0; i < 1; i++) {
-            System.out.println(AccompagnementGenerator.generateAccompagnement(MomentJournee.MIDI, MomentSemaine.SEMAINE));
+            System.out.println(AccompagnementGenerator.generateAccompagnement(MomentJournee.MIDI, MomentSemaine.WEEKEND));
         }
     }
 }

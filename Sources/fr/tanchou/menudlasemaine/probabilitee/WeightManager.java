@@ -26,6 +26,7 @@ public abstract class WeightManager {
         for (T item : items) {
             cumulativeWeight += weights.getOrDefault(item, 0);
             if (cumulativeWeight > randomWeight) {
+                System.out.println("Element sélectionné " + item+ " avec un poids de " + weights.getOrDefault(item, 0));
                 return item;
             }
         }
