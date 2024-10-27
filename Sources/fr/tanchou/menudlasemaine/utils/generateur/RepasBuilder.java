@@ -18,7 +18,7 @@ public class RepasBuilder {
         Entree entree;
 
         if (probaEntry > 70){
-            entree = EntreeFactory.getRandomEntree(momentJournee);
+            entree = EntreeFactory.getRandomEntree(momentJournee, momentSemaine);
         }else {
             entree = null;
         }
