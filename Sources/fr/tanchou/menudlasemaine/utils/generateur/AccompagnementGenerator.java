@@ -29,7 +29,6 @@ public class AccompagnementGenerator {
         // Calcul des poids
         LastUseWeightManager lastUseWeightManager = new LastUseWeightManager(new ProduitLastUseDAO());
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
-        PoidsMomentJourneeDAO poidsMomentJourneeDAO = new PoidsMomentJourneeDAO();
 
         // Calcul des poids pour les légumes
         Map<Legume, Integer> manuelLegumeWeights = manuelWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
