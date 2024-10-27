@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class MenuDAO {
-    public void insertMenu(Repas[][] repasParJour) {
+    public static void insertMenu(Repas[][] repasParJour) {
 
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
 
@@ -35,7 +35,7 @@ public class MenuDAO {
         }
     }
 
-    public void updateMenu(Repas[][] repasParJour) {
+    public static void updateMenu(Repas[][] repasParJour) {
         // SQL pour supprimer les anciens enregistrements
         String deleteSQL = "DELETE FROM Menu";
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
