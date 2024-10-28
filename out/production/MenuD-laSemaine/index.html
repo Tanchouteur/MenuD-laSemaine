@@ -9,7 +9,7 @@
 <div id="menuContainer">Chargement du menu...</div>
 
 <script>
-    fetch("http://localhost:8090/menu/getMenu")
+    fetch("http://192.168.1.59:8090/menu/getMenu")
         .then(response => response.text())
         .then(xmlText => {
             const parser = new DOMParser();
