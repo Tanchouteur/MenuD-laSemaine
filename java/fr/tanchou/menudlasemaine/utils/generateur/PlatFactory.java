@@ -13,7 +13,9 @@ public class PlatFactory {
         int probaPlatComplet = random.nextInt(100);
         Plat plat = null;
 
-        if (probaPlatComplet > 70){
+        int seuil = 50;
+
+        if (probaPlatComplet > seuil){
             plat = PlatCompletFactory.getRandomPlatComplet(momentJournee, momentSemaine, saison);
         }else {
             plat = PlatComposeFactory.getRandomPlatCompose(momentJournee, momentSemaine, saison);
