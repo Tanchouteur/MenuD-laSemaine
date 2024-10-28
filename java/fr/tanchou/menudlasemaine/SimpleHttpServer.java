@@ -37,7 +37,7 @@ public class SimpleHttpServer { // Renommé ici
         // Définir le contexte pour changer le menu
         server.createContext("/menu/changeMenu", new ChangeMenuHandler());
 
-        server.createContext("/menu", new IndexHtmlHandler());
+        //server.createContext("/menu", new IndexHtmlHandler());
 
         server.createContext("/", new NotFoundHandler());
 
