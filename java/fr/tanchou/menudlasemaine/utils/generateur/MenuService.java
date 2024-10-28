@@ -31,7 +31,7 @@ public class MenuService {
                 }
             }
         }
-
+        System.out.println("Menu généré avec succès");
         return new Menu(repasParJour);
     }
 

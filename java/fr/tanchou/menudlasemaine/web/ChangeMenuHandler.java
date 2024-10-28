@@ -14,7 +14,8 @@ public class ChangeMenuHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
             System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
-            // Logique pour changer le menu - Ici, tu pourrais appeler une méthode pour traiter le menu entrant
+
+            // Logique pour changer le menu
             String response = changeMenu();
 
             exchange.getResponseHeaders().set("Content-Type", "text/plain");
