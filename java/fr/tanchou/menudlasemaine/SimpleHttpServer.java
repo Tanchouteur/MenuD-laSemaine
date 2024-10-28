@@ -138,7 +138,7 @@ public class SimpleHttpServer { // Renommé ici
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if ("GET".equals(exchange.getRequestMethod())) {
-                // Spécifie le chemin de ton fichier HTML
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                 File file = new File("webapp/index.html");
 
                 if (file.exists()) {
