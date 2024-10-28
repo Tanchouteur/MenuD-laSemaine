@@ -71,12 +71,12 @@ public class AccompagnementGenerator {
             nouvelAccompagnement = new Accompagnement(selectedLegume, selectedFeculent);
         }
 
-        if (nouvelAccompagnement.getLegume() != null) {
+        /*if (nouvelAccompagnement.getLegume() != null) {
             ProduitLastUseDAO.updateLastUseDate(nouvelAccompagnement.getLegume().getLegumeNom());
         }
         if (nouvelAccompagnement.getFeculent() != null) {
             ProduitLastUseDAO.updateLastUseDate(nouvelAccompagnement.getFeculent().getFeculentNom());
-        }
+        }*/
 
         return nouvelAccompagnement;
     }

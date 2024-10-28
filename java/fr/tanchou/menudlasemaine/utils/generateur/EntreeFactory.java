@@ -41,9 +41,9 @@ public class EntreeFactory {
 
         Entree selectedEntree = WeightManager.selectBasedOnWeights(entrees, multipliedEntreeWeightsSaisons, random);
 
-        if (selectedEntree != null) {
+        /*if (selectedEntree != null) {
             ProduitLastUseDAO.updateLastUseDate(selectedEntree.getNomEntree()); // Assurez-vous d'avoir une méthode pour obtenir le nom
-        }
+        }*/
 
         return selectedEntree;
     }

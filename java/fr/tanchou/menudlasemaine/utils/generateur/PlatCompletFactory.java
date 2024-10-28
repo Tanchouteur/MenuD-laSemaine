@@ -49,9 +49,9 @@ public class PlatCompletFactory {
         PlatComplet selectedPlatComplet = WeightManager.selectBasedOnWeights(platsComplets, multipliedPlatCompletWeightsSaisons, random);
 
         // Mettre à jour la date de dernière utilisation pour le plat complet sélectionné
-        if (selectedPlatComplet != null) {
+        /*if (selectedPlatComplet != null) {
             ProduitLastUseDAO.updateLastUseDate(selectedPlatComplet.getNomPlat()); // Assurez-vous d'avoir une méthode pour obtenir le nom
-        }
+        }*/
 
         return selectedPlatComplet;
     }

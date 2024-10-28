@@ -42,9 +42,9 @@ public class ViandeFactory {
         Viande selectedViande = WeightManager.selectBasedOnWeights(viandes, multipliedViandeWeightsSaisons, random);
 
         // Mettre à jour la date de dernière utilisation pour la viande sélectionnée
-        if (selectedViande != null) {
+        /*if (selectedViande != null) {
             ProduitLastUseDAO.updateLastUseDate(selectedViande.getViandeNom()); // Assurez-vous d'avoir une méthode pour obtenir le nom
-        }
+        }*/
 
         return selectedViande;
     }
