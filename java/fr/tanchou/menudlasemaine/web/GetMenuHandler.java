@@ -22,14 +22,26 @@ public class GetMenuHandler implements HttpHandler {
             String response = getMenu();
 
             exchange.getResponseHeaders().set("Content-Type", "application/XML"); // Définit le type de contenu XML
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            byte[] responseBytes = response.getBytes(); // Convertit la réponse en octets
+            exchange.sendResponseHeaders(200, responseBytes.length); // Envoie les en-têtes avec le code et la taille de la réponse
+
+            try (OutputStream os = exchange.getResponseBody()) { // Utilise try-with-resources pour gérer le flux
+                System.out.println("Sending response");
+
+                // Envoi de la réponse en petits blocs
+                int blockSize = 1024; // Taille du bloc à envoyer
+                for (int i = 0; i < responseBytes.length; i += blockSize) {
+                    int length = Math.min(blockSize, responseBytes.length - i);
+                    os.write(responseBytes, i, length);
+                }
+
+                System.out.println("Response sent");
+            }
         } else {
             exchange.sendResponseHeaders(405, -1); // Méthode non autorisée si ce n'est pas GET
         }
     }
+
 
     public String getMenu() {
         StringBuilder xmlBuilder = new StringBuilder();
@@ -70,8 +82,9 @@ public class GetMenuHandler implements HttpHandler {
             }
 
             xmlBuilder.append("</menuSemaine>");
-
+            System.out.println("xml builder !");
         } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération du menu");
             e.printStackTrace();
         }
 
