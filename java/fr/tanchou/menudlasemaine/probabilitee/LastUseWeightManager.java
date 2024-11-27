@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
-import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
+import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseTempDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public class LastUseWeightManager extends WeightManager {
 
     @Override
     public <T> Map<T, Integer> calculateWeights(Class<T> produitClass, TypeProduit typeProduit) {
-        Map<T, LocalDate> lastUseDates = ProduitLastUseDAO.getLastUseDatesForType(produitClass, typeProduit);
+        Map<T, LocalDate> lastUseDates = ProduitLastUseTempDAO.getLastUseDatesForType(produitClass, typeProduit);
         Map<T, Integer> weights = new HashMap<>();
 
         for (Map.Entry<T, LocalDate> entry : lastUseDates.entrySet()) {

@@ -14,7 +14,7 @@ public class SimpleHttpServer {
 
     public static void main(String[] args) throws IOException {
 
-        HttpServer server = HttpServer.create(new InetSocketAddress("192.168.1.47", 8090), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8090), 0);
 
         // Définir le contexte pour obtenir le menu
         server.createContext("/menu/getMenu", new GetMenuHandler());

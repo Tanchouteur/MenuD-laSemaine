@@ -5,7 +5,6 @@ import fr.tanchou.menudlasemaine.dao.produit.FeculentDAO;
 import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsSaisonDAO;
-import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
@@ -17,7 +16,6 @@ import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
