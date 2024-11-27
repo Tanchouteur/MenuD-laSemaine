@@ -36,7 +36,7 @@ public abstract class WeightManager {
             // Si le poids cumulé dépasse le poids aléatoire, on retourne l'élément
             if (cumulativeWeight > randomWeight) {
                 Produits item = entry.getKey();
-                System.out.println("Element sélectionné : " + item + " avec un poids de " + itemWeight);
+                //System.out.println("Element sélectionné : " + item + " avec un poids de " + itemWeight);
 
                 item.setPoids(itemWeight); // Met à jour le poids si nécessaire
                 return item;

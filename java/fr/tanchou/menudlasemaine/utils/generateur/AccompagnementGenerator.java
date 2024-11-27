@@ -91,7 +91,7 @@ public class AccompagnementGenerator {
                     // Vérifier la compatibilité
                     if (!IncompatibilitesAccompagnementDAO.areIncompatible(legume.getNom(), feculent.getNom())) {
                         // Retourner le légume compatible
-                        System.out.println("Légume sélectionné : " + legume + " avec un poids de " + weight);
+                        //System.out.println("Légume sélectionné : " + legume + " avec un poids de " + weight);
                         return (Legume) legume;
                     }
                 }
