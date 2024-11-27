@@ -3,7 +3,6 @@ package fr.tanchou.menudlasemaine.web.products;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.tanchou.menudlasemaine.dao.produit.ProduitDAO;
-import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.Produits;
 
 import java.io.IOException;
