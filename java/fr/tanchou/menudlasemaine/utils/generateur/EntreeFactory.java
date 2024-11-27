@@ -30,7 +30,7 @@ public class EntreeFactory {
         Map<Produits, Integer> multipliedEntreeWeightsMoment = WeightManager.multiplyWeights(combinedEntreeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.ENTREE, momentJournee, momentSemaine));
         Map<Produits, Integer> multipliedEntreeWeightsSaisons = WeightManager.multiplyWeights(multipliedEntreeWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.ENTREE, saison));
 
-        Produits selectedEntree = WeightManager.selectBasedOnWeights(multipliedEntreeWeightsSaisons, random);
+        Produits selectedEntree = WeightManager.selectBasedOnWeights(multipliedEntreeWeightsSaisons, random, lastUseWeightManager.getDejaChoisis());
 
         return (Entree) selectedEntree;
     }

@@ -6,28 +6,35 @@ import fr.tanchou.menudlasemaine.models.produit.*;
 import java.util.*;
 
 public abstract class WeightManager {
-    private final LinkedList<String> dejaChoisis;
 
-    protected WeightManager() {
-        this.dejaChoisis = new LinkedList<>();
-    }
 
     // Calcule les poids pour tous les produits d'un type donné
     public abstract Map<Produits, Integer> calculateWeights(TypeProduit typeProduit);
 
     // Méthode statique pour sélectionner un élément basé sur des poids
-    public static Produits selectBasedOnWeights(Map<Produits, Integer> weights, Random random) {
-        int totalWeight = weights.values().stream().mapToInt(Integer::intValue).sum();
+    public static Produits selectBasedOnWeights(Map<Produits, Integer> weights, Random random, LinkedList<String> dejaChoisis) {
+
+        // Filtrer les produits pour mettre le poids à 0 s'ils ont déjà été choisis
+        Map<Produits, Integer> filteredWeights = new HashMap<>();
+        for (Map.Entry<Produits, Integer> entry : weights.entrySet()) {
+
+            Produits produit = entry.getKey();
+            int poids = dejaChoisis.contains(produit.getNom()) ? 0 : entry.getValue();
+            filteredWeights.put(produit, poids);
+
+        }
+
+        int totalWeight = filteredWeights.values().stream().mapToInt(Integer::intValue).sum();
 
         if (totalWeight <= 0) {
-            System.err.println("Total weight is zero or negative. No item can be selected. " + weights.keySet());
+            System.err.println("Total weight is zero or negative. No item can be selected. " + filteredWeights.keySet());
             return null;
         }
 
         int randomWeight = random.nextInt(totalWeight);
         int cumulativeWeight = 0;
 
-        for (Map.Entry<Produits, Integer> entry : weights.entrySet()) {
+        for (Map.Entry<Produits, Integer> entry : filteredWeights.entrySet()) {
             int itemWeight = entry.getValue();
 
             // On avance le poids cumulé
@@ -36,7 +43,9 @@ public abstract class WeightManager {
             // Si le poids cumulé dépasse le poids aléatoire, on retourne l'élément
             if (cumulativeWeight > randomWeight) {
                 Produits item = entry.getKey();
-                //System.out.println("Element sélectionné : " + item + " avec un poids de " + itemWeight);
+
+                // Ajout du produit à la liste des produits déjà choisis
+                //dejaChoisis.add(item.getNom());
 
                 item.setPoids(itemWeight); // Met à jour le poids si nécessaire
                 return item;
@@ -47,6 +56,8 @@ public abstract class WeightManager {
         System.err.println("Aucun élément sélectionné. Cumulative weight: " + cumulativeWeight);
         return null;
     }
+
+
 
 
 
@@ -90,15 +101,8 @@ public abstract class WeightManager {
         return multipliedWeights;
     }
 
-    private boolean isProduitDejaChoisi(Produits produit) {
-        String nomProduit = produit.getNom();
 
-        return dejaChoisis.contains(nomProduit);
-    }
 
-    // Méthodes pour ajouter les noms des produits déjà choisis
-    public void addProduit(String selectedproduitName) {
-        dejaChoisis.add(selectedproduitName);
-    }
+
 }
 

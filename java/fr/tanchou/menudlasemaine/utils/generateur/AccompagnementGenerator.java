@@ -46,7 +46,7 @@ public class AccompagnementGenerator {
         Map<Produits, Integer> multipliedFeculentWeightsSaisons = WeightManager.multiplyWeights(multipliedFeculentWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.FECULENT, saison));
 
         // Sélectionner le féculent
-        Feculent selectedFeculent = (Feculent) WeightManager.selectBasedOnWeights(multipliedFeculentWeightsSaisons, random);
+        Feculent selectedFeculent = (Feculent) WeightManager.selectBasedOnWeights(multipliedFeculentWeightsSaisons, random, lastUseWeightManager.getDejaChoisis());
 
         // Sélectionner le légume compatible avec le féculent sélectionné
         Legume selectedLegume = selectCompatibleLegume(selectedFeculent, multipliedLegumeWeightsSaisons, random);

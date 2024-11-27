@@ -22,7 +22,7 @@ public class RepasBuilder {
 
         if (probaEntry > 65){
             entree = EntreeFactory.getRandomEntree(momentJournee, momentSemaine, saison, lastUseWeightManager);
-            lastUseWeightManager.addProduit(entree.getNom());
+            //lastUseWeightManager.addProduit(entree.getNom());
         }else {
             entree = null;
         }
@@ -33,8 +33,8 @@ public class RepasBuilder {
             lastUseWeightManager.addProduit(platComplet.getNom());
 
         }else if (plat instanceof PlatCompose platCompose){
-            lastUseWeightManager.addProduit(platCompose.getViande().getNom());
-            lastUseWeightManager.addProduit(platCompose.getAccompagnement().getNomAccompagnement());
+            //lastUseWeightManager.addProduit(platCompose.getViande().getNom());
+            //lastUseWeightManager.addProduit(platCompose.getAccompagnement().getNomAccompagnement());
         }
 
         return new Repas(entree, plat, momentJournee);

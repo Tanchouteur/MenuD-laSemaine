@@ -35,7 +35,7 @@ public class PlatCompletFactory {
         Map<Produits, Integer> multipliedPlatCompletWeightsSaisons = WeightManager.multiplyWeights(multipliedPlatCompletWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.PLAT_COMPLET, saison));
 
         // Sélectionner le plat complet en fonction des poids
-        Produits selectedPlatComplet = WeightManager.selectBasedOnWeights(multipliedPlatCompletWeightsSaisons, random);
+        Produits selectedPlatComplet = WeightManager.selectBasedOnWeights(multipliedPlatCompletWeightsSaisons, random, lastUseWeightManager.getDejaChoisis());
 
         return (PlatComplet) selectedPlatComplet;
     }

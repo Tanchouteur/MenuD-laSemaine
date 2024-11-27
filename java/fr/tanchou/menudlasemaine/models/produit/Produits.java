@@ -35,7 +35,7 @@ public abstract class Produits {
 
     @Override
     public String toString() {
-        return nom + " - poids :" + poids;
+        return nom;
     }
 
     public String getNom(){

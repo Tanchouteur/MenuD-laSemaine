@@ -11,6 +11,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class LastUseWeightManager extends WeightManager {
+    private final LinkedList<String> dejaChoisis;
+
+    public LastUseWeightManager(){
+        this.dejaChoisis = new LinkedList<>();
+    }
 
     @Override
     public Map<Produits, Integer> calculateWeights(TypeProduit typeProduit) {
@@ -43,7 +48,20 @@ public class LastUseWeightManager extends WeightManager {
         return (int) Math.min(daysSinceLastUse - 3, Integer.MAX_VALUE); // Limiter pour éviter un poids trop élevé
     }
 
+    public boolean isProduitDejaChoisi(Produits produit) {
+        String nomProduit = produit.getNom();
 
+        return dejaChoisis.contains(nomProduit);
+    }
+
+    // Méthodes pour ajouter les noms des produits déjà choisis
+    public void addProduit(String selectedproduitName) {
+        dejaChoisis.add(selectedproduitName);
+    }
+
+    public LinkedList<String> getDejaChoisis(){
+        return dejaChoisis;
+    }
 }
 
 

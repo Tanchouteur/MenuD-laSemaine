@@ -31,7 +31,7 @@ public class ViandeFactory {
         Map<Produits, Integer> multipliedViandeWeightsSaisons = WeightManager.multiplyWeights(multipliedViandeWeightsMoment, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.VIANDE, momentJournee, momentSemaine));
 
         // Sélectionner la viande en fonction des poids
-        Produits selectedViande = WeightManager.selectBasedOnWeights(multipliedViandeWeightsSaisons, random);
+        Produits selectedViande = WeightManager.selectBasedOnWeights(multipliedViandeWeightsSaisons, random, lastUseWeightManager.getDejaChoisis());
 
         return (Viande) selectedViande;
     }
