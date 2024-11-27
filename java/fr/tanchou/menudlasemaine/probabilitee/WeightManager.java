@@ -18,7 +18,7 @@ public abstract class WeightManager {
         int totalWeight = weights.values().stream().mapToInt(Integer::intValue).sum();
 
         if (totalWeight <= 0) {
-            System.err.println("Total weight is zero or negative. No item can be selected.");
+            System.err.println("Total weight is zero or negative. No item can be selected. " + items);
             return null;
         }
 

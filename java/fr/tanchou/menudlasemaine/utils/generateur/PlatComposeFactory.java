@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class PlatComposeFactory {
-    public static PlatCompose getRandomPlatCompose(MomentJournee momentJournee, MomentSemaine momentSemaine, Saison saison) {
+    public static PlatCompose getRandomPlatCompose(MomentJournee momentJournee, MomentSemaine momentSemaine, Saison saison, LastUseWeightManager lastUseWeightManager) {
 
-        Viande selectedViande = ViandeFactory.getRandomViande(momentJournee, momentSemaine);
+        Viande selectedViande = ViandeFactory.getRandomViande(momentJournee, momentSemaine, lastUseWeightManager);
 
-        Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement(momentJournee, momentSemaine, saison);
+        Accompagnement randomAccompagnement = AccompagnementGenerator.generateAccompagnement(momentJournee, momentSemaine, saison, lastUseWeightManager);
 
         return new PlatCompose(selectedViande.getPoids() + randomAccompagnement.getPoids() ,selectedViande, randomAccompagnement);
     }

@@ -59,15 +59,20 @@ public class PlatCompletDAO {
     // Méthode pour récupérer tous les plats complets
     public static List<PlatComplet> getAllPlatsComplets() {
         List<PlatComplet> platsComplets = new ArrayList<>();
+
         String sql = "SELECT * FROM PlatComplet";
+
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
+
                 String name = rs.getString("nom_plat");
                 int poids = rs.getInt("poids");
                 LocalDate derniereUtilisation = getDerniereUtilisation(name);
+
                 platsComplets.add(new PlatComplet(name, poids, derniereUtilisation));
+
             }
 
         } catch (SQLException e) {

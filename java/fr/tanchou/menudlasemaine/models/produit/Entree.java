@@ -31,7 +31,7 @@ public class Entree implements Poidsable {
 
     @Override
     public String toString() {
-        return "" + nomEntree + " - poids :" + poids +" - dernière utilisation : " + lastUsed;
+        return "" + nomEntree + " - poids :" + poids;
     }
 
     public String getNomEntree() {
@@ -57,5 +57,9 @@ public class Entree implements Poidsable {
 
     public void setLastUsed(LocalDate lastUsed) {
         this.lastUsed = lastUsed;
+    }
+
+    public String getNom(){
+        return nomEntree;
     }
 }

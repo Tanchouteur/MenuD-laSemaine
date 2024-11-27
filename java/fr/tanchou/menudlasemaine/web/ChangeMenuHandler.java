@@ -34,6 +34,6 @@ public class ChangeMenuHandler implements HttpHandler {
         Menu newMenu = MenuService.buildMenu();
         MenuDAO.updateMenu(newMenu.getRepasParJour());
 
-        return "Menu a été changé avec succès";
+        return "succes";
     }
 }

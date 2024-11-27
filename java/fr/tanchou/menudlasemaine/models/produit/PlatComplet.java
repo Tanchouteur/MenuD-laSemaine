@@ -13,6 +13,7 @@ public class PlatComplet extends Plat{
 
     public PlatComplet(String nomPlat, int poids, LocalDate lastUsed) {
         super(poids, TypePlat.COMPLET);
+        this.poids = poids;
         this.nomPlat = nomPlat;
         this.lastUsed = lastUsed;
     }
@@ -48,7 +49,7 @@ public class PlatComplet extends Plat{
 
     @Override
     public int getPoids() {
-        return poids;
+        return this.poids;
     }
 
     @Override
@@ -62,5 +63,9 @@ public class PlatComplet extends Plat{
 
     public void setLastUsed(LocalDate lastUsed) {
         this.lastUsed = lastUsed;
+    }
+
+    public String getNom(){
+        return nomPlat;
     }
 }

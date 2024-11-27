@@ -7,15 +7,16 @@ public class Repas {
     private final Entree entree;
     private final Plat plat;
     private final MomentJournee momentJournee;
-    private final int poids;
+    private int poids;
 
     public Repas(Entree entree, Plat plat, MomentJournee momentJournee) {
         int poidsEntree = 0;
         if (entree != null) {
             poidsEntree = entree.getPoids();
         }
+        if (plat != null)
+            this.poids = poidsEntree + plat.getPoids();
 
-        this.poids = poidsEntree + plat.getPoids();
         this.entree = entree;
         this.plat = plat;
         this.momentJournee = momentJournee;

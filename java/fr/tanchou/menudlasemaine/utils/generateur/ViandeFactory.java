@@ -17,10 +17,9 @@ import java.util.Random;
 
 public class ViandeFactory {
 
-    public static Viande getRandomViande(MomentJournee momentJournee, MomentSemaine momentSemaine) {
+    public static Viande getRandomViande(MomentJournee momentJournee, MomentSemaine momentSemaine, LastUseWeightManager lastUseWeightManager) {
         Random random = new Random();
 
-        LastUseWeightManager lastUseWeightManager = new LastUseWeightManager();
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
 
         // Calcul des poids

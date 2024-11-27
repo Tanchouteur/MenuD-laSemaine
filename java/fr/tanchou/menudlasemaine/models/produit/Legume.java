@@ -58,4 +58,8 @@ public class Legume implements Poidsable {
     public void setLastUsed(LocalDate lastUsed) {
         this.lastUsed = lastUsed;
     }
+
+    public String getNom(){
+        return legumeNom;
+    }
 }

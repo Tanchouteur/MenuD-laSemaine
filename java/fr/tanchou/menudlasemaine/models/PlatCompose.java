@@ -2,6 +2,7 @@ package fr.tanchou.menudlasemaine.models;
 
 import fr.tanchou.menudlasemaine.enums.TypePlat;
 import fr.tanchou.menudlasemaine.models.produit.Viande;
+import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
 public class PlatCompose extends Plat {
     private Viande viande;
@@ -43,5 +44,10 @@ public class PlatCompose extends Plat {
                 ", viande=" + (viande != null ? viande.getViandeNom() : "Aucune") +
                 ", accompagnement=" + (accompagnement != null ? accompagnement.getNomAccompagnement() : "Aucun") +
                 '}';
+    }
+
+    @Override
+    public String getNom() {
+        return viande.getNom() + accompagnement.getNomAccompagnement();
     }
 }

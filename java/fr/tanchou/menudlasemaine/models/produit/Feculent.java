@@ -59,4 +59,8 @@ public class Feculent implements Poidsable {
     public void setLastUsed(LocalDate lastUsed) {
         this.lastUsed = lastUsed;
     }
+
+    public String getNom(){
+        return feculentNom;
+    }
 }

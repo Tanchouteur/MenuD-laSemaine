@@ -9,7 +9,7 @@ public class DatabaseConnection {
 
     static {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mariadb://129.151.251.156:3306/menudelasemaine");
+        config.setJdbcUrl("jdbc:mariadb://127.0.0.0:3306/menudelasemaine");
         config.setUsername("louis");
         config.setPassword("2112");
         config.setMaximumPoolSize(6);

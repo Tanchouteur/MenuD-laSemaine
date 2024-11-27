@@ -22,13 +22,12 @@ import java.util.Random;
 
 public class AccompagnementGenerator {
 
-    public static Accompagnement generateAccompagnement(MomentJournee momentJournee, MomentSemaine momentSemaine, Saison saison) {
+    public static Accompagnement generateAccompagnement(MomentJournee momentJournee, MomentSemaine momentSemaine, Saison saison, LastUseWeightManager lastUseWeightManager) {
         Random random = new Random();
 
         IncompatibilitesAccompagnementDAO incompatibilitesAccompagnementDAO = new IncompatibilitesAccompagnementDAO(); // DAO pour gérer les incompatibilités
 
         // Calcul des poids
-        LastUseWeightManager lastUseWeightManager = new LastUseWeightManager();
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
 
         // Calcul des poids pour les légumes
@@ -36,6 +35,7 @@ public class AccompagnementGenerator {
         Map<Legume, Integer> lastUseLegumeWeights = lastUseWeightManager.calculateWeights(Legume.class, TypeProduit.LEGUME);
         Map<Legume, Integer> combinedLegumeWeights = WeightManager.combineWeights(lastUseLegumeWeights, manuelLegumeWeights);
         Map<Legume, Integer> multipliedLegumeWeightsMoment = WeightManager.multiplyWeights(combinedLegumeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.LEGUME, momentJournee, momentSemaine));
+
         Map<Legume, Integer> multipliedLegumeWeightsSaisons = WeightManager.multiplyWeights(multipliedLegumeWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.LEGUME ,saison));
 
         // Calcul des poids pour les féculents
@@ -43,6 +43,7 @@ public class AccompagnementGenerator {
         Map<Feculent, Integer> lastUseFeculentWeights = lastUseWeightManager.calculateWeights(Feculent.class, TypeProduit.FECULENT);
         Map<Feculent, Integer> combinedFeculentWeights = WeightManager.combineWeights(lastUseFeculentWeights, manuelFeculentWeights);
         Map<Feculent, Integer> multipliedFeculentWeightsMoment = WeightManager.multiplyWeights(combinedFeculentWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.FECULENT, momentJournee, momentSemaine));
+
         Map<Feculent, Integer> multipliedFeculentWeightsSaisons = WeightManager.multiplyWeights(multipliedFeculentWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.FECULENT, saison));
 
         // liste de la bd
@@ -68,13 +69,6 @@ public class AccompagnementGenerator {
         } else {
             nouvelAccompagnement = new Accompagnement(selectedLegume, selectedFeculent);
         }
-
-        /*if (nouvelAccompagnement.getLegume() != null) {
-            ProduitLastUseDAO.updateLastUseDate(nouvelAccompagnement.getLegume().getLegumeNom());
-        }
-        if (nouvelAccompagnement.getFeculent() != null) {
-            ProduitLastUseDAO.updateLastUseDate(nouvelAccompagnement.getFeculent().getFeculentNom());
-        }*/
 
         return nouvelAccompagnement;
     }
