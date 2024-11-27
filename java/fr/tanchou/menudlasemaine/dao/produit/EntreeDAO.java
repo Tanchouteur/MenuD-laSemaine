@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.dao.produit;
 
 import fr.tanchou.menudlasemaine.models.produit.Entree;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
@@ -15,11 +16,11 @@ public class EntreeDAO {
         String sql = "INSERT INTO Entree (nom_entree, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, entree.getNomEntree());
+            pstmt.setString(1, entree.getNom());
             pstmt.setInt(2, entree.getPoids());
             pstmt.executeUpdate();
 
-            initialiserHistorique(entree.getNomEntree()); // Initialise la date d'utilisation pour cette entrée
+            initialiserHistorique(entree.getNom()); // Initialise la date d'utilisation pour cette entrée
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -46,8 +47,8 @@ public class EntreeDAO {
     }
 
     // Récupère toutes les entrées avec leurs poids et dates d'utilisation
-    public static List<Entree> getAllEntrees() {
-        List<Entree> entrees = new ArrayList<>();
+    public static List<Produits> getAllEntrees() {
+        List<Produits> entrees = new ArrayList<>();
         String sql = "SELECT * FROM Entree";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();

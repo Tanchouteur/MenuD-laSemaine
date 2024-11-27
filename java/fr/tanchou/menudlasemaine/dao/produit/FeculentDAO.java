@@ -3,6 +3,7 @@ package fr.tanchou.menudlasemaine.dao.produit;
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.Feculent;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
@@ -18,13 +19,13 @@ public class FeculentDAO {
         String sql = "INSERT INTO Feculent (nom_feculent, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, feculent.getFeculentNom());
+            pstmt.setString(1, feculent.getNom());
             pstmt.setInt(2, feculent.getPoids());
             pstmt.executeUpdate();
 
             // Récupérer l'ID généré et initialiser l'historique de la dernière utilisation
             if (pstmt.getGeneratedKeys().next()) {
-                initialiserHistorique(feculent.getFeculentNom(), "Feculent");
+                initialiserHistorique(feculent.getNom(), "Feculent");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,9 +39,9 @@ public class FeculentDAO {
     }
 
     // Méthode pour récupérer un féculent par son nom
-    public static Feculent getFeculentByName(String feculentName) {
+    public static Produits getFeculentByName(String feculentName) {
         String sql = "SELECT * FROM Feculent WHERE nom_feculent = ?";
-        Feculent feculent = null;
+        Produits feculent = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, feculentName);
@@ -57,8 +58,8 @@ public class FeculentDAO {
     }
 
     // Méthode pour récupérer tous les féculents
-    public static List<Feculent> getAllFeculents() {
-        List<Feculent> feculents = new ArrayList<>();
+    public static List<Produits> getAllFeculents() {
+        List<Produits> feculents = new ArrayList<>();
         String sql = "SELECT * FROM Feculent";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();

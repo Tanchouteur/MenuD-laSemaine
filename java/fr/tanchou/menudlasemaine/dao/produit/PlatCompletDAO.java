@@ -3,6 +3,7 @@ package fr.tanchou.menudlasemaine.dao.produit;
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
@@ -57,8 +58,8 @@ public class PlatCompletDAO {
     }
 
     // Méthode pour récupérer tous les plats complets
-    public static List<PlatComplet> getAllPlatsComplets() {
-        List<PlatComplet> platsComplets = new ArrayList<>();
+    public static List<Produits> getAllPlatsComplets() {
+        List<Produits> platsComplets = new ArrayList<>();
 
         String sql = "SELECT * FROM PlatComplet";
 

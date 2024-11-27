@@ -1,67 +1,54 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.models.Accompagnement;
 import fr.tanchou.menudlasemaine.models.produit.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public abstract class WeightManager {
+    private final LinkedList<String> dejaChoisis;
+
+    protected WeightManager() {
+        this.dejaChoisis = new LinkedList<>();
+    }
+
     // Calcule les poids pour tous les produits d'un type donné
-    public abstract <T> Map<T, Integer> calculateWeights(Class<T> produitClass, TypeProduit typeProduit);
+    public abstract Map<Produits, Integer> calculateWeights(TypeProduit typeProduit);
 
     // Méthode statique pour sélectionner un élément basé sur des poids
-    public static <T> T selectBasedOnWeights(List<T> items, Map<T, Integer> weights, Random random) {
+    public static Produits selectBasedOnWeights(Map<Produits, Integer> weights, Random random) {
         int totalWeight = weights.values().stream().mapToInt(Integer::intValue).sum();
 
         if (totalWeight <= 0) {
-            System.err.println("Total weight is zero or negative. No item can be selected. " + items);
+            System.err.println("Total weight is zero or negative. No item can be selected. " + weights.keySet());
             return null;
         }
 
         int randomWeight = random.nextInt(totalWeight);
         int cumulativeWeight = 0;
 
-        for (T item : items) {
-            cumulativeWeight += weights.getOrDefault(item, 0);
+        for (Map.Entry<Produits, Integer> entry : weights.entrySet()) {
+            int itemWeight = entry.getValue();
+
+            // On avance le poids cumulé
+            cumulativeWeight += itemWeight;
+
+            // Si le poids cumulé dépasse le poids aléatoire, on retourne l'élément
             if (cumulativeWeight > randomWeight) {
-                //System.out.println("Element sélectionné " + item+ " avec un poids de " + weights.getOrDefault(item, 0));
+                Produits item = entry.getKey();
+                System.out.println("Element sélectionné : " + item + " avec un poids de " + itemWeight);
 
-                switch (item.getClass().getSimpleName()) {
-                    case "Viande":
-                        Viande viandeSelected = (Viande) item;
-                        viandeSelected.setPoids(weights.getOrDefault(item, 0));
-                        return (T) viandeSelected;
-
-                    case "Legume":
-                        Legume legumeSelected = (Legume) item;
-                        legumeSelected.setPoids(weights.getOrDefault(item, 0));
-                        return (T) legumeSelected;
-
-                    case "Feculent":
-                        Feculent feculentSelected = (Feculent) item;
-                        feculentSelected.setPoids(weights.getOrDefault(item, 0));
-                        return (T) feculentSelected;
-
-                    case "PlatComplet":
-                        PlatComplet platCompletSelected = (PlatComplet) item;
-                        platCompletSelected.setPoids(weights.getOrDefault(item, 0));
-                        return (T) platCompletSelected;
-
-                    case "Entree":
-                        Entree entreeSelected = (Entree) item;
-                        entreeSelected.setPoids(weights.getOrDefault(item, 0));
-                        return (T) entreeSelected;
-                }
+                item.setPoids(itemWeight); // Met à jour le poids si nécessaire
+                return item;
             }
         }
 
-        System.err.println("Aucun élément sélectionné " + cumulativeWeight);
+        // Par sécurité, on retourne null si rien n'est trouvé
+        System.err.println("Aucun élément sélectionné. Cumulative weight: " + cumulativeWeight);
         return null;
     }
+
+
 
     // Méthode pour combiner les poids de deux sources
     public static <T> Map<T, Integer> combineWeights(Map<T, Integer> weights1, Map<T, Integer> weights2) {
@@ -101,6 +88,17 @@ public abstract class WeightManager {
         }
 
         return multipliedWeights;
+    }
+
+    private boolean isProduitDejaChoisi(Produits produit) {
+        String nomProduit = produit.getNom();
+
+        return dejaChoisis.contains(nomProduit);
+    }
+
+    // Méthodes pour ajouter les noms des produits déjà choisis
+    public void addProduit(String selectedproduitName) {
+        dejaChoisis.add(selectedproduitName);
     }
 }
 

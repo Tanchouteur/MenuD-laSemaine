@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.dao.produit;
 
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.models.produit.Viande;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
@@ -15,11 +16,11 @@ public class ViandeDAO {
         String sql = "INSERT INTO Viande (nom_viande, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, viande.getViandeNom());
+            pstmt.setString(1, viande.getNom());
             pstmt.setInt(2, viande.getPoids());
             pstmt.executeUpdate();
 
-            initialiserHistorique(viande.getViandeNom()); // Initialise la date d'utilisation pour cette viande
+            initialiserHistorique(viande.getNom()); // Initialise la date d'utilisation pour cette viande
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -45,8 +46,8 @@ public class ViandeDAO {
     }
 
     // Récupère toutes les viandes avec leurs poids et dates de dernière utilisation
-    public static List<Viande> getAllViandes() {
-        List<Viande> viandes = new ArrayList<>();
+    public static List<Produits> getAllViandes() {
+        List<Produits> viandes = new ArrayList<>();
         String sql = "SELECT * FROM Viande";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();

@@ -6,6 +6,7 @@ import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.models.produit.Viande;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
@@ -23,28 +24,15 @@ public class ViandeFactory {
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
 
         // Calcul des poids
-        Map<Viande, Integer> manuelViandeWeights = manuelWeightManager.calculateWeights(Viande.class, TypeProduit.VIANDE);
-        Map<Viande, Integer> lastUseViandeWeights = lastUseWeightManager.calculateWeights(Viande.class, TypeProduit.VIANDE);
-        Map<Viande, Integer> combienedViandeWeights = WeightManager.combineWeights(lastUseViandeWeights, manuelViandeWeights);
-        Map<Viande, Integer> multipliedViandeWeightsMoment = WeightManager.multiplyWeights(combienedViandeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.VIANDE, momentJournee, momentSemaine));
-        Map<Viande, Integer> multipliedViandeWeightsSaisons = WeightManager.multiplyWeights(multipliedViandeWeightsMoment, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.VIANDE, momentJournee, momentSemaine));
-
-        // Récupérer toutes les viandes
-        List<Viande> viandes = ViandeDAO.getAllViandes();
-
-        if (viandes.isEmpty()) {
-            System.out.println("Aucune viande trouvée");
-            return null;
-        }
+        Map<Produits, Integer> manuelViandeWeights = manuelWeightManager.calculateWeights(TypeProduit.VIANDE);
+        Map<Produits, Integer> lastUseViandeWeights = lastUseWeightManager.calculateWeights(TypeProduit.VIANDE);
+        Map<Produits, Integer> combienedViandeWeights = WeightManager.combineWeights(lastUseViandeWeights, manuelViandeWeights);
+        Map<Produits, Integer> multipliedViandeWeightsMoment = WeightManager.multiplyWeights(combienedViandeWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.VIANDE, momentJournee, momentSemaine));
+        Map<Produits, Integer> multipliedViandeWeightsSaisons = WeightManager.multiplyWeights(multipliedViandeWeightsMoment, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.VIANDE, momentJournee, momentSemaine));
 
         // Sélectionner la viande en fonction des poids
-        Viande selectedViande = WeightManager.selectBasedOnWeights(viandes, multipliedViandeWeightsSaisons, random);
+        Produits selectedViande = WeightManager.selectBasedOnWeights(multipliedViandeWeightsSaisons, random);
 
-        // Mettre à jour la date de dernière utilisation pour la viande sélectionnée
-        /*if (selectedViande != null) {
-            ProduitLastUseDAO.updateLastUseDate(selectedViande.getViandeNom()); // Assurez-vous d'avoir une méthode pour obtenir le nom
-        }*/
-
-        return selectedViande;
+        return (Viande) selectedViande;
     }
 }

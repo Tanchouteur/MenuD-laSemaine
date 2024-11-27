@@ -2,6 +2,7 @@ package fr.tanchou.menudlasemaine.probabilitee;
 
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 
 import java.util.Map;
 
@@ -15,9 +16,9 @@ public class SomeWeightManager {
         manuelWeightManager = new ManuelWeightManager();
     }
 
-    public <T> Map<T, Integer> calculateCombinedWeights(Class<T> produitClass, TypeProduit typeProduit) {
-        Map<T, Integer> lastUsedWeights = lastUsedWeightManager.calculateWeights(produitClass, typeProduit);
-        Map<T, Integer> manuelWeights = manuelWeightManager.calculateWeights(produitClass, typeProduit);
+    public Map<Produits, Integer> calculateCombinedWeights(TypeProduit typeProduit) {
+        Map<Produits, Integer> lastUsedWeights = lastUsedWeightManager.calculateWeights(typeProduit);
+        Map<Produits, Integer> manuelWeights = manuelWeightManager.calculateWeights(typeProduit);
 
         return WeightManager.combineWeights(lastUsedWeights, manuelWeights);
     }

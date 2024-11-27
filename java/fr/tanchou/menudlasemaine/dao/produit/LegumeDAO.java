@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.dao.produit;
 
 import fr.tanchou.menudlasemaine.models.produit.Legume;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;
@@ -15,20 +16,20 @@ public class LegumeDAO {
         String sql = "INSERT INTO Legume (nom_legume, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, legume.getLegumeNom());
+            pstmt.setString(1, legume.getNom());
             pstmt.setInt(2, legume.getPoids());
             pstmt.executeUpdate();
 
-            initialiserHistorique(legume.getLegumeNom()); // Initialise la date d'utilisation pour ce légume
+            initialiserHistorique(legume.getNom()); // Initialise la date d'utilisation pour ce légume
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     // Récupère un légume par son nom, incluant le poids et la dernière utilisation
-    public static Legume getLegumeByName(String nomLegume) {
+    public static Produits getLegumeByName(String nomLegume) {
         String sql = "SELECT * FROM Legume WHERE nom_legume = ?";
-        Legume legume = null;
+        Produits legume = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomLegume);
@@ -45,8 +46,8 @@ public class LegumeDAO {
     }
 
     // Récupère tous les légumes avec leurs poids et dates de dernière utilisation
-    public static List<Legume> getAllLegumes() {
-        List<Legume> legumes = new ArrayList<>();
+    public static List<Produits> getAllLegumes() {
+        List<Produits> legumes = new ArrayList<>();
         String sql = "SELECT * FROM Legume";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();

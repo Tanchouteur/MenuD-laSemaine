@@ -1,29 +1,20 @@
 package fr.tanchou.menudlasemaine.models;
 
 import fr.tanchou.menudlasemaine.enums.TypePlat;
+import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.Poidsable;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 
-public abstract class Plat implements Poidsable {
+import java.time.LocalDate;
+
+public abstract class Plat extends Produits {
     private final TypePlat typePlat; // Utilisation de l'enum
-    private int poids;
 
-    public Plat(int poids, TypePlat typePlat) {
-        this.poids = poids;
+    public Plat(String nom, int poids, LocalDate lastUsed, TypePlat typePlat) {
+        super(nom,poids,lastUsed, TypeProduit.PLAT_COMPLET);
         this.typePlat = typePlat;
     }
 
-    public TypePlat getTypePlat() {
-        return typePlat;
-    }
-
-    @Override
-    public int getPoids() {
-        return poids;
-    }
-
-    public void setPoids(int poids) {
-        this.poids = poids;
-    }
 
     public abstract String getNomPlat(); // Méthode abstraite pour obtenir le nom du plat
 
@@ -31,7 +22,7 @@ public abstract class Plat implements Poidsable {
     public String toString() {
         return "Plat{" +
                 ", typePlat=" + typePlat.getLabel() +
-                ", poids=" + poids +
+                ", poids=" + getPoids() +
                 '}';
     }
 }

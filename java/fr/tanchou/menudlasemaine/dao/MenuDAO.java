@@ -25,7 +25,7 @@ public class MenuDAO {
                 for (int j = 0; j < repasParJour[i].length; j++) {
                     pstmt.setString(1, joursSemaine[i]);
                     pstmt.setString(2, moments[j]); // ou "Soir" selon la position
-                    pstmt.setString(3, repasParJour[i][j].getEntree() != null ? repasParJour[i][j].getEntree().getNomEntree() : "Aucune");
+                    pstmt.setString(3, repasParJour[i][j].getEntree() != null ? repasParJour[i][j].getEntree().getNom() : "Aucune");
                     pstmt.setString(4, repasParJour[i][j].getPlat() != null ? repasParJour[i][j].getPlat().getNomPlat() : "Aucun");
                     pstmt.executeUpdate();
                 }
@@ -54,7 +54,7 @@ public class MenuDAO {
                 for (int j = 0; j < repasParJour[i].length; j++) {
                     insertPstmt.setString(1, joursSemaine[i]);
                     insertPstmt.setString(2, moments[j]); // "Midi" ou "Soir" selon la position
-                    insertPstmt.setString(3, repasParJour[i][j].getEntree() != null ? repasParJour[i][j].getEntree().getNomEntree() : "Aucune");
+                    insertPstmt.setString(3, repasParJour[i][j].getEntree() != null ? repasParJour[i][j].getEntree().getNom() : "Aucune");
                     insertPstmt.setString(4, repasParJour[i][j].getPlat() != null ? repasParJour[i][j].getPlat().getNomPlat() : "Aucun");
                     insertPstmt.executeUpdate();
                 }

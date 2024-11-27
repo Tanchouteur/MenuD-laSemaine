@@ -8,44 +8,45 @@ import fr.tanchou.menudlasemaine.dao.produit.EntreeDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ManuelWeightManager extends WeightManager {
 
+    public ManuelWeightManager() {
+        super();
+    }
+
     @Override
-    public <T> Map<T, Integer> calculateWeights(Class<T> produitClass, TypeProduit typeProduit) {
-        Map<T, Integer> weights = new HashMap<>();
+    public Map<Produits, Integer> calculateWeights(TypeProduit typeProduit) {
+        Map<Produits, Integer> weights = new HashMap<>();
 
         // Récupérer tous les produits du type spécifié
-        List<T> produits = getAllProduits(produitClass); // Récupération des produits
+        List<Produits> produits = getAllProduits(typeProduit); // Récupération des produits
 
-        for (T produit : produits) {
-            if (produit instanceof Poidsable) { // Vérifiez que le produit est Poidsable
-                int poids = ((Poidsable) produit).getPoids(); // Récupérer le poids de chaque produit
-                weights.put(produit, poids);
-            }
+        for (Produits produit : produits) {
+
+            int poids = produit.getPoids(); // Récupérer le poids de chaque produit
+            weights.put(produit, poids);
+
         }
 
         return weights;
     }
 
     // Méthode pour récupérer tous les produits en fonction de leur type
-    @SuppressWarnings("unchecked") // Éviter les avertissements de compilation pour le cast
-    private <T> List<T> getAllProduits(Class<T> produitClass) {
-        if (produitClass == Viande.class) {
-            return (List<T>) ViandeDAO.getAllViandes();
-        } else if (produitClass == Legume.class) {
-            return (List<T>) LegumeDAO.getAllLegumes();
-        } else if (produitClass == Feculent.class) {
-            return (List<T>) FeculentDAO.getAllFeculents();
-        } else if (produitClass == PlatComplet.class) {
-            return (List<T>) PlatCompletDAO.getAllPlatsComplets();
-        } else if (produitClass == Entree.class) {
-            return (List<T>) EntreeDAO.getAllEntrees();
+
+    private List<Produits> getAllProduits(TypeProduit typeProduit) {
+        if (typeProduit == TypeProduit.VIANDE) {
+            return ViandeDAO.getAllViandes();
+        } else if (typeProduit == TypeProduit.LEGUME) {
+            return LegumeDAO.getAllLegumes();
+        } else if (typeProduit == TypeProduit.FECULENT) {
+            return FeculentDAO.getAllFeculents();
+        } else if (typeProduit == TypeProduit.PLAT_COMPLET) {
+            return PlatCompletDAO.getAllPlatsComplets();
+        } else if (typeProduit == TypeProduit.ENTREE) {
+            return EntreeDAO.getAllEntrees();
         }
-        return new ArrayList<>(); // Retourner une liste vide si aucun type ne correspond
+        return new ArrayList<>();
     }
 }

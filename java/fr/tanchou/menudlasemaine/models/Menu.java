@@ -27,9 +27,9 @@ public class Menu {
                 sb.append((j == 0 ? "Midi : " : "Soir : "));
 
                 if (repas.getEntree() != null) {
-                    sb.append(repas.getEntree().getNomEntree()).append(" - ");
+                    sb.append(repas.getEntree().getNom()).append(" - ");
                 }
-                sb.append(repas.getPlat().getNomPlat()).append("\n");
+                sb.append(repas.getPlat().getNom()).append("\n");
             }
         }
 

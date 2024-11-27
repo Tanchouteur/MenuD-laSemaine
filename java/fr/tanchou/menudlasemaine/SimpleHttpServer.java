@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 import fr.tanchou.menudlasemaine.web.ChangeMenuHandler;
 import fr.tanchou.menudlasemaine.web.GetMenuHandler;
 import fr.tanchou.menudlasemaine.web.NotFoundHandler;
+import fr.tanchou.menudlasemaine.web.products.GetProductsHandler;
 
 import java.io.IOException;
 
@@ -21,6 +22,9 @@ public class SimpleHttpServer {
 
         // Définir le contexte pour changer le menu
         server.createContext("/menu/changeMenu", new ChangeMenuHandler());
+
+        // Définir le contexte pour recup les produits
+        server.createContext("/products", new GetProductsHandler());
 
         //server.createContext("/menu", new IndexHtmlHandler());
 

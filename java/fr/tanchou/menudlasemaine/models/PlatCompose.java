@@ -4,12 +4,19 @@ import fr.tanchou.menudlasemaine.enums.TypePlat;
 import fr.tanchou.menudlasemaine.models.produit.Viande;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
+import java.time.LocalDate;
+
 public class PlatCompose extends Plat {
     private Viande viande;
     private Accompagnement accompagnement;
 
     public PlatCompose(int poids, Viande viande, Accompagnement accompagnement) {
-        super(poids, TypePlat.COMPOSE);
+        String nom = viande.getNom();
+        if (accompagnement != null){
+            nom = nom + " " + accompagnement.getNomAccompagnement();
+        }
+        super(nom ,poids, viande.getLastUsed(),TypePlat.COMPOSE);
+
         this.viande = viande;
         this.accompagnement = accompagnement;
     }
@@ -32,7 +39,7 @@ public class PlatCompose extends Plat {
 
     @Override
     public String getNomPlat() {
-        return (viande != null ? viande.getViandeNom() : "") +
+        return (viande != null ? viande.getNom() : "") +
                 (accompagnement != null ? " + " + accompagnement.getNomAccompagnement() : "");
     }
 
@@ -41,7 +48,7 @@ public class PlatCompose extends Plat {
         return "PlatCompose{ " +
                 "nomPlat='" + getNomPlat() + '\'' +
                 " , poids=" + getPoids() +
-                ", viande=" + (viande != null ? viande.getViandeNom() : "Aucune") +
+                ", viande=" + (viande != null ? viande.getNom() : "Aucune") +
                 ", accompagnement=" + (accompagnement != null ? accompagnement.getNomAccompagnement() : "Aucun") +
                 '}';
     }

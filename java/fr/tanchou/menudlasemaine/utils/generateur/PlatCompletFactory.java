@@ -8,6 +8,7 @@ import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
+import fr.tanchou.menudlasemaine.models.produit.Produits;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
@@ -27,28 +28,16 @@ public class PlatCompletFactory {
         ManuelWeightManager manuelWeightManager = new ManuelWeightManager();
 
         // Calcul des poids pour les plats complets
-        Map<PlatComplet, Integer> lastUsePlatCompletWeights = lastUseWeightManager.calculateWeights(PlatComplet.class, TypeProduit.PLAT_COMPLET);
-        Map<PlatComplet, Integer> manuelPlatCompletWeights = manuelWeightManager.calculateWeights(PlatComplet.class, TypeProduit.PLAT_COMPLET);
-        Map<PlatComplet, Integer> combinedPlatCompletWeights = WeightManager.combineWeights(lastUsePlatCompletWeights, manuelPlatCompletWeights);
-        Map<PlatComplet, Integer> multipliedPlatCompletWeightsMoment = WeightManager.multiplyWeights(combinedPlatCompletWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.PLAT_COMPLET, momentJournee, momentSemaine));
-        Map<PlatComplet, Integer> multipliedPlatCompletWeightsSaisons = WeightManager.multiplyWeights(multipliedPlatCompletWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.PLAT_COMPLET, saison));
-
-        // Récupérer tous les plats complets
-        List<PlatComplet> platsComplets = PlatCompletDAO.getAllPlatsComplets();
-
-        if (platsComplets.isEmpty()) {
-            throw new IllegalStateException("La liste de plats complets est vide.");
-        }
+        Map<Produits, Integer> lastUsePlatCompletWeights = lastUseWeightManager.calculateWeights(TypeProduit.PLAT_COMPLET);
+        Map<Produits, Integer> manuelPlatCompletWeights = manuelWeightManager.calculateWeights(TypeProduit.PLAT_COMPLET);
+        Map<Produits, Integer> combinedPlatCompletWeights = WeightManager.combineWeights(lastUsePlatCompletWeights, manuelPlatCompletWeights);
+        Map<Produits, Integer> multipliedPlatCompletWeightsMoment = WeightManager.multiplyWeights(combinedPlatCompletWeights, PoidsMomentJourneeDAO.getAllWeightByTypeAndMoment(TypeProduit.PLAT_COMPLET, momentJournee, momentSemaine));
+        Map<Produits, Integer> multipliedPlatCompletWeightsSaisons = WeightManager.multiplyWeights(multipliedPlatCompletWeightsMoment, PoidsSaisonDAO.getAllWeightByTypeAndSeason(TypeProduit.PLAT_COMPLET, saison));
 
         // Sélectionner le plat complet en fonction des poids
-        PlatComplet selectedPlatComplet = WeightManager.selectBasedOnWeights(platsComplets, multipliedPlatCompletWeightsSaisons, random);
+        Produits selectedPlatComplet = WeightManager.selectBasedOnWeights(multipliedPlatCompletWeightsSaisons, random);
 
-        // Mettre à jour la date de dernière utilisation pour le plat complet sélectionné
-        /*if (selectedPlatComplet != null) {
-            ProduitLastUseDAO.updateLastUseDate(selectedPlatComplet.getNomPlat()); // Assurez-vous d'avoir une méthode pour obtenir le nom
-        }*/
-
-        return selectedPlatComplet;
+        return (PlatComplet) selectedPlatComplet;
     }
 }
 

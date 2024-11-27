@@ -1,6 +1,8 @@
 package fr.tanchou.menudlasemaine.dao.weight;
 
+import fr.tanchou.menudlasemaine.dao.produit.*;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
+import fr.tanchou.menudlasemaine.models.produit.*;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;
@@ -84,8 +86,8 @@ public class ProduitLastUseDAO {
     *
     * @return une Map contenant les noms des produits et leurs dates de dernière utilisation.
     */
-    public static  <T> Map<T, LocalDate> getLastUseDatesForType(Class<T> produitClass, TypeProduit typeProduit) {
-        Map<T, LocalDate> lastUseDates = new HashMap<>();
+    public static  Map<Produits, LocalDate> getLastUseDatesForType(TypeProduit typeProduit) {
+        Map<Produits, LocalDate> lastUseDates = new HashMap<>();
         String sql = "";
 
         // Préparer la requête SQL selon le type de produit
@@ -127,12 +129,27 @@ public class ProduitLastUseDAO {
                 int poids = rs.getInt("poids");
                 LocalDate lastUseDate = rs.getDate("date_last_use") != null ? rs.getDate("date_last_use").toLocalDate() : null;
 
-                // Crée une instance du produit avec son nom, poids et date de dernière utilisation
-                T produitInstance = produitClass.getConstructor(String.class, int.class, LocalDate.class)
-                        .newInstance(nomProduit, poids, lastUseDate);
-                lastUseDates.put(produitInstance, lastUseDate);
+                switch (typeProduit) {
+                    case VIANDE:
+                        lastUseDates.put(new Viande(nomProduit,poids,lastUseDate), lastUseDate);
+                        break;
+                    case FECULENT:
+                        lastUseDates.put(new Feculent(nomProduit,poids,lastUseDate), lastUseDate);
+                        break;
+                    case LEGUME:
+                        lastUseDates.put(new Legume(nomProduit,poids,lastUseDate), lastUseDate);
+                        break;
+                    case ENTREE:
+                        lastUseDates.put(new Entree(nomProduit,poids,lastUseDate), lastUseDate);
+                        break;
+                    case PLAT_COMPLET:
+                        lastUseDates.put(new PlatComplet(nomProduit,poids,lastUseDate), lastUseDate);
+                        break;
+                }
+
+
             }
-        } catch (SQLException | ReflectiveOperationException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

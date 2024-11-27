@@ -44,10 +44,10 @@ public class Accompagnement {
     public String getNomAccompagnement() {
         String nomAccompagnement = "";
         if (legume != null) {
-            nomAccompagnement += legume.getLegumeNom() + " ";
+            nomAccompagnement += legume.getNom() + " ";
         }
         if (feculent != null) {
-            nomAccompagnement += feculent.getFeculentNom();
+            nomAccompagnement += feculent.getNom();
         }
         return nomAccompagnement;
     }

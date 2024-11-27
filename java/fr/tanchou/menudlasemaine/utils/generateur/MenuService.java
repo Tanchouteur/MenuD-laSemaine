@@ -72,7 +72,7 @@ public class MenuService {
 
 
                 if (repas.getEntree() != null) {
-                    repasText += repas.getEntree().getNomEntree();
+                    repasText += repas.getEntree().getNom();
                 }else {
                     repasText += "pas d'entrée ";
                 }
