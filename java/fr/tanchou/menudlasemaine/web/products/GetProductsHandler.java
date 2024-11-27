@@ -4,8 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.tanchou.menudlasemaine.dao.produit.ProduitDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.models.produit.Entree;
-import fr.tanchou.menudlasemaine.models.produit.Poidsable;
 import fr.tanchou.menudlasemaine.models.produit.Produits;
 
 import java.io.IOException;
@@ -20,9 +18,12 @@ public class GetProductsHandler implements HttpHandler {
 
         // Extraire le type de produit de l'URL (par exemple : /products/entree)
         String productType = requestURI.split("/")[2];
-
+        System.out.println("productType : " + productType);
         // Récupérer les produits du type demandé
-        String response = getProductsByType(TypeProduit.valueOf(productType));
+
+        String response = getProductsByType(productType);
+
+
         System.out.println("response : " + response);
         // Définir le type de contenu comme JSON
         exchange.getResponseHeaders().set("Content-Type", "application/json"); // Changer XML en JSON
@@ -40,7 +41,7 @@ public class GetProductsHandler implements HttpHandler {
     }
 
 
-    private String getProductsByType(TypeProduit type) {
+    private String getProductsByType(String type) {
         // Récupérer la liste de produits du DAO
         List<?> produits = ProduitDAO.getAllProduitByType(type);
 
