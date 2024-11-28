@@ -26,8 +26,6 @@ public class ChangeRepasHandler implements HttpHandler {
             System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
             // // /menu/repas/change?jours=*&moment=*
 
-
-
             // Décomposition de la requete
             String query = exchange.getRequestURI().getQuery();
             Map<String, String> params = Arrays.stream(query.split("&"))
@@ -46,11 +44,21 @@ public class ChangeRepasHandler implements HttpHandler {
             // Logique pour changer un repas
             String response = changeRepas(jour, MomentJournee.valueOf(moment.toUpperCase()));
 
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*"); // Autorise toutes les origines
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, OPTIONS"); // Autorise les méthodes GET et OPTIONS
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type"); // Autorise les en-têtes nécessaires
+
             exchange.getResponseHeaders().set("Content-Type", "text/plain");
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
             os.close();
+        } else if ("OPTIONS".equals(exchange.getRequestMethod())) {
+            // Réponse pour les requêtes OPTIONS (pré-vol)
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, OPTIONS");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
+            exchange.sendResponseHeaders(204, -1); // Pas de contenu pour les OPTIONS
         } else {
             exchange.sendResponseHeaders(405, -1);
         }

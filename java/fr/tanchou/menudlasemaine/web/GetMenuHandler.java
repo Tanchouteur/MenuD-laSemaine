@@ -21,6 +21,7 @@ public class GetMenuHandler implements HttpHandler {
 
             String response = getMenu();
 
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Content-Type", "application/XML"); // Définit le type de contenu XML
             byte[] responseBytes = response.getBytes(); // Convertit la réponse en octets
             exchange.sendResponseHeaders(200, responseBytes.length); // Envoie les en-têtes avec le code et la taille de la réponse
