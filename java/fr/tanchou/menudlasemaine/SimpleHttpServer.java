@@ -3,6 +3,7 @@ package fr.tanchou.menudlasemaine;
 import com.sun.net.httpserver.HttpServer;
 
 import fr.tanchou.menudlasemaine.web.ChangeMenuHandler;
+import fr.tanchou.menudlasemaine.web.ChangeRepasHandler;
 import fr.tanchou.menudlasemaine.web.GetMenuHandler;
 import fr.tanchou.menudlasemaine.web.NotFoundHandler;
 import fr.tanchou.menudlasemaine.web.products.GetProductsHandler;
@@ -22,6 +23,9 @@ public class SimpleHttpServer {
 
         // Définir le contexte pour changer le menu
         server.createContext("/menu/changeMenu", new ChangeMenuHandler());
+
+        // Changement d'un repas
+        server.createContext("/menu/repas/change", new ChangeRepasHandler());
 
         // Définir le contexte pour recup les produits
         server.createContext("/products", new GetProductsHandler());

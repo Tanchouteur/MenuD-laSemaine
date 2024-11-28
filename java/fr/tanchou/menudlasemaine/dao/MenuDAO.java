@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.dao;
 import fr.tanchou.menudlasemaine.dao.produit.EntreeDAO;
+import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.models.Plat;
 import fr.tanchou.menudlasemaine.models.Repas;
 import fr.tanchou.menudlasemaine.models.produit.Entree;
@@ -65,7 +66,7 @@ public class MenuDAO {
     }
 
     //methode pour recuperer le menu
-    public static String getMenu() {
+    public static String getMenuAsString() {
         StringBuilder menuBuilder = new StringBuilder();
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
 
@@ -102,5 +103,34 @@ public class MenuDAO {
 
         return menuBuilder.toString();
     }
+
+    public static void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
+        // SQL pour mettre à jour un repas spécifique dans la base de données
+        String updateSQL = "UPDATE Menu SET entree = ?, plat = ? WHERE jour = ? AND moment = ?";
+
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement updatePstmt = conn.prepareStatement(updateSQL)) {
+
+            // Définir les paramètres de la requête SQL
+            updatePstmt.setString(1, repasToUpdate.getEntree() != null ? repasToUpdate.getEntree().getNom() : "Aucune");
+            updatePstmt.setString(2, repasToUpdate.getPlat() != null ? repasToUpdate.getPlat().getNomPlat() : "Aucun");
+            updatePstmt.setString(3, jour); // Le jour (ex : "Lundi")
+            updatePstmt.setString(4, moment.toString()); // Le moment ("midi" ou "soir")
+
+            // Exécuter la mise à jour
+            int rowsAffected = updatePstmt.executeUpdate();
+
+            // Afficher un message pour indiquer si la mise à jour a réussi
+            if (rowsAffected > 0) {
+                System.out.println("Le repas a été mis à jour avec succès pour " + jour + " - " + moment);
+            } else {
+                System.out.println("Aucun repas n'a été trouvé pour " + jour + " - " + moment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Erreur lors de la mise à jour du repas.");
+        }
+    }
+
 
 }
