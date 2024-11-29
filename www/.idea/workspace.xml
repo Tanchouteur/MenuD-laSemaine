@@ -4,31 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c968ccbd-4062-4acb-b81b-91cdf69e5ed6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/web/CorsFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/css/menu.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/css/products.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/css/theme.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../info/tableBD.md" beforeDir="false" afterPath="$PROJECT_DIR$/../info/tableBD.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../info/vueBD.md" beforeDir="false" afterPath="$PROJECT_DIR$/../info/vueBD.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/SimpleHttpsServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/SimpleHttpsServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/EntreeDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/EntreeDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/FeculentDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/FeculentDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/LegumeDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/LegumeDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/PlatCompletDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/PlatCompletDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/ProduitDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/ProduitDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/ViandeDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/produit/ViandeDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/weight/ProduitLastUseDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/weight/ProduitLastUseDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/web/products/GetProductsHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/web/products/GetProductsHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/decodeMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/decodeMenu.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/navBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/navBar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/produits/entrees.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/produits/products.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/produits/products.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/produits/entree.html" beforeDir="false" afterPath="$PROJECT_DIR$/produits/produits.html" afterDir="false" />
-    </list>
+    <list default="true" id="c968ccbd-4062-4acb-b81b-91cdf69e5ed6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -79,16 +55,16 @@
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" show_stripe_button="false" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.15161133" />
-      <window_info id="Commit" order="1" weight="0.25" />
+      <window_info active="true" id="Commit" order="1" visible="true" weight="0.15161133" />
       <window_info id="Welcome to GitHub Copilot" order="2" show_stripe_button="false" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
       <window_info anchor="bottom" id="TODO" show_stripe_button="false" />
       <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="0" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="0" visible="true" weight="0.34187663" />
       <window_info anchor="bottom" id="Problems" order="1" />
       <window_info anchor="bottom" id="Problems View" order="2" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="3" visible="true" weight="0.14291921" />
+      <window_info anchor="bottom" id="Terminal" order="3" weight="0.14291921" />
       <window_info anchor="bottom" id="Services" order="4" />
       <window_info anchor="bottom" id="Find" order="4" weight="0.32971328" />
       <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
@@ -117,12 +93,23 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1732909652642</updated>
-      <workItem from="1732909655244" duration="11580000" />
+      <workItem from="1732909655244" duration="11753000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

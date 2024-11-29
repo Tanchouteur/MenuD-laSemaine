@@ -144,7 +144,7 @@ function updateRepas(xmlDoc, jourName, moment) {
         if (momentDiv) {
             // Mettre à jour le contenu du moment
             momentDiv.innerHTML = `
-                        <div class="meal-time">${moment === "MIDI" ? "Midi" : "Soir"} : <button class="card-button" id="${jourName}SOIR" onclick="regenerateRepa('${jourName}', '${moment}')">Regénéré</button></div>
+                        <div class="meal-time">${moment === "MIDI" ? "Midi" : "Soir"} : <button class="card-button" id="${jourName}${moment}" onclick="regenerateRepa('${jourName}', '${moment}')">Regénéré</button></div>
                         <p><b>Entrée : </b>${entree}</p>
                         <p><b>Plat : </b>${plat}</p>
                     `;
