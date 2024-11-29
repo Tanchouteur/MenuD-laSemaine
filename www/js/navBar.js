@@ -4,9 +4,9 @@ function toggleDropdown() {
 }
 
 function goToHome() {
-    window.location.href = 'https://menu.tanchou.fr'; // Redirige vers l'accueil
+    window.location.href = 'https://menu.tanchou.fr';
 }
 
 function goToCategory(category) {
-    window.location.href = `/produits/${category}.html`; // Redirige vers la sous-catégorie
+    window.location.href = `/produits/produits.html?categorie=${category}`;
 }

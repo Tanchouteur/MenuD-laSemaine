@@ -45,16 +45,11 @@ public class PlatCompose extends Plat {
 
     @Override
     public String toString() {
-        return "PlatCompose{ " +
-                "nomPlat='" + getNomPlat() + '\'' +
-                " , poids=" + getPoids() +
-                ", viande=" + (viande != null ? viande.getNom() : "Aucune") +
-                ", accompagnement=" + (accompagnement != null ? accompagnement.getNomAccompagnement() : "Aucun") +
-                '}';
+        return getNom();
     }
 
     @Override
     public String getNom() {
-        return viande.getNom() + accompagnement.getNomAccompagnement();
+        return viande.getNom() + " " + accompagnement.getNomAccompagnement();
     }
 }

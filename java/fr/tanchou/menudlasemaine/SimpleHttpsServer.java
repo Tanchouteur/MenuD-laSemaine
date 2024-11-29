@@ -13,10 +13,7 @@ import javax.net.ssl.SSLEngine;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 
-import fr.tanchou.menudlasemaine.web.ChangeMenuHandler;
-import fr.tanchou.menudlasemaine.web.ChangeRepasHandler;
-import fr.tanchou.menudlasemaine.web.GetMenuHandler;
-import fr.tanchou.menudlasemaine.web.NotFoundHandler;
+import fr.tanchou.menudlasemaine.web.*;
 import fr.tanchou.menudlasemaine.web.products.GetProductsHandler;
 
 public class SimpleHttpsServer {
@@ -50,14 +47,16 @@ public class SimpleHttpsServer {
         });
 
         // Définir les contextes pour les différentes routes
-        server.createContext("/menu/getMenu", new GetMenuHandler());
-        server.createContext("/menu/changeMenu", new ChangeMenuHandler());
-        server.createContext("/menu/repas/change", new ChangeRepasHandler());
-        server.createContext("/products", new GetProductsHandler());
+        server.createContext("/menu/getMenu", new GetMenuHandler()).getFilters().add(new CorsFilter());
+        server.createContext("/menu/changeMenu", new ChangeMenuHandler()).getFilters().add(new CorsFilter());
+        server.createContext("/menu/repas/change", new ChangeRepasHandler()).getFilters().add(new CorsFilter());
+        server.createContext("/products", new GetProductsHandler()).getFilters().add(new CorsFilter());
         server.createContext("/", new NotFoundHandler());
 
         // Démarrer le serveur
         server.start();
         System.out.println("Serveur démarré en HTTPS sur le port 8090");
     }
+
+
 }

@@ -1,0 +1,69 @@
+/* Style général pour la liste */
+ul.entries-list {
+    list-style-type: none; /* Supprime les puces */
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Style pour chaque élément de la liste */
+.list-products {
+    display: flex;
+    flex-direction: column; /* Empile les contenus pour mobile */
+    background-color: #f9f9f9; /* Couleur de fond légère */
+    border: 1px solid #ddd; /* Bordure légère */
+    border-radius: 8px; /* Coins arrondis */
+    padding: 10px; /* Espacement intérieur */
+    margin-bottom: 10px; /* Espacement entre les éléments */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+    transition: background-color 0.3s, transform 0.2s; /* Animation au survol */
+}
+
+/* Texte pour le nom du produit */
+.list-products .product-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px; /* Espacement entre le nom et les détails */
+}
+
+/* Texte pour les détails */
+.list-products .product-details {
+    font-size: 14px;
+    color: #777;
+    line-height: 1.4; /* Espacement entre les lignes */
+}
+
+/* Effet au survol */
+.list-products:hover {
+    background-color: #f0f8ff; /* Change la couleur de fond */
+    transform: scale(1.02); /* Agrandit légèrement */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ombre subtile */
+}
+
+/* Style pour les écrans plus grands */
+@media (min-width: 600px) {
+    .list-products {
+        flex-direction: row; /* Aligne les contenus en ligne */
+        justify-content: space-between; /* Sépare le contenu */
+        align-items: center; /* Centre verticalement */
+        padding: 15px 20px; /* Plus d'espace pour desktop */
+    }
+
+    .list-products .product-name {
+        font-size: 18px; /* Texte légèrement plus grand */
+    }
+
+    .list-products .product-details {
+        font-size: 16px;
+        color: #555;
+    }
+}
+
+/* Réactivité pour tablettes */
+@media (min-width: 768px) {
+    ul.entries-list {
+        max-width: 600px; /* Limite la largeur de la liste */
+        margin: 0 auto; /* Centre la liste */
+    }
+}

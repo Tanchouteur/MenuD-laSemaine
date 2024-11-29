@@ -1,6 +1,5 @@
 package fr.tanchou.menudlasemaine.dao.weight;
 
-import fr.tanchou.menudlasemaine.dao.produit.*;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.models.produit.*;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
@@ -94,27 +93,27 @@ public class ProduitLastUseDAO {
         switch (typeProduit) {
             case VIANDE:
                 sql = "SELECT pl.nom_produit, v.poids, pl.date_last_use " +
-                        "FROM ProduitLastUse pl JOIN Viande v ON pl.nom_produit = v.nom_viande " +
+                        "FROM ProduitLastUse pl JOIN viande v ON pl.nom_produit = v.nom_viande " +
                         "WHERE pl.type_produit = ?";
                 break;
             case FECULENT:
                 sql = "SELECT pl.nom_produit, f.poids, pl.date_last_use " +
-                        "FROM ProduitLastUse pl JOIN Feculent f ON pl.nom_produit = f.nom_feculent " +
+                        "FROM ProduitLastUse pl JOIN feculent f ON pl.nom_produit = f.nom_feculent " +
                         "WHERE pl.type_produit = ?";
                 break;
             case LEGUME:
                 sql = "SELECT pl.nom_produit, l.poids, pl.date_last_use " +
-                        "FROM ProduitLastUse pl JOIN Legume l ON pl.nom_produit = l.nom_legume " +
+                        "FROM ProduitLastUse pl JOIN legume l ON pl.nom_produit = l.nom_legume " +
                         "WHERE pl.type_produit = ?";
                 break;
             case ENTREE:
                 sql = "SELECT pl.nom_produit, e.poids, pl.date_last_use " +
-                        "FROM ProduitLastUse pl JOIN Entree e ON pl.nom_produit = e.nom_entree " +
+                        "FROM ProduitLastUse pl JOIN entree e ON pl.nom_produit = e.nom_entree " +
                         "WHERE pl.type_produit = ?";
                 break;
             case PLAT_COMPLET:
                 sql = "SELECT pl.nom_produit, pc.poids, pl.date_last_use " +
-                        "FROM ProduitLastUse pl JOIN PlatComplet pc ON pl.nom_produit = pc.nom_plat " +
+                        "FROM ProduitLastUse pl JOIN plat_complet pc ON pl.nom_produit = pc.nom_plat_complet " +
                         "WHERE pl.type_produit = ?";
                 break;
         }

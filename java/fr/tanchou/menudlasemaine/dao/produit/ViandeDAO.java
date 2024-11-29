@@ -13,7 +13,7 @@ public class ViandeDAO {
 
     // Méthode pour ajouter une viande avec son nom et poids, et initialiser l'historique d'utilisation
     public void ajouterViande(Viande viande) {
-        String sql = "INSERT INTO Viande (nom_viande, poids) VALUES (?, ?)";
+        String sql = "INSERT INTO viande (nom_viande, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, viande.getNom());
@@ -28,7 +28,7 @@ public class ViandeDAO {
 
     // Récupère une viande par son nom, incluant le poids et la dernière utilisation
     public static Viande getViandeByName(String nomViande) {
-        String sql = "SELECT * FROM Viande WHERE nom_viande = ?";
+        String sql = "SELECT * FROM viande WHERE nom_viande = ?";
         Viande viande = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -48,7 +48,7 @@ public class ViandeDAO {
     // Récupère toutes les viandes avec leurs poids et dates de dernière utilisation
     public static List<Produits> getAllViandes() {
         List<Produits> viandes = new ArrayList<>();
-        String sql = "SELECT * FROM Viande";
+        String sql = "SELECT * FROM viande";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -66,7 +66,7 @@ public class ViandeDAO {
 
     // Supprime une viande par son nom
     public void deleteViande(String nomViande) {
-        String sql = "DELETE FROM Viande WHERE nom_viande = ?";
+        String sql = "DELETE FROM viande WHERE nom_viande = ?";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomViande);

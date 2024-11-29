@@ -13,7 +13,7 @@ public class LegumeDAO {
 
     // Ajoute un légume avec son nom et son poids, et initialise l'historique d'utilisation
     public static void ajouterLegume(Legume legume) {
-        String sql = "INSERT INTO Legume (nom_legume, poids) VALUES (?, ?)";
+        String sql = "INSERT INTO legume (nom_legume, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, legume.getNom());
@@ -28,7 +28,7 @@ public class LegumeDAO {
 
     // Récupère un légume par son nom, incluant le poids et la dernière utilisation
     public static Produits getLegumeByName(String nomLegume) {
-        String sql = "SELECT * FROM Legume WHERE nom_legume = ?";
+        String sql = "SELECT * FROM legume WHERE nom_legume = ?";
         Produits legume = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -48,7 +48,7 @@ public class LegumeDAO {
     // Récupère tous les légumes avec leurs poids et dates de dernière utilisation
     public static List<Produits> getAllLegumes() {
         List<Produits> legumes = new ArrayList<>();
-        String sql = "SELECT * FROM Legume";
+        String sql = "SELECT * FROM legume";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -66,7 +66,7 @@ public class LegumeDAO {
 
     // Supprime un légume par son nom
     public static void deleteLegume(String nomLegume) {
-        String sql = "DELETE FROM Legume WHERE nom_legume = ?";
+        String sql = "DELETE FROM legume WHERE nom_legume = ?";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nomLegume);

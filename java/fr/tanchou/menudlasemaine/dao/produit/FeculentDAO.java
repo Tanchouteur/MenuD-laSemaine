@@ -16,7 +16,7 @@ public class FeculentDAO {
 
     // Méthode pour ajouter un féculent et initialiser son historique dans ProduitLastUse
     public static void ajouterFeculent(Feculent feculent) {
-        String sql = "INSERT INTO Feculent (nom_feculent, poids) VALUES (?, ?)";
+        String sql = "INSERT INTO feculent (nom_feculent, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, feculent.getNom());
@@ -40,7 +40,7 @@ public class FeculentDAO {
 
     // Méthode pour récupérer un féculent par son nom
     public static Produits getFeculentByName(String feculentName) {
-        String sql = "SELECT * FROM Feculent WHERE nom_feculent = ?";
+        String sql = "SELECT * FROM feculent WHERE nom_feculent = ?";
         Produits feculent = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -60,7 +60,7 @@ public class FeculentDAO {
     // Méthode pour récupérer tous les féculents
     public static List<Produits> getAllFeculents() {
         List<Produits> feculents = new ArrayList<>();
-        String sql = "SELECT * FROM Feculent";
+        String sql = "SELECT * FROM feculent";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

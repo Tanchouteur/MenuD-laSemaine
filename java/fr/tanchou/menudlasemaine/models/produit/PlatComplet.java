@@ -12,10 +12,7 @@ public class PlatComplet extends Plat{
 
     @Override
     public String toString() {
-        return "PlatComplet{" +
-                ", poids=" + getPoids() +
-                ", nomPlat='" + getNom() + '\'' +
-                '}';
+        return getNom();
     }
 
     @Override

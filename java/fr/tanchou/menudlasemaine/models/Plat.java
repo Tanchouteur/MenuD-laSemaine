@@ -20,9 +20,6 @@ public abstract class Plat extends Produits {
 
     @Override
     public String toString() {
-        return "Plat{" +
-                ", typePlat=" + typePlat.getLabel() +
-                ", poids=" + getPoids() +
-                '}';
+        return getNomPlat();
     }
 }

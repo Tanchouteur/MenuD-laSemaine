@@ -22,7 +22,6 @@ public class GetProductsHandler implements HttpHandler {
 
         String response = getProductsByType(productType);
 
-
         System.out.println("response : " + response);
         // Définir le type de contenu comme JSON
         exchange.getResponseHeaders().set("Content-Type", "application/json"); // Changer XML en JSON
@@ -39,10 +38,9 @@ public class GetProductsHandler implements HttpHandler {
         os.close();
     }
 
-
     private String getProductsByType(String type) {
         // Récupérer la liste de produits du DAO
-        List<?> produits = ProduitDAO.getAllProduitByType(type);
+        List<Produits> produits = ProduitDAO.getAllProduitByType(type);
 
         // Utiliser un StringBuilder pour construire le JSON
         StringBuilder jsonBuilder = new StringBuilder();
@@ -50,25 +48,18 @@ public class GetProductsHandler implements HttpHandler {
         // Début du tableau JSON
         jsonBuilder.append("[");
 
-        // Parcours de la liste des produits
+        // Parcourir la liste des produits
         for (int i = 0; i < produits.size(); i++) {
-            Object produit = produits.get(i);
+            Produits produit = produits.get(i);
 
-            // Commencer un objet JSON pour chaque produit
-            jsonBuilder.append("{");
+            // Ajouter les propriétés du produit dans l'objet JSON
+            jsonBuilder.append("{")
+                    .append("\"nom\": \"").append(produit.getNom()).append("\", ")
+                    .append("\"poids\": \"").append(produit.getPoids()).append("\", ")
+                    .append("\"last_use\": \"").append(produit.getLastUsed()).append("\"")
+                    .append("}");
 
-            // Gérer les différents types de produits, ici un exemple pour "Entree"
-            if (produit instanceof Produits entree) {
-
-                jsonBuilder.append("\"nom_entree\": \"")
-                        .append(entree.getNom()).append("\", ")
-                        .append("\"poids\": ").append(entree.getPoids()).append("\"");
-            }
-
-            // Fin de l'objet JSON
-            jsonBuilder.append("}");
-
-            // Si ce n'est pas le dernier élément de la liste, ajouter une virgule
+            // Ajouter une virgule sauf pour le dernier élément
             if (i < produits.size() - 1) {
                 jsonBuilder.append(", ");
             }
@@ -79,4 +70,5 @@ public class GetProductsHandler implements HttpHandler {
 
         return jsonBuilder.toString();
     }
+
 }

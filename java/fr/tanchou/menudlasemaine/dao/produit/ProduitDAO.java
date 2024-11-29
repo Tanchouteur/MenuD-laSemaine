@@ -59,53 +59,52 @@ public class ProduitDAO {
         return poids;
     }
 
-    public static List<Produits> getAllProduitByType(String typeProduit){ //TypeProduit est un enum
+    public static List<Produits> getAllProduitByType(String typeProduit){
         List<Produits> produits = new ArrayList<>();
-        String query = "SELECT p.*, plu.last_used FROM " + typeProduit + " p " +
-                "LEFT JOIN ProduitLastUse plu ON p.nom_legume = plu.nom_produit " +
-                "WHERE plu.type_produit = ?"; // Assurez-vous que le nom de la colonne est correct
+        String query = "SELECT p.*, plu.date_last_use FROM " + typeProduit.toLowerCase() + " p " +
+                "LEFT JOIN ProduitLastUse plu ON p.nom_"+ typeProduit.toLowerCase() + " = plu.nom_produit " +
+                "WHERE plu.type_produit = '" + typeProduit.toLowerCase() +"'"; // Assurez-vous que le nom de la colonne est correct
 
         try (Connection connection = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, typeProduit.toLowerCase()); // Type de produit
 
             switch (typeProduit){
-                case "Legume":
+                case "legume":
                     try (ResultSet resultSet = statement.executeQuery()) {
                         while (resultSet.next()) {
-                            Produits produit = new Legume(resultSet.getString("nom_legume"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            Produits produit = new Legume(resultSet.getString("nom_legume"), resultSet.getInt("poids"), resultSet.getDate("date_last_use").toLocalDate());
                             produits.add(produit);
                         }
                     }
                     break;
-                case "VIANDE":
+                case "viande":
                     try (ResultSet resultSet = statement.executeQuery()) {
                         while (resultSet.next()) {
-                            Produits produit = new Viande(resultSet.getString("nom_viande"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            Produits produit = new Viande(resultSet.getString("nom_viande"), resultSet.getInt("poids"), resultSet.getDate("date_last_use").toLocalDate());
                             produits.add(produit);
                         }
                     }
                     break;
-                case "FECULENT":
+                case "feculent":
                     try (ResultSet resultSet = statement.executeQuery()) {
                         while (resultSet.next()) {
-                            Produits produit = new Feculent(resultSet.getString("nom_feculent"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            Produits produit = new Feculent(resultSet.getString("nom_feculent"), resultSet.getInt("poids"), resultSet.getDate("date_last_use").toLocalDate());
                             produits.add(produit);
                         }
                     }
                     break;
-                case "PLAT_COMPLET":
+                case "plat_complet":
                     try (ResultSet resultSet = statement.executeQuery()) {
                         while (resultSet.next()) {
-                            Produits produit = new PlatComplet(resultSet.getString("nom_plat_complet"), resultSet.getInt("poids"), resultSet.getDate("last_used").toLocalDate());
+                            Produits produit = new PlatComplet(resultSet.getString("nom_plat_complet"), resultSet.getInt("poids"), resultSet.getDate("date_last_use").toLocalDate());
                             produits.add(produit);
                         }
                     }
                     break;
-                case "Entree":
+                case "entree":
                     try (ResultSet resultSet = statement.executeQuery()) {
                         while (resultSet.next()) {
-                            Produits produit = new Entree(resultSet.getString("nom_entree"), resultSet.getInt("poids"), LocalDate.now());
+                            Produits produit = new Entree(resultSet.getString("nom_entree"), resultSet.getInt("poids"), resultSet.getDate("date_last_use").toLocalDate());
                             produits.add(produit);
                         }
                     }

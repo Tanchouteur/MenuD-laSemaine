@@ -24,7 +24,7 @@ public class ChangeRepasHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
             System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
-            // // /menu/repas/change?jours=*&moment=*
+            // /menu/repas/change?jours=*&moment=*
 
             // Décomposition de la requete
             String query = exchange.getRequestURI().getQuery();
@@ -44,15 +44,19 @@ public class ChangeRepasHandler implements HttpHandler {
             // Logique pour changer un repas
             String response = changeRepas(jour, MomentJournee.valueOf(moment.toUpperCase()));
 
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*"); // Autorise toutes les origines
-            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, OPTIONS"); // Autorise les méthodes GET et OPTIONS
-            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type"); // Autorise les en-têtes nécessaires
+            // Définition du type de contenu (utilisez "application/xml" si la réponse est en XML)
+            exchange.getResponseHeaders().set("Content-Type", "application/xml");
 
-            exchange.getResponseHeaders().set("Content-Type", "text/plain");
-            exchange.sendResponseHeaders(200, response.length());
+            // Calcul de la longueur de la réponse pour la réponse HTTP
+            byte[] responseBytes = response.getBytes();
+            exchange.sendResponseHeaders(200, responseBytes.length);
+
+            // Envoi de la réponse
             OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
+            os.write(responseBytes);
             os.close();
+            //System.out.println("Response : " + response);
+
         } else if ("OPTIONS".equals(exchange.getRequestMethod())) {
             // Réponse pour les requêtes OPTIONS (pré-vol)
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
@@ -70,7 +74,21 @@ public class ChangeRepasHandler implements HttpHandler {
         Repas repas = RepasBuilder.buildRepa(moment, getMomentSemaine(jour), Saison.getSaisonByMois(LocalDate.EPOCH.getMonthValue()), new LastUseWeightManager());
         MenuDAO.updateRepas(repas, jour, moment);
 
-        return "succes";
+        StringBuilder xmlBuilder = new StringBuilder();
+
+        xmlBuilder.append("<jour nom=\"").append(jour).append("\">");
+
+        // Ajouter les éléments moment, entree, et plat
+        xmlBuilder.append("<").append(moment).append(">")
+                .append("<entree>").append(repas.getEntree() != null ? repas.getEntree() : "").append("</entree>")
+                .append("<plat>").append(repas.getPlat().toString()).append("</plat>")
+                .append("</").append(moment).append(">");
+
+
+        xmlBuilder.append("</jour>");
+
+
+        return xmlBuilder.toString();
     }
 
     private MomentSemaine getMomentSemaine(String jours) {

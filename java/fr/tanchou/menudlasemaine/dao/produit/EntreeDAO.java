@@ -13,7 +13,7 @@ public class EntreeDAO {
 
     // Ajoute une nouvelle entrée avec son nom et poids, et initialise l'historique d'utilisation
     public void ajouterEntree(Entree entree) {
-        String sql = "INSERT INTO Entree (nom_entree, poids) VALUES (?, ?)";
+        String sql = "INSERT INTO entree (nom_entree, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, entree.getNom());
@@ -28,7 +28,7 @@ public class EntreeDAO {
 
     // Récupère une entrée par son nom avec son poids et dernière utilisation
     public static Entree getEntreeByName(String entreeName) {
-        String sql = "SELECT * FROM Entree WHERE nom_entree = ?";
+        String sql = "SELECT * FROM entree WHERE nom_entree = ?";
         Entree entree = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -49,7 +49,7 @@ public class EntreeDAO {
     // Récupère toutes les entrées avec leurs poids et dates d'utilisation
     public static List<Produits> getAllEntrees() {
         List<Produits> entrees = new ArrayList<>();
-        String sql = "SELECT * FROM Entree";
+        String sql = "SELECT * FROM entree";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -67,7 +67,7 @@ public class EntreeDAO {
 
     // Supprime une entrée par son nom
     public void deleteEntree(String entreeName) {
-        String sql = "DELETE FROM Entree WHERE nom_entree = ?";
+        String sql = "DELETE FROM entree WHERE nom_entree = ?";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, entreeName);

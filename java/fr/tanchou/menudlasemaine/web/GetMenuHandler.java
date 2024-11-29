@@ -27,7 +27,7 @@ public class GetMenuHandler implements HttpHandler {
             exchange.sendResponseHeaders(200, responseBytes.length); // Envoie les en-têtes avec le code et la taille de la réponse
 
             try (OutputStream os = exchange.getResponseBody()) { // Utilise try-with-resources pour gérer le flux
-                System.out.println("Sending response");
+                //System.out.println("Sending response");
 
                 // Envoi de la réponse en petits blocs
                 int blockSize = 1024; // Taille du bloc à envoyer
@@ -36,7 +36,7 @@ public class GetMenuHandler implements HttpHandler {
                     os.write(responseBytes, i, length);
                 }
 
-                System.out.println("Response sent");
+                //System.out.println("Response sent");
             }
         } else {
             exchange.sendResponseHeaders(405, -1); // Méthode non autorisée si ce n'est pas GET

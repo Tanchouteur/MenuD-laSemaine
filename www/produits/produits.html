@@ -2,15 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Entrée</title>
+    <title>Produits</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/navBar.css">
+    <link rel="stylesheet" href="/css/products.css">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
 </head>
+
 <body>
 <nav class="navbar">
     <div class="navbar-item">
@@ -23,33 +25,34 @@
             <button class="dropdown-item" onclick="goToCategory('legume')">Légumes</button>
             <button class="dropdown-item" onclick="goToCategory('feculent')">Féculents</button>
             <button class="dropdown-item" onclick="goToCategory('viande')">Viandes</button>
-            <button class="dropdown-item" onclick="goToCategory('plat-complet')">Plats complets</button>
+            <button class="dropdown-item" onclick="goToCategory('plat_complet')">Plats complets</button>
         </div>
     </div>
 </nav>
 
 <header style="display: flex; flex-direction: column; align-content: center">
-    <h1>Entrées</h1>
+    <h1 id="title"></h1>
 </header>
 
-<!-- Formulaire pour ajouter une entrée -->
+
 <section id="add-entry" style="margin: 20px; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
-    <h2>Ajouter une entrée</h2>
+    <h2 id="addEntryTitle"></h2>
     <form id="entryForm">
-        <label for="entryName">Nom de l'entrée :</label>
+        <label for="entryName">Nom :</label>
         <input type="text" id="entryName" name="entryName" required>
-        <button type="button" onclick="addEntry()">Ajouter</button>
+        <button class="nav-button" type="button" id="addEntryButton">Ajouter</button>
     </form>
 </section>
 
 <!-- Liste des entrées -->
 <section id="entry-list" style="margin: 20px; padding: 20px; background-color: #ffffff; border-radius: 8px;">
-    <h2>Liste des entrées</h2>
-    <ul id="entries">
+    <h2>Liste des produits</h2>
+    <ul id="productsList">
         <!-- Les entrées s'afficheront ici -->
     </ul>
 </section>
 
+
 <script src="/js/navBar.js"></script>
-<script src="/js/entrees.js"></script>
+<script src="/js/produits/products.js"></script>
 </body>

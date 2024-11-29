@@ -39,7 +39,7 @@ CREATE TABLE Repas (
                        repas_id INT AUTO_INCREMENT PRIMARY KEY,
                        entree_id INT,
                        plat_id INT,
-                       FOREIGN KEY (entree_id) REFERENCES Entree(entree_id),
+                       FOREIGN KEY (entree_id) REFERENCES entree(entree_id),
                        FOREIGN KEY (plat_id) REFERENCES Plat(plat_id)
 );
 
@@ -62,7 +62,7 @@ CREATE TABLE PlatCompose (
                              viande_id INT,
                              accompagnement_id INT,
                              FOREIGN KEY (plat_id) REFERENCES Plat(plat_id), -- FK vers la table Plat
-                             FOREIGN KEY (viande_id) REFERENCES Viande(viande_id),
+                             FOREIGN KEY (viande_id) REFERENCES viande(viande_id),
                              FOREIGN KEY (accompagnement_id) REFERENCES Accompagnement(accompagnement_id)
 );
 
@@ -84,8 +84,8 @@ CREATE TABLE Accompagnement (
                                 accompagnement_id INT AUTO_INCREMENT PRIMARY KEY,
                                 legume_id INT,
                                 feculent_id INT,
-                                FOREIGN KEY (legume_id) REFERENCES Legume(legume_id),
-                                FOREIGN KEY (feculent_id) REFERENCES Feculent(feculent_id)
+                                FOREIGN KEY (legume_id) REFERENCES legume(legume_id),
+                                FOREIGN KEY (feculent_id) REFERENCES feculent(feculent_id)
 );
 
 -- Table Legume
@@ -142,9 +142,9 @@ CREATE TABLE Incompatibilite (
                                  viande_id INT, -- Peut être NULL si l'incompatibilité concerne uniquement des accompagnements
                                  legume_id INT, -- Peut être NULL si l'incompatibilité concerne uniquement la viande
                                  feculent_id INT, -- Peut être NULL si l'incompatibilité ne concerne pas de féculent
-                                 FOREIGN KEY (viande_id) REFERENCES Viande(viande_id),
-                                 FOREIGN KEY (legume_id) REFERENCES Legume(legume_id),
-                                 FOREIGN KEY (feculent_id) REFERENCES Feculent(feculent_id)
+                                 FOREIGN KEY (viande_id) REFERENCES viande(viande_id),
+                                 FOREIGN KEY (legume_id) REFERENCES legume(legume_id),
+                                 FOREIGN KEY (feculent_id) REFERENCES feculent(feculent_id)
 );
 
 ```
@@ -152,15 +152,15 @@ CREATE TABLE Incompatibilite (
 ## SQL exemple d'insertion de données
 ```sql
 INSERT INTO Incompatibilite (viande_id, feculent_id) 
-VALUES ((SELECT viande_id FROM Viande WHERE nom_viande = 'poisson'), 
-        (SELECT feculent_id FROM Feculent WHERE nom_feculent = 'frites'));
+VALUES ((SELECT viande_id FROM viande WHERE nom_viande = 'poisson'), 
+        (SELECT feculent_id FROM feculent WHERE nom_feculent = 'frites'));
 
 INSERT INTO Incompatibilite (legume_id, feculent_id)
-VALUES ((SELECT legume_id FROM Legume WHERE nom_legume = 'brocoli'),
-        (SELECT feculent_id FROM Feculent WHERE nom_feculent = 'riz'));
+VALUES ((SELECT legume_id FROM legume WHERE nom_legume = 'brocoli'),
+        (SELECT feculent_id FROM feculent WHERE nom_feculent = 'riz'));
 
 INSERT INTO Incompatibilite (viande_id, legume_id)
-VALUES ((SELECT viande_id FROM Viande WHERE nom_viande = 'poulet'),
-        (SELECT legume_id FROM Legume WHERE nom_legume = 'tomate'));
+VALUES ((SELECT viande_id FROM viande WHERE nom_viande = 'poulet'),
+        (SELECT legume_id FROM legume WHERE nom_legume = 'tomate'));
 
 ```

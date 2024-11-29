@@ -1,0 +1,33 @@
+/* Conteneur principal */
+.menu-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing);
+    max-width: 100%;
+    padding: var(--spacing);
+}
+
+/* Cards */
+.card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: calc(var(--spacing) * 1.5);
+    margin: var(--spacing);
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.card h2 {
+    color: var(--secondary-color);
+    font-size: 1.3em;
+}
+
+/* Mobile-first */
+@media (min-width: 768px) {
+    .card {
+        width: 250px;
+    }
+}

@@ -16,7 +16,7 @@ public class PlatCompletDAO {
 
     // Méthode pour ajouter un plat complet avec la gestion du poids et de la dernière utilisation
     public void ajouterPlatComplet(PlatComplet platComplet) {
-        String sql = "INSERT INTO PlatComplet (nom_plat, poids) VALUES (?, ?)";
+        String sql = "INSERT INTO plat_complet (nom_plat_complet, poids) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, platComplet.getNomPlat());
@@ -40,7 +40,7 @@ public class PlatCompletDAO {
 
     // Méthode pour récupérer un plat complet par son nom
     public static PlatComplet getPlatCompletByName(String platCompletName) {
-        String sql = "SELECT * FROM PlatComplet WHERE nom_plat = ?";
+        String sql = "SELECT * FROM plat_complet WHERE nom_plat_complet = ?";
         PlatComplet platComplet = null;
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -61,14 +61,14 @@ public class PlatCompletDAO {
     public static List<Produits> getAllPlatsComplets() {
         List<Produits> platsComplets = new ArrayList<>();
 
-        String sql = "SELECT * FROM PlatComplet";
+        String sql = "SELECT * FROM plat_complet";
 
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
 
-                String name = rs.getString("nom_plat");
+                String name = rs.getString("nom_plat_complet");
                 int poids = rs.getInt("poids");
                 LocalDate derniereUtilisation = getDerniereUtilisation(name);
 
