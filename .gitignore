@@ -40,6 +40,5 @@ replay_pid*
 /out/production/MenuD-laSemaine/simplelogger.properties
 /out/production/MenuD-laSemaine/styles.css
 /.attach_pid874363
-/certificates/_.tanchou.fr_private_key.pem
-/certificates/_.tanchou.fr_ssl_fullchain.cer
+
 /certificates/keystore.p12
