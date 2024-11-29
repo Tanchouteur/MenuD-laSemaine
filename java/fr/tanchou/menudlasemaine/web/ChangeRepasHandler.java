@@ -23,7 +23,7 @@ public class ChangeRepasHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
-            System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
+            //System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
             // /menu/repas/change?jours=*&moment=*
 
             // Décomposition de la requete

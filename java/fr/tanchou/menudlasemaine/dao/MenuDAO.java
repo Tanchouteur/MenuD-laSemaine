@@ -122,7 +122,7 @@ public class MenuDAO {
 
             // Afficher un message pour indiquer si la mise à jour a réussi
             if (rowsAffected > 0) {
-                System.out.println("Le repas a été mis à jour avec succès pour " + jour + " - " + moment);
+                //System.out.println("Le repas a été mis à jour avec succès pour " + jour + " - " + moment);
             } else {
                 System.out.println("Aucun repas n'a été trouvé pour " + jour + " - " + moment);
             }
