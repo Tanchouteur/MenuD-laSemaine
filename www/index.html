@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu de la Semaine</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/navBar.css">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-item"> 
+        <button class="nav-button" onclick="goToHome()">Accueil</button>
+    </div>
+    <div class="navbar-item dropdown">
+        <button class="nav-button" onclick="toggleDropdown()">Produits</button>
+        <div class="dropdown-menu">
+
+            <button class="dropdown-item" onclick="goToCategory('entree')">Entrées</button>
+            <button class="dropdown-item" onclick="goToCategory('legume')">Légumes</button>
+            <button class="dropdown-item" onclick="goToCategory('feculent')">Féculents</button>
+            <button class="dropdown-item" onclick="goToCategory('viande')">Viandes</button>
+            <button class="dropdown-item" onclick="goToCategory('plat-complet')">Plats complets</button>
+
+        </div>
+    </div>
+</nav>
+
+
+<header style="display: flex; flex-direction: column; align-content: center">
+    <h1>Menu de la Semaine</h1>
+    <div id="errContainer" class=""></div>
+</header>
+
+<div id="menuContainer" class="menu-container">Chargement du menu...</div>
+
+<script src="js/decodeMenu.js"></script>
+<script src="js/navBar.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+/* Navbar de base */
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Boutons principaux */
+.navbar-item .nav-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 1em;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-item .nav-button:hover {
+    background-color: #2980b9;
+}
+
+/* Dropdown menu */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.dropdown-item {
+    padding: 10px;
+    text-align: left;
+    background-color: #f4f4f9;
+    border-bottom: 1px solid #ececec;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #dfe6e9;
+}
+
+/* Affichage du menu déroulant */
+.dropdown-menu.show {
+    display: flex;
+}

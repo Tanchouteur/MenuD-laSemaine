@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrée</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/navBar.css">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-item">
+        <button class="nav-button" onclick="goToHome()">Accueil</button>
+    </div>
+    <div class="navbar-item dropdown">
+        <button class="nav-button" onclick="toggleDropdown()">Produits</button>
+        <div class="dropdown-menu">
+            <button class="dropdown-item" onclick="goToCategory('entree')">Entrées</button>
+            <button class="dropdown-item" onclick="goToCategory('legume')">Légumes</button>
+            <button class="dropdown-item" onclick="goToCategory('feculent')">Féculents</button>
+            <button class="dropdown-item" onclick="goToCategory('viande')">Viandes</button>
+            <button class="dropdown-item" onclick="goToCategory('plat-complet')">Plats complets</button>
+        </div>
+    </div>
+</nav>
+
+<header style="display: flex; flex-direction: column; align-content: center">
+    <h1>Entrées</h1>
+</header>
+
+<!-- Formulaire pour ajouter une entrée -->
+<section id="add-entry" style="margin: 20px; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
+    <h2>Ajouter une entrée</h2>
+    <form id="entryForm">
+        <label for="entryName">Nom de l'entrée :</label>
+        <input type="text" id="entryName" name="entryName" required>
+        <button type="button" onclick="addEntry()">Ajouter</button>
+    </form>
+</section>
+
+<!-- Liste des entrées -->
+<section id="entry-list" style="margin: 20px; padding: 20px; background-color: #ffffff; border-radius: 8px;">
+    <h2>Liste des entrées</h2>
+    <ul id="entries">
+        <!-- Les entrées s'afficheront ici -->
+    </ul>
+</section>
+
+<script src="/js/navBar.js"></script>
+<script src="/js/entrees.js"></script>
+</body>
