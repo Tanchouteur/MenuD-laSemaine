@@ -19,7 +19,7 @@ import fr.tanchou.menudlasemaine.web.GetMenuHandler;
 import fr.tanchou.menudlasemaine.web.NotFoundHandler;
 import fr.tanchou.menudlasemaine.web.products.GetProductsHandler;
 
-public class SimpleHttpServer {
+public class SimpleHttpsServer {
 
     public static void main(String[] args) throws Exception {
         // Chemin vers le fichier keystore contenant le certificat SSL
