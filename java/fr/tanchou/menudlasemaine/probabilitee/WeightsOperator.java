@@ -1,6 +1,7 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
 import fr.tanchou.menudlasemaine.dao.IncompatibilitesDAO;
+import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.menu.Produits;
 
 import java.time.LocalDate;
@@ -50,9 +51,9 @@ public class WeightsOperator {
     }
 
     // Méthode pour slelectionner un élément basé sur l'incompatibilité
-    public static Produits selectCompatibleProduct(Produits produitOnBaseTheIncopatibilitie, int moment, int saison){
+    public static Produits selectCompatibleProduct(Produits produitOnBaseTheIncopatibilitie, TypeProduit typeProduitWeWish, int moment, int saison){
         // On récupère la liste des produits compatibles
-        LinkedList<Produits> compatibleProducts = IncompatibilitesDAO.getProduitsCompatibles(produitOnBaseTheIncopatibilitie.getId(), produitOnBaseTheIncopatibilitie.getType());
+        LinkedList<Produits> compatibleProducts = IncompatibilitesDAO.getProduitsCompatibles(produitOnBaseTheIncopatibilitie.getId(), typeProduitWeWish);
 
         // On sélectionne un produit compatible
         return selectBasedOnWeights(compatibleProducts, moment, saison);

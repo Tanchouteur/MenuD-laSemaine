@@ -45,11 +45,11 @@ public class Factory {
             if (random.nextBoolean()) {
                 legume = WeightsOperator.selectBasedOnWeights(weightManager.getProduitsByType(TypeProduit.LEGUME), momentInt, saisonInt);
                 assert legume != null;
-                feculent = WeightsOperator.selectCompatibleProduct(legume, momentInt, saisonInt);
+                feculent = WeightsOperator.selectCompatibleProduct(legume, TypeProduit.FECULENT, momentInt, saisonInt);
             }else {
                 feculent = WeightsOperator.selectBasedOnWeights(weightManager.getProduitsByType(TypeProduit.FECULENT), momentInt, saisonInt);
                 assert feculent != null;
-                legume = WeightsOperator.selectCompatibleProduct(feculent, momentInt, saisonInt);
+                legume = WeightsOperator.selectCompatibleProduct(feculent, TypeProduit.LEGUME, momentInt, saisonInt);
             }
 
             accompagnement = new Accompagnement(legume, feculent);
