@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
-import fr.tanchou.menudlasemaine.dao.incompatibilitedao.IncompatibilitesAccompagnementDAO;
+import fr.tanchou.menudlasemaine.dao.IncompatibilitesDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsSaisonDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
@@ -84,7 +84,7 @@ public class AccompagnementGenerator {
 
                 if (cumulativeWeight > randomWeight) {
                     // Vérifier la compatibilité
-                    if (!IncompatibilitesAccompagnementDAO.areIncompatible(legume.getNom(), feculent.getNom())) {
+                    if (!IncompatibilitesDAO.areIncompatible(legume.getNom(), feculent.getNom())) {
                         // Retourner le légume compatible
                         //System.out.println("Légume sélectionné : " + legume + " avec un poids de " + weight);
                         return (Legume) legume;

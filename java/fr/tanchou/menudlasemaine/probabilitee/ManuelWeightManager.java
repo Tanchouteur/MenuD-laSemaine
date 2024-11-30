@@ -1,9 +1,5 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
-import fr.tanchou.menudlasemaine.dao.produit.FeculentDAO;
-import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
-import fr.tanchou.menudlasemaine.dao.produit.ViandeDAO;
-import fr.tanchou.menudlasemaine.dao.produit.PlatCompletDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.menu.Produits;
 

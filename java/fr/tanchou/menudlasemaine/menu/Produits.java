@@ -5,20 +5,24 @@ import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import java.time.LocalDate;
 
 public class Produits {
+    private final int id;
     private final String nomProduit;
     private final TypeProduit typeProduit;
     private final LocalDate lastUsed;
     private final int poidsArbitraire;
     private int poidsLastUsed;
-    private int poidsMoment;
-    private int poidsSaison;
+    private final int[][] poidsMoment;
+    private final int[] poidsSaison;
     private int poidsFinal;
 
-    protected Produits(String nomProduit, int poidsArbitraire, LocalDate lastUsed, TypeProduit typeProduit){
+    public Produits(int id,String nomProduit, int poidsArbitraire, LocalDate lastUsed, TypeProduit typeProduit, int[][] poidsMoment, int[] poidsSaison) {
+        this.id = id;
         this.nomProduit = nomProduit;
         this.poidsArbitraire = poidsArbitraire;
         this.lastUsed = lastUsed;
         this.typeProduit = typeProduit;
+        this.poidsMoment = poidsMoment;
+        this.poidsSaison = poidsSaison;
     }
 
     @Override
@@ -50,20 +54,12 @@ public class Produits {
         this.poidsLastUsed = poidsLastUsed;
     }
 
-    public int getPoidsMoment() {
+    public int[][] getPoidsMoment() {
         return poidsMoment;
     }
 
-    public void setPoidsMoment(int poidsMoment) {
-        this.poidsMoment = poidsMoment;
-    }
-
-    public int getPoidsSaison() {
+    public int[] getPoidsSaison() {
         return poidsSaison;
-    }
-
-    public void setPoidsSaison(int poidsSaison) {
-        this.poidsSaison = poidsSaison;
     }
 
     public int getPoidsFinal() {

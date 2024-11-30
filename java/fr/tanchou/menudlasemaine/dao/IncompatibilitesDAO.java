@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.dao.incompatibilitedao;
+package fr.tanchou.menudlasemaine.dao;
 
 import fr.tanchou.menudlasemaine.menu.incompatibilite.IncompatibilitesAccompagnement;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncompatibilitesAccompagnementDAO {
+public class IncompatibilitesDAO {
     public void ajouterIncompatibilite(String legumeNom, String feculentNom) {
         String sql = "INSERT INTO Incompatibilites_Accompagnement (legume_nom, feculent_nom) VALUES (?, ?)";
 

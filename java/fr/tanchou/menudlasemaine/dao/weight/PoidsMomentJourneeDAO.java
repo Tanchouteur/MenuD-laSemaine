@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.dao.weight;
 
-import fr.tanchou.menudlasemaine.dao.produit.ProduitDAO;
+import fr.tanchou.menudlasemaine.dao.ProduitDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
