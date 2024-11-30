@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.web;
+package fr.tanchou.menudlasemaine.api.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -7,15 +7,23 @@ import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.menu.Repas;
+import fr.tanchou.menudlasemaine.utils.Factory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ChangeRepasHandler implements HttpHandler {
+    private final Factory factory;
+
+    public ChangeRepasHandler(Factory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
@@ -66,8 +74,13 @@ public class ChangeRepasHandler implements HttpHandler {
 
     // Méthode pour changer le menu
     public String changeRepas(String jour, MomentJournee moment) {
+        MomentSemaine momentSemaine = getMomentSemaine(jour);
 
-        Repas repas = RepasBuilder.buildRepa(moment, getMomentSemaine(jour), Saison.getSaisonByMois(LocalDate.EPOCH.getMonthValue()), new LastUseWeightManager());
+        Month moisCourant = LocalDate.now().getMonth();
+        int saisonInt = Saison.getSaisonIndexByMois(moisCourant.getValue());
+
+        Repas repas = factory.buildRepas(factory.getMomentInt(moment, momentSemaine), saisonInt);
+
         MenuDAO.updateRepas(repas, jour, moment);
 
         StringBuilder xmlBuilder = new StringBuilder();

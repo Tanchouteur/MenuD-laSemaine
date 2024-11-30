@@ -1,14 +1,20 @@
-package fr.tanchou.menudlasemaine.web;
+package fr.tanchou.menudlasemaine.api.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.menu.Menu;
+import fr.tanchou.menudlasemaine.utils.Factory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class ChangeMenuHandler implements HttpHandler {
+    private final Factory factory;
+    public ChangeMenuHandler(Factory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
@@ -30,8 +36,8 @@ public class ChangeMenuHandler implements HttpHandler {
     // Méthode pour changer le menu
     public String changeMenu() {
 
-        Menu newMenu = MenuService.buildMenu();
-        MenuDAO.updateMenu(newMenu.getRepasParJour());
+        Menu newMenu = factory.buildMenu();
+        MenuDAO.updateMenu(newMenu.getListRepas());
 
         return "succes";
     }

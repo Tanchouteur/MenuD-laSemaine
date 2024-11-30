@@ -1,15 +1,23 @@
-package fr.tanchou.menudlasemaine.web.products;
+package fr.tanchou.menudlasemaine.api.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.tanchou.menudlasemaine.dao.ProduitDAO;
+import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.menu.Produits;
+import fr.tanchou.menudlasemaine.utils.Factory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
 public class GetProductsHandler implements HttpHandler {
+    private final Factory factory;
+
+    public GetProductsHandler(Factory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         System.out.println("GetProduct : " + exchange.getRequestURI());
@@ -20,7 +28,8 @@ public class GetProductsHandler implements HttpHandler {
         System.out.println("productType : " + productType);
         // Récupérer les produits du type demandé
 
-        String response = getProductsByType(productType);
+        TypeProduit type = TypeProduit.valueOf(productType.toUpperCase());
+        String response = getProductsByType(type);
 
         System.out.println("response : " + response);
         // Définir le type de contenu comme JSON
@@ -38,9 +47,9 @@ public class GetProductsHandler implements HttpHandler {
         os.close();
     }
 
-    private String getProductsByType(String type) {
+    private String getProductsByType(TypeProduit type) {
         // Récupérer la liste de produits du DAO
-        List<Produits> produits = ProduitDAO.getAllProduitByType(type);
+        List<Produits> produits = factory.getWeightManager().getProduitsByType(type);
 
         // Utiliser un StringBuilder pour construire le JSON
         StringBuilder jsonBuilder = new StringBuilder();
@@ -54,8 +63,8 @@ public class GetProductsHandler implements HttpHandler {
 
             // Ajouter les propriétés du produit dans l'objet JSON
             jsonBuilder.append("{")
-                    .append("\"nom\": \"").append(produit.getNom()).append("\", ")
-                    .append("\"poids\": \"").append(produit.getPoids()).append("\", ")
+                    .append("\"nom\": \"").append(produit.getNomProduit()).append("\", ")
+                    .append("\"poids\": \"").append(produit.getPoidsArbitraire()).append("\", ")
                     .append("\"last_use\": \"").append(produit.getLastUsed()).append("\"")
                     .append("}");
 
