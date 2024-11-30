@@ -87,9 +87,17 @@ public class ProduitDAO {
                 if (resultSet.next()) {
                     // Récupération des informations de la ligne courante
                     int id = resultSet.getInt("id");
-                    TypeProduit typeProduit = TypeProduit.valueOf(resultSet.getString("typeProduit"));
+                    TypeProduit typeProduit = TypeProduit.valueOf(resultSet.getString("typeProduit").toUpperCase());
+
                     int poidsArbitraire = resultSet.getInt("poidsArbitraire");
-                    LocalDate lastUsed = resultSet.getDate("lastUsed").toLocalDate();
+
+                    Date lastUsed = resultSet.getDate("dateLastUsed");
+                    LocalDate dateLastUsed = null;
+                    if (lastUsed != null) {
+                        dateLastUsed = lastUsed.toLocalDate();
+                    }
+
+
                     int[] poidsMoment = new int[]{
                             resultSet.getInt("poidsMidiSemaine"),
                             resultSet.getInt("poidsSoirSemaine"),
@@ -105,11 +113,13 @@ public class ProduitDAO {
                     };
 
                     // Création de l'objet Produit
-                    produit = new Produits(id, nomProduit, poidsArbitraire, lastUsed, typeProduit, poidsMoment, poidsSaison);
+                    produit = new Produits(id, nomProduit, poidsArbitraire, dateLastUsed, typeProduit, poidsMoment, poidsSaison);
                 }
             }
         } catch (Exception e) {
+            System.out.println("---------------------------------------------------------------------");
             System.out.println("Probleme de connexion a la bd getProduitByName(); " + e.getMessage());
+            System.out.println("---------------------------------------------------------------------");
         }
 
         return produit;

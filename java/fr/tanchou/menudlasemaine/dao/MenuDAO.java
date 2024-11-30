@@ -112,33 +112,55 @@ public class MenuDAO {
             int i = 0;
             int j = 0;
             while (rs.next()) {
+                String jour = rs.getString("jour");
+                String momentStr = rs.getString("moment");
                 String entree = rs.getString("entree");
                 String plat = rs.getString("plat");
-                MomentJournee moment = MomentJournee.valueOf(rs.getString("moment").toUpperCase());
 
-                Produits entreeProduit = ProduitDAO.getProduitByName(entree);
+                System.out.println("Traitement du jour: " + jour);
+                System.out.println("Moment: " + momentStr);
+                System.out.println("Entrée: " + entree);
+                System.out.println("Plat: " + plat);
 
-                Produits platCompletProduits = ProduitDAO.getProduitByName(plat);
+                MomentJournee moment;
+                try {
+                    moment = MomentJournee.valueOf(momentStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Moment invalide: " + momentStr);
+                    continue; // Passer à la ligne suivante si le moment est invalide
+                }
+
+                // Récupérer l'objet Produits pour l'entrée
+                Produits entreeProduit = (entree != null && !entree.equalsIgnoreCase("Aucune")) ? ProduitDAO.getProduitByName(entree) : null;
+
+                // Récupérer l'objet Produits pour le plat
+                Produits platCompletProduits = (plat != null && !plat.isEmpty()) ? ProduitDAO.getProduitByName(plat) : null;
 
                 Accompagnement accompagnement = null;
-                Repas repas = null;
-                if (platCompletProduits == null) {//si c'est pas un plat complet
-                    String[] produitsList = plat.split(",");
-                    Produits viande = ProduitDAO.getProduitByName(produitsList[0]);
+                Repas repas;
 
-                    if (produitsList.length == 2) {
+                if (platCompletProduits == null) { // Si c'est un plat composé
+                    if (plat != null && plat.contains(",")) {
+                        String[] produitsList = plat.split(",");
+
+                        if (produitsList.length < 2) {
+                            System.err.println("Erreur de format pour le plat composé: " + plat);
+                            continue; // Passer à la ligne suivante si le format du plat est incorrect
+                        }
+
+                        Produits viande = ProduitDAO.getProduitByName(produitsList[0]);
                         Produits legume = ProduitDAO.getProduitByName(produitsList[1]);
-                        Produits feculent = ProduitDAO.getProduitByName(produitsList[2]);
+                        Produits feculent = (produitsList.length > 2) ? ProduitDAO.getProduitByName(produitsList[2]) : null;
 
                         accompagnement = new Accompagnement(legume, feculent);
-
-                    } else if (produitsList.length == 3) {
-                        Produits feculent = ProduitDAO.getProduitByName(produitsList[1]);
-                        accompagnement = new Accompagnement(null, feculent);
+                        PlatCompose platCompose = new PlatCompose(viande, accompagnement);
+                        repas = new Repas(entreeProduit, platCompose);
+                    } else {
+                        System.err.println("Erreur de format pour le plat: " + plat);
+                        continue; // Passer à la ligne suivante si le format du plat est incorrect
                     }
-                    PlatCompose platCompose = new PlatCompose(viande, accompagnement);
-                    repas = new Repas(entreeProduit, platCompose); // 3eme parametre = moment de la journée (midi ou soir)
-                }else{
+                } else {
+                    // Cas où c'est un plat complet
                     PlatComplet platComplet = new PlatComplet(platCompletProduits);
                     repas = new Repas(entreeProduit, platComplet);
                 }
@@ -152,13 +174,15 @@ public class MenuDAO {
                 }
             }
 
-
+            return new Menu(listRepas);
 
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération du menu. " + e.getMessage());
         }
-        return new Menu(listRepas);
+
+        return null;
     }
+
 
     public static void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
         // SQL pour mettre à jour un repas spécifique dans la base de données

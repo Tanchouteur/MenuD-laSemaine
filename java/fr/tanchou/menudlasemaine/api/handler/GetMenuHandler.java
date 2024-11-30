@@ -41,7 +41,7 @@ public class GetMenuHandler implements HttpHandler {
                     os.write(responseBytes, i, length);
                 }
 
-                //System.out.println("Response sent");
+                System.out.println("Response sent");
             }
         } else {
             exchange.sendResponseHeaders(405, -1); // Méthode non autorisée si ce n'est pas GET
@@ -70,6 +70,8 @@ public class GetMenuHandler implements HttpHandler {
                 // Ajouter l'entrée
                 if (repas.getEntree() != null) {
                     xmlBuilder.append("      <entree>").append(repas.getEntree().getNomProduit()).append("</entree>\n");
+                }else {
+                    xmlBuilder.append("      <entree>").append("Aucune").append("</entree>\n");
                 }
 
                 // Ajouter le plat (gestion des types PlatCompose et PlatComplet)
@@ -100,7 +102,7 @@ public class GetMenuHandler implements HttpHandler {
         xmlBuilder.append("</menuSemaine>\n");
 
         // Affichage pour debug
-        System.out.println("XML généré :\n" + xmlBuilder);
+        //System.out.println("XML généré :\n" + xmlBuilder);
 
         return xmlBuilder.toString();
     }

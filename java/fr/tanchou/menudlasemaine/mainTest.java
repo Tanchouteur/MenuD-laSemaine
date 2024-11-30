@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine;
 
+import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.menu.Menu;
 import fr.tanchou.menudlasemaine.utils.Factory;
 
@@ -8,7 +9,7 @@ public class mainTest {
         Factory factory = new Factory();
         Menu newMenu = factory.buildMenu();
 
-        //MenuDAO.updateMenu(newMenu.getRepasParJour());
+        MenuDAO.updateMenu(newMenu.getListRepas());
 
         System.out.println(newMenu);
     }
