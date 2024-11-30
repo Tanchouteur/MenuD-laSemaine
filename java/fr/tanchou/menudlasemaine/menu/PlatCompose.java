@@ -28,7 +28,7 @@ public class PlatCompose extends Plat {
     @Override
     public String getNomPlat() {
         return (viande != null ? viande.getNomProduit() : "") +
-                (accompagnement != null ? " + " + accompagnement.getNomAccompagnement() : "");
+                (accompagnement != null ? "," + accompagnement.getNomAccompagnement() : "");
     }
 
     @Override

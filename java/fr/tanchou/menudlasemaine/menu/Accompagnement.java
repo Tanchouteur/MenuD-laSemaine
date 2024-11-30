@@ -20,7 +20,7 @@ public class Accompagnement {
     public String getNomAccompagnement() {
         String nomAccompagnement = "";
         if (legume != null) {
-            nomAccompagnement += legume.getNomProduit() + " ";
+            nomAccompagnement += legume.getNomProduit() + ",";
         }
         if (feculent != null) {
             nomAccompagnement += feculent.getNomProduit();

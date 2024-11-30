@@ -11,11 +11,11 @@ public class Produits {
     private final LocalDate lastUsed;
     private final int poidsArbitraire;
     private int poidsLastUsed;
-    private final int[][] poidsMoment;
-    private final int[] poidsSaison;
+    private final int[] poidsMoment; // [midiSemaine, soirSemaine, midiWeekend, soirWeekend]
+    private final int[] poidsSaison; // [printemps, été, automne, hiver]
     private int poidsFinal;
 
-    public Produits(int id,String nomProduit, int poidsArbitraire, LocalDate lastUsed, TypeProduit typeProduit, int[][] poidsMoment, int[] poidsSaison) {
+    public Produits(int id,String nomProduit, int poidsArbitraire, LocalDate lastUsed, TypeProduit typeProduit, int[] poidsMoment, int[] poidsSaison) {
         this.id = id;
         this.nomProduit = nomProduit;
         this.poidsArbitraire = poidsArbitraire;
@@ -54,7 +54,7 @@ public class Produits {
         this.poidsLastUsed = poidsLastUsed;
     }
 
-    public int[][] getPoidsMoment() {
+    public int[] getPoidsMoment() {
         return poidsMoment;
     }
 

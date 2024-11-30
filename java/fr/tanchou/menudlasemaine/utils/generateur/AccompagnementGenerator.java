@@ -1,8 +1,6 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
 import fr.tanchou.menudlasemaine.dao.IncompatibilitesDAO;
-import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
-import fr.tanchou.menudlasemaine.dao.weight.PoidsSaisonDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
