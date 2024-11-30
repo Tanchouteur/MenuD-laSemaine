@@ -101,8 +101,8 @@ public class MenuDAO {
     }
 
     //methode pour recuperer le menu
-    public static Repas[][] getMenu() {
-        Repas[][] menu = new Repas[7][2];
+    public static Menu getMenu() {
+        Repas[][] listRepas = new Repas[7][2];
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
 
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
@@ -143,7 +143,7 @@ public class MenuDAO {
                     repas = new Repas(entreeProduit, platComplet, moment);
                 }
 
-                menu[i][j] = repas;
+                listRepas[i][j] = repas;
 
                 j++;
                 if (j == 2) {
@@ -151,11 +151,13 @@ public class MenuDAO {
                     i++;
                 }
             }
+
+
+
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération du menu. " + e.getMessage());
         }
-
-        return menu;
+        return new Menu(listRepas);
     }
 
     public static void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {

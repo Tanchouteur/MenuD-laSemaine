@@ -1,4 +1,6 @@
-package fr.tanchou.menudlasemaine.menu;
+package fr.tanchou.menudlasemaine.probabilitee;
+
+import fr.tanchou.menudlasemaine.menu.Produits;
 
 public class Incompatibilites {
     private final Produits legume;
