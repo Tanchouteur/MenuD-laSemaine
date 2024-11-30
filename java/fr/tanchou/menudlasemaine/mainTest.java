@@ -1,12 +1,12 @@
 package fr.tanchou.menudlasemaine;
 
 import fr.tanchou.menudlasemaine.menu.Menu;
-import fr.tanchou.menudlasemaine.utils.generateur.MenuService;
+import fr.tanchou.menudlasemaine.utils.Factory;
 
 public class mainTest {
     public static void main(String[] args) {
-
-        Menu newMenu = MenuService.buildMenu();
+        Factory factory = new Factory();
+        Menu newMenu = factory.buildMenu();
 
         //MenuDAO.updateMenu(newMenu.getRepasParJour());
 

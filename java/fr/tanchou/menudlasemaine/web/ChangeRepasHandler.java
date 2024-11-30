@@ -7,7 +7,6 @@ import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.menu.Repas;
-import fr.tanchou.menudlasemaine.utils.generateur.RepasBuilder;
 
 import java.io.IOException;
 import java.io.OutputStream;

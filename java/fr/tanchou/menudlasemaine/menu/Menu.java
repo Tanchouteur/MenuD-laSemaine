@@ -11,6 +11,10 @@ public class Menu {
         return listRepas;
     }
 
+    public Repas getRepas(int jour, int moment) {
+        return listRepas[jour][moment];
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

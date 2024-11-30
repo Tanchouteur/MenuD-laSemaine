@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.menu.Menu;
-import fr.tanchou.menudlasemaine.utils.generateur.MenuService;
 
 import java.io.IOException;
 import java.io.OutputStream;

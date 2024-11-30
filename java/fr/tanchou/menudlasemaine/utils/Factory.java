@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.utils.generateur;
+package fr.tanchou.menudlasemaine.utils;
 
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
@@ -8,6 +8,8 @@ import fr.tanchou.menudlasemaine.menu.*;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightsOperator;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Random;
 
 public class Factory {
@@ -76,7 +78,43 @@ public class Factory {
     }
 
     // methode : buildRepas(): Repas
+    public Repas buildRepas(int momentInt, int saisonInt) {
+        Random random = new Random();
+
+        int probaEntry = random.nextInt(100);
+        Produits entree;
+
+        if (probaEntry > 65){
+            entree = generateEntree(momentInt, saisonInt);
+        }else {
+            entree = null;
+        }
+
+        return new Repas(entree, buildPlat(momentInt, saisonInt));
+    }
+
     // methode : buildMenu(): Menu
+    public Menu buildMenu() {
+        Month moisCourant = LocalDate.now().getMonth();
+        int saisonInt = Saison.getSaisonIndexByMois(moisCourant.getValue());
+
+        String[] jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+        String[] moments = {"midi", "soir"};
+
+        Repas[][] listeRepas = new Repas[jours.length][moments.length];
+
+        for (int i = 0; i < jours.length; i++) {
+            for (int j = 0; j < moments.length; j++) {
+                if (i < 6) {
+                    listeRepas[i][j] = buildRepas(getMomentInt(MomentJournee.valueOf(moments[j]), MomentSemaine.SEMAINE), saisonInt);
+                }else {
+                    listeRepas[i][j] = buildRepas(getMomentInt(MomentJournee.valueOf(moments[j]), MomentSemaine.WEEKEND), saisonInt);
+                }
+            }
+        }
+
+        return new Menu(listeRepas);
+    }
 
     public int getMomentInt(MomentJournee momentJournee, MomentSemaine momentSemaine) {
         if (momentJournee == MomentJournee.MIDI) {
