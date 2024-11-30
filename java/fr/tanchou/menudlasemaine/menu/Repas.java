@@ -1,7 +1,5 @@
 package fr.tanchou.menudlasemaine.menu;
 
-import fr.tanchou.menudlasemaine.enums.MomentJournee;
-
 public class Repas {
     private final Produits entree;
     private final Plat plat;

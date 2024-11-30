@@ -2,6 +2,11 @@ package fr.tanchou.menudlasemaine.api.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import fr.tanchou.menudlasemaine.dao.MenuDAO;
+import fr.tanchou.menudlasemaine.menu.Menu;
+import fr.tanchou.menudlasemaine.menu.PlatComplet;
+import fr.tanchou.menudlasemaine.menu.PlatCompose;
+import fr.tanchou.menudlasemaine.menu.Repas;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.io.IOException;
@@ -19,7 +24,7 @@ public class GetMenuHandler implements HttpHandler {
 
             System.out.println("Received GET /menu/getMenu + param = " + exchange.getRequestURI().getQuery());
 
-            String response = getMenu();
+            String response = getMenuXml();
 
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Content-Type", "application/XML"); // Définit le type de contenu XML
@@ -44,51 +49,61 @@ public class GetMenuHandler implements HttpHandler {
     }
 
 
-    public String getMenu() {
+    public String getMenuXml() {
         StringBuilder xmlBuilder = new StringBuilder();
-        xmlBuilder.append("<menuSemaine>");
 
-        String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
+        // Récupérer le menu
+        Menu menu = MenuDAO.getMenu();
 
-        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(selectSQL);
-             ResultSet rs = pstmt.executeQuery()) {
+        // Début du document XML
+        xmlBuilder.append("<menuSemaine>\n");
 
-            String currentJour = "";
-            while (rs.next()) {
-                String jour = rs.getString("jour");
-                String moment = rs.getString("moment");
-                String entree = rs.getString("entree");
-                String plat = rs.getString("plat");
+        // Parcourir les repas de la semaine
+        for (int jour = 0; jour < menu.getListRepas().length; jour++) {
+            xmlBuilder.append("  <jour numero=\"").append(jour + 1).append("\">\n");
 
-                // Ajouter un nouvel élément jour si on passe à un jour différent
-                if (!jour.equals(currentJour)) {
-                    if (!currentJour.isEmpty()) {
-                        xmlBuilder.append("</jour>"); // Fermer l'élément précédent
-                    }
-                    xmlBuilder.append("<jour nom=\"").append(jour).append("\">");
-                    currentJour = jour;
+            for (int repasIndex = 0; repasIndex < menu.getListRepas()[jour].length; repasIndex++) {
+                Repas repas = menu.getListRepas()[jour][repasIndex];
+
+                xmlBuilder.append("    <repas>\n");
+
+                // Ajouter l'entrée
+                if (repas.getEntree() != null) {
+                    xmlBuilder.append("      <entree>").append(repas.getEntree().getNomProduit()).append("</entree>\n");
                 }
 
-                // Ajouter les éléments moment, entree, et plat
-                xmlBuilder.append("<").append(moment).append(">")
-                        .append("<entree>").append(entree != null && !entree.equals("Aucune") ? entree : "").append("</entree>")
-                        .append("<plat>").append(plat).append("</plat>")
-                        .append("</").append(moment).append(">");
+                // Ajouter le plat (gestion des types PlatCompose et PlatComplet)
+                if (repas.getPlat() != null) {
+                    if (repas.getPlat() instanceof PlatComplet) {
+                        PlatComplet platComplet = (PlatComplet) repas.getPlat();
+                        xmlBuilder.append("      <platComplet>").append(platComplet.getNomPlat()).append("</platComplet>\n");
+                    } else if (repas.getPlat() instanceof PlatCompose) {
+                        PlatCompose platCompose = (PlatCompose) repas.getPlat();
+                        xmlBuilder.append("      <platCompose>\n");
+                        if (platCompose.getViande() != null) {
+                            xmlBuilder.append("        <viande>").append(platCompose.getViande().getNomProduit()).append("</viande>\n");
+                        }
+                        if (platCompose.getAccompagnement() != null) {
+                            xmlBuilder.append("        <accompagnement>").append(platCompose.getAccompagnement().getNomAccompagnement()).append("</accompagnement>\n");
+                        }
+                        xmlBuilder.append("      </platCompose>\n");
+                    }
+                }
+
+                xmlBuilder.append("    </repas>\n");
             }
 
-            // Fermer le dernier élément jour
-            if (!currentJour.isEmpty()) {
-                xmlBuilder.append("</jour>");
-            }
-
-            xmlBuilder.append("</menuSemaine>");
-            System.out.println("xml builder !");
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération du menu");
-            e.printStackTrace();
+            xmlBuilder.append("  </jour>\n");
         }
+
+        // Fin du document XML
+        xmlBuilder.append("</menuSemaine>\n");
+
+        // Affichage pour debug
+        System.out.println("XML généré :\n" + xmlBuilder);
 
         return xmlBuilder.toString();
     }
+
+
 }
