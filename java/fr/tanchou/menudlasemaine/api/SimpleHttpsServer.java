@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine;
+package fr.tanchou.menudlasemaine.api;
 
 
 public class SimpleHttpsServer {

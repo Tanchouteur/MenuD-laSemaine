@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.api.handler;
+package fr.tanchou.menudlasemaine.api.handler.menu;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -7,14 +7,9 @@ import fr.tanchou.menudlasemaine.menu.Menu;
 import fr.tanchou.menudlasemaine.menu.PlatComplet;
 import fr.tanchou.menudlasemaine.menu.PlatCompose;
 import fr.tanchou.menudlasemaine.menu.Repas;
-import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class GetMenuHandler implements HttpHandler {
     @Override
@@ -41,7 +36,7 @@ public class GetMenuHandler implements HttpHandler {
                     os.write(responseBytes, i, length);
                 }
 
-                System.out.println("Response sent");
+                //System.out.println("Response sent");
             }
         } else {
             exchange.sendResponseHeaders(405, -1); // Méthode non autorisée si ce n'est pas GET

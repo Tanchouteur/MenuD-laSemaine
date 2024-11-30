@@ -1,4 +1,4 @@
-package fr.tanchou.menudlasemaine.api.handler;
+package fr.tanchou.menudlasemaine.api.handler.menu;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

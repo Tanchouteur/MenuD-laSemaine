@@ -4,6 +4,11 @@ import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsParameters;
 import com.sun.net.httpserver.HttpsServer;
 import fr.tanchou.menudlasemaine.api.handler.*;
+import fr.tanchou.menudlasemaine.api.handler.menu.ChangeMenuHandler;
+import fr.tanchou.menudlasemaine.api.handler.menu.ChangeRepasHandler;
+import fr.tanchou.menudlasemaine.api.handler.menu.GetMenuHandler;
+import fr.tanchou.menudlasemaine.api.handler.products.AddProductHandler;
+import fr.tanchou.menudlasemaine.api.handler.products.GetProductsHandler;
 import fr.tanchou.menudlasemaine.utils.Factory;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -49,7 +54,12 @@ public class ApiMain {
         server.createContext("/menu/getMenu", new GetMenuHandler()).getFilters().add(new CorsFilter());
         server.createContext("/menu/changeMenu", new ChangeMenuHandler(factory)).getFilters().add(new CorsFilter());
         server.createContext("/menu/repas/change", new ChangeRepasHandler(factory)).getFilters().add(new CorsFilter());
-        server.createContext("/products", new GetProductsHandler(factory)).getFilters().add(new CorsFilter());
+
+        server.createContext("/products/get", new GetProductsHandler(factory)).getFilters().add(new CorsFilter());
+        server.createContext("/products/add", new AddProductHandler(factory)).getFilters().add(new CorsFilter());
+        /*server.createContext("/products/delete", new DeleteProductHandler(factory)).getFilters().add(new CorsFilter());
+        server.createContext("/products/update", new UpdateProductHandler(factory)).getFilters().add(new CorsFilter());*/
+
         server.createContext("/", new NotFoundHandler());
 
         // Démarrer le serveur

@@ -5,10 +5,10 @@ import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import java.time.LocalDate;
 
 public class Produits {
-    private final int id;
+    private int id;
     private final String nomProduit;
     private final TypeProduit typeProduit;
-    private final LocalDate lastUsed;
+    private LocalDate lastUsed;
     private final int poidsArbitraire;
     private int poidsLastUsed;
     private final int[] poidsMoment; // [midiSemaine, soirSemaine, midiWeekend, soirWeekend]
@@ -23,6 +23,16 @@ public class Produits {
         // Les poids sont étaloner de 0 à 10
         this.poidsArbitraire = poidsArbitraire;
         this.lastUsed = lastUsed;
+        this.poidsMoment = poidsMoment;
+        this.poidsSaison = poidsSaison;
+    }
+
+    public Produits(String nomProduit, int poidsArbitraire, TypeProduit typeProduit, int[] poidsMoment, int[] poidsSaison) {
+        this.nomProduit = nomProduit;
+        this.typeProduit = typeProduit;
+
+        // Les poids sont étaloner de 0 à 10
+        this.poidsArbitraire = poidsArbitraire;
         this.poidsMoment = poidsMoment;
         this.poidsSaison = poidsSaison;
     }

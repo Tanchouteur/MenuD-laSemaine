@@ -126,8 +126,8 @@ public class ProduitDAO {
     }
 
     // Méthode pour ajouter un produit avec la procedure stockée
-    public static void addProduit(String nomProduit, TypeProduit typeProduit, int poidsArbitraire, int[] poidsMoment, int[] poidsSaison) {
-        String query = "{CALL addProduit(" + nomProduit + ", " + typeProduit + ", " + poidsArbitraire + ", " + String.valueOf(poidsMoment[0]) + ", " + String.valueOf(poidsMoment[1]) + ", " + String.valueOf(poidsMoment[2]) + ", " + String.valueOf(poidsMoment[3]) + ", " + poidsSaison[0] + ", " + poidsSaison[1] + ", " + poidsSaison[2] + ", " + poidsSaison[3] + ")}";
+    public static void addProduit(Produits produit) {
+        String query = "{CALL addProduit(" + produit.getNomProduit() + ", " + produit.getType() + ", " + produit.getPoidsArbitraire() + ", " + String.valueOf(produit.getPoidsMoment()[0]) + ", " + String.valueOf(produit.getPoidsMoment()[1]) + ", " + String.valueOf(produit.getPoidsMoment()[2]) + ", " + String.valueOf(produit.getPoidsMoment()[3]) + ", " + produit.getPoidsSaison()[0] + ", " + produit.getPoidsSaison()[1] + ", " + produit.getPoidsSaison()[2] + ", " + produit.getPoidsSaison()[3] + ")}";
         query = query.replace("[", "").replace("]", "");
         query = query.replace(" ", "");
         try {

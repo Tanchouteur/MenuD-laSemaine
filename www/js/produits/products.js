@@ -1,5 +1,5 @@
 function fetchProducts(type) {
-    return fetch(`https://tanchou.fr:8090/products/${type}`)
+    return fetch(`https://tanchou.fr:8090/products/get/${type}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Erreur HTTP : ${response.status}`);

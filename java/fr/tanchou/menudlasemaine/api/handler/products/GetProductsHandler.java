@@ -1,8 +1,7 @@
-package fr.tanchou.menudlasemaine.api.handler;
+package fr.tanchou.menudlasemaine.api.handler.products;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import fr.tanchou.menudlasemaine.dao.ProduitDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.menu.Produits;
 import fr.tanchou.menudlasemaine.utils.Factory;
