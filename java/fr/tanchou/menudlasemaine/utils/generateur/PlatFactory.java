@@ -4,7 +4,6 @@ import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.menu.Plat;
-import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
 import java.util.Random;
 

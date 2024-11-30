@@ -6,7 +6,6 @@ import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.menu.PlatCompose;
 import fr.tanchou.menudlasemaine.menu.Plat;
 import fr.tanchou.menudlasemaine.menu.Repas;
-import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
 import java.util.Random;
 

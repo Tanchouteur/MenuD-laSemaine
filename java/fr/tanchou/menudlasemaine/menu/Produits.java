@@ -18,9 +18,11 @@ public class Produits {
     public Produits(int id,String nomProduit, int poidsArbitraire, LocalDate lastUsed, TypeProduit typeProduit, int[] poidsMoment, int[] poidsSaison) {
         this.id = id;
         this.nomProduit = nomProduit;
+        this.typeProduit = typeProduit;
+
+        // Les poids sont étaloner de 0 à 10
         this.poidsArbitraire = poidsArbitraire;
         this.lastUsed = lastUsed;
-        this.typeProduit = typeProduit;
         this.poidsMoment = poidsMoment;
         this.poidsSaison = poidsSaison;
     }
