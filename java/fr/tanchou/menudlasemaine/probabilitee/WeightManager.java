@@ -57,10 +57,6 @@ public abstract class WeightManager {
         return null;
     }
 
-
-
-
-
     // Méthode pour combiner les poids de deux sources
     public static <T> Map<T, Integer> combineWeights(Map<T, Integer> weights1, Map<T, Integer> weights2) {
         Map<T, Integer> combinedWeights = new HashMap<>();

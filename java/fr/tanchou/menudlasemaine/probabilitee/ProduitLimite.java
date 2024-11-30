@@ -3,6 +3,7 @@ package fr.tanchou.menudlasemaine.probabilitee;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 
 public class ProduitLimite {
+
     // Valeurs limites pour chaque type de produit
     private static final int VIANDE_POIDS_FAIBLE = 1;
     private static final int VIANDE_POIDS_LIMITE = 4;
