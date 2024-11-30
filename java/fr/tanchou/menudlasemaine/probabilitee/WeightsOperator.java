@@ -83,6 +83,11 @@ public class WeightsOperator {
         LocalDate lastUsed = produit.getLastUsed();
         LocalDate today = LocalDate.now();
 
+        if (lastUsed == null) {
+            produit.setPoidsLastUsed(10);
+            return;
+        }
+
         // Calculer la différence en jours
         long daysSinceLastUsed = ChronoUnit.DAYS.between(lastUsed, today);
 

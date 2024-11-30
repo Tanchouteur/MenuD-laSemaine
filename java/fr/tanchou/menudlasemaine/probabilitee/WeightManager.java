@@ -7,7 +7,7 @@ import fr.tanchou.menudlasemaine.menu.Produits;
 import java.util.*;
 
 public class WeightManager {
-    private Map<TypeProduit, LinkedList<Produits>> produitListMap;
+    private final Map<TypeProduit, LinkedList<Produits>> produitListMap;
 
     public WeightManager() {
         this.produitListMap = ProduitDAO.getAllProduits();

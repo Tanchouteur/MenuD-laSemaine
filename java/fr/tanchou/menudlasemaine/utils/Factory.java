@@ -66,7 +66,8 @@ public class Factory {
         Produits viande = WeightsOperator.selectBasedOnWeights(weightManager.getProduitsByType(TypeProduit.VIANDE), momentInt, saisonInt);
         Accompagnement accompagnement = generateAccompagnement(momentInt, saisonInt);
 
-        int platComposeWeight = viande.getPoidsFinal() + (accompagnement.getFeculent().getPoidsFinal() + accompagnement.getLegume().getPoidsFinal());
+        int platComposeWeight;
+        platComposeWeight = (accompagnement.getFeculent() == null) ? viande.getPoidsFinal() + accompagnement.getLegume().getPoidsFinal() : viande.getPoidsFinal() + accompagnement.getFeculent().getPoidsFinal();
 
         if (platComplet.getPoidsFinal() > (viande.getPoidsFinal() + platComposeWeight)) {
             plat = new PlatComplet(platComplet);
@@ -106,9 +107,9 @@ public class Factory {
         for (int i = 0; i < jours.length; i++) {
             for (int j = 0; j < moments.length; j++) {
                 if (i < 6) {
-                    listeRepas[i][j] = buildRepas(getMomentInt(MomentJournee.valueOf(moments[j]), MomentSemaine.SEMAINE), saisonInt);
+                    listeRepas[i][j] = buildRepas(getMomentInt(MomentJournee.valueOf(moments[j].toUpperCase()), MomentSemaine.SEMAINE), saisonInt);
                 }else {
-                    listeRepas[i][j] = buildRepas(getMomentInt(MomentJournee.valueOf(moments[j]), MomentSemaine.WEEKEND), saisonInt);
+                    listeRepas[i][j] = buildRepas(getMomentInt(MomentJournee.valueOf(moments[j].toUpperCase()), MomentSemaine.WEEKEND), saisonInt);
                 }
             }
         }

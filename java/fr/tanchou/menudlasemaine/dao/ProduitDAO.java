@@ -5,6 +5,7 @@ import fr.tanchou.menudlasemaine.menu.Produits;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -27,10 +28,19 @@ public class ProduitDAO {
             while (resultSet.next()) {
                 // Récupération des informations de la ligne courante
                 int id = resultSet.getInt("id");
+
                 String nomProduit = resultSet.getString("nomProduit");
-                TypeProduit typeProduit = TypeProduit.valueOf(resultSet.getString("typeProduit"));
+
+                TypeProduit typeProduit = TypeProduit.valueOf(resultSet.getString("typeProduit").toUpperCase());
+
                 int poidsArbitraire = resultSet.getInt("poidsArbitraire");
-                LocalDate lastUsed = resultSet.getDate("lastUsed").toLocalDate();
+
+                Date lastUsed = resultSet.getDate("dateLastUsed");
+                LocalDate dateLastUsed = null;
+                if (lastUsed != null) {
+                    dateLastUsed = lastUsed.toLocalDate();
+                }
+
                 int[] poidsMoment = new int[]{
                         resultSet.getInt("poidsMidiSemaine"),
                         resultSet.getInt("poidsSoirSemaine"),
@@ -46,13 +56,15 @@ public class ProduitDAO {
 
 
                 // Création de l'objet Produit
-                Produits produit = new Produits(id, nomProduit, poidsArbitraire, lastUsed, typeProduit, poidsMoment, poidsSaison);
+                Produits produit = new Produits(id, nomProduit, poidsArbitraire, dateLastUsed, typeProduit, poidsMoment, poidsSaison);
 
                 // Ajout du produit dans la liste correspondante dans la map
                 produitsMap.computeIfAbsent(typeProduit, k -> new LinkedList<>()).add(produit);
             }
         } catch (Exception e) {
-            System.out.println("Probleme de connexion a la bd getAllProduits(); " + e.getMessage());
+            System.out.println("---------------------------------------------------------------------");
+            System.out.println("Probleme dans le try de connexion a la bd getAllProduits(); " + e.getMessage());
+            System.out.println("---------------------------------------------------------------------");
         }
 
         return produitsMap;
