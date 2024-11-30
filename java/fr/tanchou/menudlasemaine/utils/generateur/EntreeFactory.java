@@ -1,6 +1,5 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
-import fr.tanchou.menudlasemaine.dao.produit.EntreeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsSaisonDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
@@ -13,7 +12,6 @@ import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 

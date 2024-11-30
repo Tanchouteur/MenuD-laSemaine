@@ -1,16 +1,12 @@
 package fr.tanchou.menudlasemaine.dao;
-import fr.tanchou.menudlasemaine.dao.produit.EntreeDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
-import fr.tanchou.menudlasemaine.models.Plat;
 import fr.tanchou.menudlasemaine.models.Repas;
-import fr.tanchou.menudlasemaine.models.produit.Entree;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class MenuDAO {
     public static void insertMenu(Repas[][] repasParJour) {
