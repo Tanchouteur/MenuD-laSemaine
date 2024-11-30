@@ -71,4 +71,8 @@ public class Produits {
     public void setPoidsFinal(int poidsFinal) {
         this.poidsFinal = poidsFinal;
     }
+
+    public int getId() {
+        return id;
+    }
 }

@@ -139,7 +139,7 @@ public class MenuDAO {
                     PlatCompose platCompose = new PlatCompose(viande, accompagnement);
                     repas = new Repas(entreeProduit, platCompose, moment); // 3eme parametre = moment de la journée (midi ou soir)
                 }else{
-                    PlatCompet platComplet = new PlatCompet(platCompletProduits);
+                    PlatComplet platComplet = new PlatComplet(platCompletProduits);
                     repas = new Repas(entreeProduit, platComplet, moment);
                 }
 

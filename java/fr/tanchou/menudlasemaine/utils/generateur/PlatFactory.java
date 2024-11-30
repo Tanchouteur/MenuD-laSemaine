@@ -11,7 +11,7 @@ public class PlatFactory {
     public static Plat getRandomPlat(MomentJournee momentJournee, MomentSemaine momentSemaine, Saison saison, LastUseWeightManager lastUseWeightManager) {
         Random random = new Random();
         int probaPlatComplet = random.nextInt(100);
-        Plat plat;
+
 
         int seuil = 50;
 

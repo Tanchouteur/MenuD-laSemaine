@@ -1,9 +1,9 @@
 package fr.tanchou.menudlasemaine.menu;
 
-public class PlatCompet extends Plat {
+public class PlatComplet extends Plat {
     private final Produits plat;
 
-    public PlatCompet(Produits plat) {
+    public PlatComplet(Produits plat) {
         this.plat = plat;
     }
 

@@ -1,5 +1,6 @@
 package fr.tanchou.menudlasemaine.probabilitee;
 
+import fr.tanchou.menudlasemaine.dao.IncompatibilitesDAO;
 import fr.tanchou.menudlasemaine.menu.Produits;
 
 import java.time.LocalDate;
@@ -14,7 +15,12 @@ public class WeightsOperator {
 
         int totalWeight = 0;
         for (Produits produit : produitsList) {
+            // Calculer le poids de dernier utilisation
+            computeLastUsedWeight(produit);
+
+            // Calculer le poids final
             calculateWeight(produit, moment, saison);
+
             totalWeight += produit.getPoidsFinal();
         }
 
@@ -41,6 +47,15 @@ public class WeightsOperator {
         // Par sécurité, on retourne null si rien n'est trouvé
         System.err.println("Aucun élément sélectionné. Cumulative weight: " + cumulativeWeight);
         return null;
+    }
+
+    // Méthode pour slelectionner un élément basé sur l'incompatibilité
+    public static Produits selectCompatibleProduct(Produits produitOnBaseTheIncopatibilitie, int moment, int saison){
+        // On récupère la liste des produits compatibles
+        LinkedList<Produits> compatibleProducts = IncompatibilitesDAO.getProduitsCompatibles(produitOnBaseTheIncopatibilitie.getId(), produitOnBaseTheIncopatibilitie.getType());
+
+        // On sélectionne un produit compatible
+        return selectBasedOnWeights(compatibleProducts, moment, saison);
     }
 
     // Méthode pour calculer le poids final d'un produit
@@ -90,6 +105,4 @@ public class WeightsOperator {
         // Retourner l'entier arrondi
         produit.setPoidsLastUsed((int) Math.round(normalizedWeight));
     }
-
-
 }
