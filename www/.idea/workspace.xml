@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c968ccbd-4062-4acb-b81b-91cdf69e5ed6" name="Changes" comment="" />
+    <list default="true" id="c968ccbd-4062-4acb-b81b-91cdf69e5ed6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/produits/produits.html" beforeDir="false" afterPath="$PROJECT_DIR$/produits/produits.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,9 +26,9 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/produits/produits.html" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2pXPsAyV9WfRLA78R7ZX1gI22x7" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -38,7 +41,7 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Refonte",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -54,19 +57,19 @@
       <window_info id="Merge Requests" show_stripe_button="false" />
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" show_stripe_button="false" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.15161133" />
-      <window_info active="true" id="Commit" order="1" visible="true" weight="0.15161133" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15161133" />
+      <window_info id="Commit" order="1" weight="0.15161133" />
       <window_info id="Welcome to GitHub Copilot" order="2" show_stripe_button="false" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info id="Structure" order="3" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
       <window_info anchor="bottom" id="TODO" show_stripe_button="false" />
       <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="0" visible="true" weight="0.34187663" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.34187663" />
       <window_info anchor="bottom" id="Problems" order="1" />
       <window_info anchor="bottom" id="Problems View" order="2" />
       <window_info anchor="bottom" id="Terminal" order="3" weight="0.14291921" />
       <window_info anchor="bottom" id="Services" order="4" />
-      <window_info anchor="bottom" id="Find" order="4" weight="0.32971328" />
+      <window_info anchor="bottom" id="Find" order="5" weight="0.32971328" />
       <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
       <window_info anchor="right" id="Coverage" show_stripe_button="false" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
@@ -74,8 +77,8 @@
       <window_info anchor="right" id="Database" order="2" weight="0.25" />
       <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
       <window_info anchor="right" id="Maven" order="4" weight="0.25" />
-      <window_info anchor="right" id="github.copilotToolWindow" order="4" show_stripe_button="false" />
-      <window_info anchor="right" id="GitHub Copilot Chat" order="4" show_stripe_button="false" />
+      <window_info anchor="right" id="github.copilotToolWindow" order="5" show_stripe_button="false" />
+      <window_info anchor="right" id="GitHub Copilot Chat" order="6" show_stripe_button="false" />
     </layout>
   </component>
   <component name="SharedIndexes">
@@ -94,6 +97,7 @@
       <option name="presentableId" value="Default" />
       <updated>1732909652642</updated>
       <workItem from="1732909655244" duration="11753000" />
+      <workItem from="1732999575404" duration="504000" />
     </task>
     <servers />
   </component>

@@ -38,8 +38,43 @@
 <section id="add-entry" style="margin: 20px; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
     <h2 id="addEntryTitle"></h2>
     <form id="entryForm">
+        <!--recuperer : String nomProduit, int poidsArbitraire, TypeProduit typeProduit, int[] poidsMoment, int[] poidsSaison
+
+        avec int[] poidsMoment; // [midiSemaine, soirSemaine, midiWeekend, soirWeekend]
+             int[] poidsSaison; // [printemps, été, automne, hiver]
+        -->
         <label for="entryName">Nom :</label>
         <input type="text" id="entryName" name="entryName" required>
+
+        <label >Poids : entier entre 0 a 10</label>
+
+        <label for="poidsArbitraire">Poids Arbitraire: </label>
+        <input type="number" id="poidsArbitraire" name="poidsArbitraire" required>
+
+        <label for="midiSemaine">Midi Semaine : </label>
+        <input type="number" id="midiSemaine" name="midiSemaine" required>
+
+        <label for="soirSemaine">Soir Semaine : </label>
+        <input type="number" id="soirSemaine" name="soirSemaine" required>
+
+        <label for="midiWeekend">Midi Weekend : </label>
+        <input type="number" id="midiWeekend" name="midiWeekend" required>
+
+        <label for="soirWeekend">Soir Weekend : </label>
+        <input type="number" id="soirWeekend" name="soirWeekend" required>
+
+        <label for="printemps">Printemps : </label>
+        <input type="number" id="printemps" name="printemps" required>
+
+        <label for="ete">Ete : </label>
+        <input type="number" id="ete" name="ete" required>
+
+        <label for="automne">Automne : </label>
+        <input type="number" id="automne" name="automne" required>
+
+        <label for="hiver">Hiver : </label>
+        <input type="number" id="hiver" name="hiver" required>
+
         <button class="nav-button" type="button" id="addEntryButton">Ajouter</button>
     </form>
 </section>
