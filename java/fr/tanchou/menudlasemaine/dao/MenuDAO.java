@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.dao;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
-import fr.tanchou.menudlasemaine.models.Repas;
+import fr.tanchou.menudlasemaine.menu.Repas;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;

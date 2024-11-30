@@ -1,18 +1,14 @@
 package fr.tanchou.menudlasemaine.utils.generateur;
 
-import fr.tanchou.menudlasemaine.dao.produit.ViandeDAO;
 import fr.tanchou.menudlasemaine.dao.weight.PoidsMomentJourneeDAO;
-import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.models.produit.Produits;
-import fr.tanchou.menudlasemaine.models.produit.Viande;
+import fr.tanchou.menudlasemaine.menu.Produits;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 

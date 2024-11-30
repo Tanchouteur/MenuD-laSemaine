@@ -5,7 +5,7 @@ import fr.tanchou.menudlasemaine.dao.produit.LegumeDAO;
 import fr.tanchou.menudlasemaine.dao.produit.ViandeDAO;
 import fr.tanchou.menudlasemaine.dao.produit.PlatCompletDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.models.produit.*;
+import fr.tanchou.menudlasemaine.menu.Produits;
 
 import java.util.*;
 

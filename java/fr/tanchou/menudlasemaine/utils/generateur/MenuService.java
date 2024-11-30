@@ -4,8 +4,8 @@ import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
-import fr.tanchou.menudlasemaine.models.Menu;
-import fr.tanchou.menudlasemaine.models.Repas;
+import fr.tanchou.menudlasemaine.menu.Menu;
+import fr.tanchou.menudlasemaine.menu.Repas;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
 public class MenuService {

@@ -3,11 +3,9 @@ package fr.tanchou.menudlasemaine.utils.generateur;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
-import fr.tanchou.menudlasemaine.models.PlatCompose;
-import fr.tanchou.menudlasemaine.models.produit.Entree;
-import fr.tanchou.menudlasemaine.models.Plat;
-import fr.tanchou.menudlasemaine.models.Repas;
-import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
+import fr.tanchou.menudlasemaine.menu.PlatCompose;
+import fr.tanchou.menudlasemaine.menu.Plat;
+import fr.tanchou.menudlasemaine.menu.Repas;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 
 import java.util.Random;

@@ -7,13 +7,11 @@ import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
-import fr.tanchou.menudlasemaine.models.produit.Produits;
+import fr.tanchou.menudlasemaine.menu.Produits;
 import fr.tanchou.menudlasemaine.probabilitee.LastUseWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.ManuelWeightManager;
 import fr.tanchou.menudlasemaine.probabilitee.WeightManager;
 
-import java.util.List;
 import java.util.Random;
 
 import java.util.Map;

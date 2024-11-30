@@ -2,8 +2,7 @@ package fr.tanchou.menudlasemaine.dao.produit;
 
 import fr.tanchou.menudlasemaine.dao.weight.ProduitLastUseDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
-import fr.tanchou.menudlasemaine.models.produit.PlatComplet;
-import fr.tanchou.menudlasemaine.models.produit.Produits;
+import fr.tanchou.menudlasemaine.menu.Produits;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.*;

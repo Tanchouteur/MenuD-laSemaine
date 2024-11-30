@@ -1,6 +1,6 @@
 package fr.tanchou.menudlasemaine.dao.incompatibilitedao;
 
-import fr.tanchou.menudlasemaine.models.incompatibilite.IncompatibilitesAccompagnement;
+import fr.tanchou.menudlasemaine.menu.incompatibilite.IncompatibilitesAccompagnement;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;
