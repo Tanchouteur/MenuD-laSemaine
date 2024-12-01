@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c968ccbd-4062-4acb-b81b-91cdf69e5ed6" name="Changes" comment="html">
-      <change afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/gson/ProduitsAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/ApiMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/ApiMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/handler/menu/GetMenuHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/handler/menu/GetMenuHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/handler/products/AddProductHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/handler/products/AddProductHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/handler/products/GetProductsHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/api/handler/products/GetProductsHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/MenuDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/MenuDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/ProduitDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/dao/ProduitDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/menu/MenuManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/menu/Produits.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/menu/Produits.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/probabilitee/WeightManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java/fr/tanchou/menudlasemaine/probabilitee/WeightManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/navBar.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/navBar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/css/products.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/products.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/produits/products.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/produits/products.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/produits/produits.html" beforeDir="false" afterPath="$PROJECT_DIR$/produits/produits.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +60,7 @@
       <window_info id="Merge Requests" show_stripe_button="false" />
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" show_stripe_button="false" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.15161133" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15161133" />
       <window_info id="Commit" order="1" weight="0.15161133" />
       <window_info id="Welcome to GitHub Copilot" order="2" show_stripe_button="false" />
       <window_info id="Structure" order="3" side_tool="true" weight="0.25" />
@@ -110,7 +101,7 @@
       <updated>1732909652642</updated>
       <workItem from="1732909655244" duration="11753000" />
       <workItem from="1732999575404" duration="691000" />
-      <workItem from="1733038791252" duration="13101000" />
+      <workItem from="1733038791252" duration="14249000" />
     </task>
     <task id="LOCAL-00001" summary="html">
       <option name="closed" value="true" />

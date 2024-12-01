@@ -49,8 +49,9 @@
 .dropdown-item {
     padding: 10px;
     text-align: left;
-    background-color: #f4f4f9;
+    background-color: #3498db;
     border-bottom: 1px solid #ececec;
+    color: #ffffff;
     font-size: 1em;
     cursor: pointer;
 }
