@@ -9,7 +9,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MenuDAO {
-    public static void insertMenu(Repas[][] listRepas) {
+    private Menu menu;
+    private boolean isMenuUpTodate = false;
+    private final ProduitDAO produitDAO;
+
+    public MenuDAO(ProduitDAO produitDAO) {
+        this.produitDAO = produitDAO;
+        this.menu = this.getMenu();
+    }
+
+    public Menu getMenu() {
+        if (!isMenuUpTodate) {
+            menu = getMenuObject();
+            isMenuUpTodate = true;
+        }
+        return menu;
+    }
+
+    public void insertMenu(Repas[][] listRepas) {
 
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
 
@@ -27,12 +44,13 @@ public class MenuDAO {
                     pstmt.executeUpdate();
                 }
             }
+            isMenuUpTodate = false;
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void updateMenu(Repas[][] listRepas) {
+    public void updateMenu(Repas[][] listRepas) {
         // SQL pour supprimer les anciens enregistrements
         String deleteSQL = "DELETE FROM Menu";
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
@@ -56,13 +74,14 @@ public class MenuDAO {
                     insertPstmt.executeUpdate();
                 }
             }
+            isMenuUpTodate = false;
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     //methode pour recuperer le menu
-    public static String getMenuAsString() {
+    public String getMenuAsString() {
         StringBuilder menuBuilder = new StringBuilder();
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
 
@@ -101,7 +120,7 @@ public class MenuDAO {
     }
 
     //methode pour recuperer le menu
-    public static Menu getMenu() {
+    private Menu getMenuObject() {
         Repas[][] listRepas = new Repas[7][2];
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
 
@@ -117,11 +136,6 @@ public class MenuDAO {
                 String entree = rs.getString("entree");
                 String plat = rs.getString("plat");
 
-                System.out.println("Traitement du jour: " + jour);
-                System.out.println("Moment: " + momentStr);
-                System.out.println("Entrée: " + entree);
-                System.out.println("Plat: " + plat);
-
                 MomentJournee moment;
                 try {
                     moment = MomentJournee.valueOf(momentStr.toUpperCase());
@@ -131,10 +145,10 @@ public class MenuDAO {
                 }
 
                 // Récupérer l'objet Produits pour l'entrée
-                Produits entreeProduit = (entree != null && !entree.equalsIgnoreCase("Aucune")) ? ProduitDAO.getProduitByName(entree) : null;
+                Produits entreeProduit = (entree != null && !entree.equalsIgnoreCase("Aucune")) ? produitDAO.getProduitByName(entree) : null;
 
                 // Récupérer l'objet Produits pour le plat
-                Produits platCompletProduits = (plat != null && !plat.isEmpty()) ? ProduitDAO.getProduitByName(plat) : null;
+                Produits platCompletProduits = (plat != null && !plat.isEmpty()) ? produitDAO.getProduitByName(plat) : null;
 
                 Accompagnement accompagnement = null;
                 Repas repas;
@@ -148,9 +162,9 @@ public class MenuDAO {
                             continue; // Passer à la ligne suivante si le format du plat est incorrect
                         }
 
-                        Produits viande = ProduitDAO.getProduitByName(produitsList[0]);
-                        Produits legume = ProduitDAO.getProduitByName(produitsList[1]);
-                        Produits feculent = (produitsList.length > 2) ? ProduitDAO.getProduitByName(produitsList[2]) : null;
+                        Produits viande = produitDAO.getProduitByName(produitsList[0]);
+                        Produits legume = produitDAO.getProduitByName(produitsList[1]);
+                        Produits feculent = (produitsList.length > 2) ? produitDAO.getProduitByName(produitsList[2]) : null;
 
                         accompagnement = new Accompagnement(legume, feculent);
                         PlatCompose platCompose = new PlatCompose(viande, accompagnement);
@@ -184,7 +198,8 @@ public class MenuDAO {
     }
 
 
-    public static void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
+    public void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
+
         // SQL pour mettre à jour un repas spécifique dans la base de données
         String updateSQL = "UPDATE Menu SET entree = ?, plat = ? WHERE jour = ? AND moment = ?";
 
@@ -203,6 +218,7 @@ public class MenuDAO {
             // Afficher un message pour indiquer si la mise à jour a réussi
             if (rowsAffected > 0) {
                 //System.out.println("Le repas a été mis à jour avec succès pour " + jour + " - " + moment);
+                isMenuUpTodate = false;
             } else {
                 System.out.println("Aucun repas n'a été trouvé pour " + jour + " - " + moment);
             }

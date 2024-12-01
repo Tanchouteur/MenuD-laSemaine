@@ -51,7 +51,7 @@ public class ApiMain {
         });
 
         // Définir les contextes pour les différentes routes
-        server.createContext("/menu/getMenu", new GetMenuHandler()).getFilters().add(new CorsFilter());
+        server.createContext("/menu/getMenu", new GetMenuHandler(factory.getWeightManager().getMenuDAO())).getFilters().add(new CorsFilter());
         server.createContext("/menu/changeMenu", new ChangeMenuHandler(factory)).getFilters().add(new CorsFilter());
         server.createContext("/menu/repas/change", new ChangeRepasHandler(factory)).getFilters().add(new CorsFilter());
 

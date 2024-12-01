@@ -81,7 +81,7 @@ public class ChangeRepasHandler implements HttpHandler {
 
         Repas repas = factory.buildRepas(factory.getMomentInt(moment, momentSemaine), saisonInt);
 
-        MenuDAO.updateRepas(repas, jour, moment);
+        factory.getWeightManager().getMenuDAO().updateRepas(repas, jour, moment);
 
         StringBuilder xmlBuilder = new StringBuilder();
 

@@ -12,9 +12,25 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class ProduitDAO {
+    private Map<TypeProduit, LinkedList<Produits>> produitListMap;
+    private boolean isUpTodate = false;
+    public ProduitDAO() {
+        this.produitListMap = this.getAllProduits();
+        isUpTodate = true;
+    }
+
+    public LinkedList<Produits> getProduitsByType(TypeProduit typeProduit) {
+        if (isUpTodate) {
+            return produitListMap.get(typeProduit);
+        }else {
+            this.produitListMap = this.getAllProduits();
+            isUpTodate = true;
+            return produitListMap.get(typeProduit);
+        }
+    }
 
     // Méthode pour récupérer tous les produits
-    public static Map<TypeProduit, LinkedList<Produits>> getAllProduits() {
+    public Map<TypeProduit, LinkedList<Produits>> getAllProduits() {
 
         Map<TypeProduit, LinkedList<Produits>> produitsMap = new HashMap<>();
         String query = "SELECT * FROM Produits " +
@@ -71,7 +87,7 @@ public class ProduitDAO {
     }
 
     // Méthode pour récupérer un produit par son nom
-    public static Produits getProduitByName(String nomProduit) {
+    public Produits getProduitByName(String nomProduit) {
         Produits produit = null;
         String query = "SELECT * FROM Produits " +
                 "LEFT JOIN PoidsMoment ON Produits.id = PoidsMoment.idProduit " +
@@ -126,33 +142,56 @@ public class ProduitDAO {
     }
 
     // Méthode pour ajouter un produit avec la procedure stockée
-    public static void addProduit(Produits produit) {
-        String query = "{CALL addProduit(" + produit.getNomProduit() + ", " + produit.getType() + ", " + produit.getPoidsArbitraire() + ", " + String.valueOf(produit.getPoidsMoment()[0]) + ", " + String.valueOf(produit.getPoidsMoment()[1]) + ", " + String.valueOf(produit.getPoidsMoment()[2]) + ", " + String.valueOf(produit.getPoidsMoment()[3]) + ", " + produit.getPoidsSaison()[0] + ", " + produit.getPoidsSaison()[1] + ", " + produit.getPoidsSaison()[2] + ", " + produit.getPoidsSaison()[3] + ")}";
-        query = query.replace("[", "").replace("]", "");
-        query = query.replace(" ", "");
+    public void addProduit(Produits produit) {
+        String query = "{CALL ajouter_produit(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}"; // Utilisation de paramètres pour éviter les erreurs
+
         try {
+            // Obtenir la connexion
             Connection connection = DatabaseConnection.getDataSource().getConnection();
+
+            // Préparer la requête
             PreparedStatement statement = connection.prepareStatement(query);
+
+            // Remplir les paramètres
+            statement.setString(1, produit.getNomProduit());
+            statement.setString(2, produit.getType().toString());
+            statement.setInt(3, produit.getPoidsArbitraire());
+            statement.setInt(4, produit.getPoidsMoment()[0]);
+            statement.setInt(5, produit.getPoidsMoment()[1]);
+            statement.setInt(6, produit.getPoidsMoment()[2]);
+            statement.setInt(7, produit.getPoidsMoment()[3]);
+            statement.setInt(8, produit.getPoidsSaison()[0]);
+            statement.setInt(9, produit.getPoidsSaison()[1]);
+            statement.setInt(10, produit.getPoidsSaison()[2]);
+            statement.setInt(11, produit.getPoidsSaison()[3]);
+
+            // Exécuter la procédure stockée
             statement.executeUpdate();
+            System.out.println("Produit ajouté avec succès.");
+            this.isUpTodate = false;
+
         } catch (Exception e) {
-            System.out.println("Probleme de connexion a la bd addProduit(); " + e.getMessage());
+            System.out.println("---------------------------------------------------------------------");
+            System.out.println("Probleme dans le try de addProduit(); " + e.getMessage());
+            System.out.println("---------------------------------------------------------------------");
         }
     }
 
     // Méthode pour supprimer un produit avec la procedure stockée
-    public static void deleteProduit(String nomProduit) {
+    public void deleteProduit(String nomProduit) {
         String query = "{CALL supprimer_produit(" + nomProduit + ")}";
         try {
             Connection connection = DatabaseConnection.getDataSource().getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
             statement.executeUpdate();
+            this.isUpTodate = false;
         } catch (Exception e) {
             System.out.println("Probleme de connexion a la bd deleteProduit(); " + e.getMessage());
         }
     }
 
     // Méthode pour mettre à jour un produit avec la procedure stockée
-    public static void updateProduit(String nomProduit, TypeProduit typeProduit, int poidsArbitraire, int[] poidsMoment, int[] poidsSaison) {
+    public void updateProduit(String nomProduit, TypeProduit typeProduit, int poidsArbitraire, int[] poidsMoment, int[] poidsSaison) {
         String query = "{CALL updateProduit(" + nomProduit + ", " + typeProduit + ", " + poidsArbitraire + ", " + String.valueOf(poidsMoment[0]) + ", " + String.valueOf(poidsMoment[1]) + ", " + String.valueOf(poidsMoment[2]) + ", " + String.valueOf(poidsMoment[3]) + ", " + poidsSaison[0] + ", " + poidsSaison[1] + ", " + poidsSaison[2] + ", " + poidsSaison[3] + ")}";
         query = query.replace("[", "").replace("]", "");
         query = query.replace(" ", "");
@@ -160,6 +199,7 @@ public class ProduitDAO {
             Connection connection = DatabaseConnection.getDataSource().getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
             statement.executeUpdate();
+            this.isUpTodate = false;
         } catch (Exception e) {
             System.out.println("Probleme de connexion a la bd updateProduit(); " + e.getMessage());
         }

@@ -23,7 +23,7 @@ public class GetProductsHandler implements HttpHandler {
         String requestURI = exchange.getRequestURI().toString();
 
         // Extraire le type de produit de l'URL (par exemple : /products/entree)
-        String productType = requestURI.split("/")[2];
+        String productType = requestURI.split("/")[3];
         System.out.println("productType : " + productType);
         // Récupérer les produits du type demandé
 
@@ -63,7 +63,18 @@ public class GetProductsHandler implements HttpHandler {
             // Ajouter les propriétés du produit dans l'objet JSON
             jsonBuilder.append("{")
                     .append("\"nom\": \"").append(produit.getNomProduit()).append("\", ")
-                    .append("\"poids\": \"").append(produit.getPoidsArbitraire()).append("\", ")
+                    .append("\"poids_arbitraire\": \"").append(produit.getPoidsArbitraire()).append("\", ")
+
+                    .append("\"poids_midiSemaine\": \"").append(produit.getPoidsMoment()[0]).append("\", ")
+                    .append("\"poids_soirSemaine\": \"").append(produit.getPoidsMoment()[1]).append("\", ")
+                    .append("\"poids_midiWeekend\": \"").append(produit.getPoidsMoment()[2]).append("\", ")
+                    .append("\"poids_soirWeekend\": \"").append(produit.getPoidsMoment()[3]).append("\", ")
+
+                    .append("\"poids_printemps\": \"").append(produit.getPoidsSaison()[0]).append("\", ")
+                    .append("\"poids_ete\": \"").append(produit.getPoidsSaison()[1]).append("\", ")
+                    .append("\"poids_automne\": \"").append(produit.getPoidsSaison()[2]).append("\", ")
+                    .append("\"poids_hiver\": \"").append(produit.getPoidsSaison()[3]).append("\", ")
+
                     .append("\"last_use\": \"").append(produit.getLastUsed()).append("\"")
                     .append("}");
 

@@ -12,6 +12,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class GetMenuHandler implements HttpHandler {
+    private final MenuDAO menuDAO;
+
+    public GetMenuHandler(MenuDAO menuDAO) {
+        this.menuDAO = menuDAO;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
@@ -48,7 +54,7 @@ public class GetMenuHandler implements HttpHandler {
         StringBuilder xmlBuilder = new StringBuilder();
 
         // Récupérer le menu
-        Menu menu = MenuDAO.getMenu();
+        Menu menu = menuDAO.getMenu();
 
         // Début du document XML
         xmlBuilder.append("<menuSemaine>\n");

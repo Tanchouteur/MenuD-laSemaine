@@ -1,8 +1,10 @@
 package fr.tanchou.menudlasemaine.api.handler.products;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import fr.tanchou.menudlasemaine.api.gson.ProduitsAdapter;
 import fr.tanchou.menudlasemaine.dao.ProduitDAO;
 import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.menu.Produits;
@@ -23,10 +25,8 @@ public class AddProductHandler implements HttpHandler {
         String requestURI = exchange.getRequestURI().toString();
 
         // Extraire le type de produit de l'URL (par exemple : /products/add/entree)
-        String productType = requestURI.split("/")[2];
-        System.out.println("productType : " + productType);
-
-        TypeProduit type = TypeProduit.valueOf(productType.toUpperCase());
+        String productType = requestURI.split("/")[3];
+        //System.out.println("productType : " + productType);
 
         // Lire le corps de la requête POST
         InputStream inputStream = exchange.getRequestBody();
@@ -40,15 +40,21 @@ public class AddProductHandler implements HttpHandler {
         reader.close();
 
         // Utiliser Gson pour parser le JSON en un objet Produits
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Produits.class, new ProduitsAdapter())
+                .create();
+
         Produits newProduits = gson.fromJson(requestBody.toString(), Produits.class);
-
-        // Si besoin, vous pouvez configurer les poids de la requête de cette manière
-        // newProduits.setPoidsMoment(new int[]{...});
-        // newProduits.setPoidsSaison(new int[]{...});
-
-        // Ajouter le produit (exemple de fonction de traitement)
-        String response = addProduct(newProduits);
+        String response;
+        if (newProduits == null) {
+            System.out.println("newProduits is null");
+            return;
+        }
+        if (newProduits.getType() == null || newProduits.getNomProduit() == null) {
+            response = "Le type et le nom du produit sont obligatoires";
+        }else {
+            response = addProduct(newProduits);
+        }
 
         System.out.println("response : " + response);
 
@@ -66,11 +72,30 @@ public class AddProductHandler implements HttpHandler {
         os.close();
     }
 
-    private String addProduct(Produits produits) {
+    private String addProduct(Produits produit) {
         // Ajouter le produit à la base de données
-        ProduitDAO.addProduit(produits);
+        factory.getWeightManager().getProduitDAO().addProduit(produit);
 
-        // Retourner le produit ajouté
-        return new Gson().toJson(produits);
+        StringBuilder jsonBuilder = new StringBuilder();
+        // Ajouter les propriétés du produit dans l'objet JSON
+        jsonBuilder.append("{")
+                .append("\"nom\": \"").append(produit.getNomProduit()).append("\", ")
+                .append("\"poids_arbitraire\": \"").append(produit.getPoidsArbitraire()).append("\", ")
+
+                .append("\"poids_midiSemaine\": \"").append(produit.getPoidsMoment()[0]).append("\", ")
+                .append("\"poids_soirSemaine\": \"").append(produit.getPoidsMoment()[1]).append("\", ")
+                .append("\"poids_midiWeekend\": \"").append(produit.getPoidsMoment()[2]).append("\", ")
+                .append("\"poids_soirWeekend\": \"").append(produit.getPoidsMoment()[3]).append("\", ")
+
+                .append("\"poids_printemps\": \"").append(produit.getPoidsSaison()[0]).append("\", ")
+                .append("\"poids_ete\": \"").append(produit.getPoidsSaison()[1]).append("\", ")
+                .append("\"poids_automne\": \"").append(produit.getPoidsSaison()[2]).append("\", ")
+                .append("\"poids_hiver\": \"").append(produit.getPoidsSaison()[3]).append("\", ")
+
+                .append("\"last_use\": \"").append(produit.getLastUsed()).append("\"")
+                .append("}");
+
+        return jsonBuilder.toString();
+
     }
 }

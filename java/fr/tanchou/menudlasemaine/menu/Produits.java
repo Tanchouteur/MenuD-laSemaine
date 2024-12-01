@@ -6,13 +6,13 @@ import java.time.LocalDate;
 
 public class Produits {
     private int id;
-    private final String nomProduit;
-    private final TypeProduit typeProduit;
+    private String nomProduit;
+    private TypeProduit typeProduit;
     private LocalDate lastUsed;
-    private final int poidsArbitraire;
+    private int poidsArbitraire;
     private int poidsLastUsed;
-    private final int[] poidsMoment; // [midiSemaine, soirSemaine, midiWeekend, soirWeekend]
-    private final int[] poidsSaison; // [printemps, été, automne, hiver]
+    private int[] poidsMoment; // [midiSemaine, soirSemaine, midiWeekend, soirWeekend]
+    private int[] poidsSaison; // [printemps, été, automne, hiver]
     private int poidsFinal;
 
     public Produits(int id,String nomProduit, int poidsArbitraire, LocalDate lastUsed, TypeProduit typeProduit, int[] poidsMoment, int[] poidsSaison) {
@@ -46,16 +46,32 @@ public class Produits {
         return this.nomProduit;
     }
 
+    public void setNomProduit(String nomProduit){
+        this.nomProduit = nomProduit;
+    }
+
     public LocalDate getLastUsed() {
         return lastUsed;
+    }
+
+    public void setLastUsed(LocalDate lastUsed) {
+        this.lastUsed = lastUsed;
     }
 
     public TypeProduit getType() {
         return this.typeProduit;
     }
 
+    public void setType(TypeProduit typeProduit) {
+        this.typeProduit = typeProduit;
+    }
+
     public int getPoidsArbitraire() {
         return poidsArbitraire;
+    }
+
+    public void setPoidsArbitraire(int poidsArbitraire) {
+        this.poidsArbitraire = poidsArbitraire;
     }
 
     public int getPoidsLastUsed() {
@@ -70,8 +86,16 @@ public class Produits {
         return poidsMoment;
     }
 
+    public void setPoidsMoment(int[] poidsMoment) {
+        this.poidsMoment = poidsMoment;
+    }
+
     public int[] getPoidsSaison() {
         return poidsSaison;
+    }
+
+    public void setPoidsSaison(int[] poidsSaison) {
+        this.poidsSaison = poidsSaison;
     }
 
     public int getPoidsFinal() {
