@@ -37,7 +37,7 @@ public class ChangeMenuHandler implements HttpHandler {
     public String changeMenu() {
 
         Menu newMenu = factory.buildMenu();
-        MenuDAO.updateMenu(newMenu.getListRepas());
+        factory.getWeightManager().getMenuDAO().updateMenu(newMenu.getListRepas());
 
         return "succes";
     }

@@ -8,6 +8,7 @@ import fr.tanchou.menudlasemaine.api.handler.menu.ChangeMenuHandler;
 import fr.tanchou.menudlasemaine.api.handler.menu.ChangeRepasHandler;
 import fr.tanchou.menudlasemaine.api.handler.menu.GetMenuHandler;
 import fr.tanchou.menudlasemaine.api.handler.products.AddProductHandler;
+import fr.tanchou.menudlasemaine.api.handler.products.DeleteProductHandler;
 import fr.tanchou.menudlasemaine.api.handler.products.GetProductsHandler;
 import fr.tanchou.menudlasemaine.utils.Factory;
 
@@ -57,8 +58,8 @@ public class ApiMain {
 
         server.createContext("/products/get", new GetProductsHandler(factory)).getFilters().add(new CorsFilter());
         server.createContext("/products/add", new AddProductHandler(factory)).getFilters().add(new CorsFilter());
-        /*server.createContext("/products/delete", new DeleteProductHandler(factory)).getFilters().add(new CorsFilter());
-        server.createContext("/products/update", new UpdateProductHandler(factory)).getFilters().add(new CorsFilter());*/
+        server.createContext("/products/delete", new DeleteProductHandler(factory)).getFilters().add(new CorsFilter());
+        /*server.createContext("/products/update", new UpdateProductHandler(factory)).getFilters().add(new CorsFilter());*/
 
         server.createContext("/", new NotFoundHandler());
 

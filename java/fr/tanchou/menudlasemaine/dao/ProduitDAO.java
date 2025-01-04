@@ -178,15 +178,17 @@ public class ProduitDAO {
     }
 
     // Méthode pour supprimer un produit avec la procedure stockée
-    public void deleteProduit(String nomProduit) {
-        String query = "{CALL supprimer_produit(" + nomProduit + ")}";
+    public boolean deleteProduit(String nomProduit) {
+        String query = "{CALL supprimer_produit('" + nomProduit + "')}";
         try {
             Connection connection = DatabaseConnection.getDataSource().getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
             statement.executeUpdate();
             this.isUpTodate = false;
+            return true;
         } catch (Exception e) {
             System.out.println("Probleme de connexion a la bd deleteProduit(); " + e.getMessage());
+            return false;
         }
     }
 

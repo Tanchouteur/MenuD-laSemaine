@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.tanchou.menudlasemaine.api.gson.ProduitsAdapter;
-import fr.tanchou.menudlasemaine.dao.ProduitDAO;
-import fr.tanchou.menudlasemaine.enums.TypeProduit;
 import fr.tanchou.menudlasemaine.menu.Produits;
 import fr.tanchou.menudlasemaine.utils.Factory;
 
@@ -23,10 +21,6 @@ public class AddProductHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         System.out.println("AddProduct : " + exchange.getRequestURI());
         String requestURI = exchange.getRequestURI().toString();
-
-        // Extraire le type de produit de l'URL (par exemple : /products/add/entree)
-        String productType = requestURI.split("/")[3];
-        //System.out.println("productType : " + productType);
 
         // Lire le corps de la requête POST
         InputStream inputStream = exchange.getRequestBody();

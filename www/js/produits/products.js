@@ -136,7 +136,10 @@ document.getElementById("addEntryButton").addEventListener("click", function () 
         ]
     };
 
-    // Envoi à l'API
+    addProduct(type, newProduct);
+});
+
+function addProduct(type, newProduct) {
     fetch(`https://tanchou.fr:8090/products/add/${type}`, {
         method: "POST",
         headers: {
@@ -163,4 +166,32 @@ document.getElementById("addEntryButton").addEventListener("click", function () 
             console.error("Erreur :", error);
             alert("Erreur lors de l'ajout du produit.");
         });
-});
+}
+
+//Supprimer un produit
+function deleteProduct(productName) {
+    if (confirm(`Voulez-vous vraiment supprimer le produit "${productName}" ?`)) {
+        fetch(`https://tanchou.fr:8090/products/delete/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: productName
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur lors de l'ajout du produit ");
+            }
+            return response.json();
+        })
+        .then(deletedProduct => {
+            console.log("Produit supprimé avec succès :", deletedProduct);
+
+            // Mise à jour de la liste globale
+            productList = productList.filter(product => product.nom !== productName);
+
+            // Rafraîchissement de l'affichage
+            renderProducts();
+        })
+    }
+}
