@@ -99,7 +99,7 @@ public class Factory {
         Accompagnement accompagnement = generateAccompagnement(momentInt, saisonInt);
 
         int platComposeWeight;
-        platComposeWeight = (accompagnement.getFeculent() == null) ? viande.getPoidsFinal() + accompagnement.getLegume().getPoidsFinal() : viande.getPoidsFinal() + accompagnement.getFeculent().getPoidsFinal();
+        platComposeWeight = (accompagnement.feculent() == null) ? viande.getPoidsFinal() + accompagnement.legume().getPoidsFinal() : viande.getPoidsFinal() + accompagnement.feculent().getPoidsFinal();
 
         if (platComplet.getPoidsFinal() > (viande.getPoidsFinal() + platComposeWeight)) {
             plat = new PlatComplet(platComplet);

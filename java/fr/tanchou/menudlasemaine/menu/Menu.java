@@ -1,34 +1,46 @@
 package fr.tanchou.menudlasemaine.menu;
 
-public class Menu {
-    private final Repas[][] listRepas;
+/**
+ * Represents a weekly menu containing meals for each day and each time of the day.
+ * This class uses an immutable structure (record) to encapsulate a list of meals.
+ *
+ * @param listRepas A two-dimensional array representing the meals for the week.
+ *                  Each row corresponds to a day of the week, and each column to a specific time of the day.
+ *                  By convention, the first column is for lunch, and the second for dinner.
+ */
+public record Menu(Repas[][] listRepas) {
 
-    public Menu(Repas[][] listRepas) {
-        this.listRepas = listRepas;
-    }
-
-    public Repas[][] getListRepas() {
-        return listRepas;
-    }
-
+    /**
+     * Retrieves a specific meal based on the day and time.
+     *
+     * @param jour   The index of the day (0 = Monday, 1 = Tuesday, etc.).
+     * @param moment The index of the time (0 = lunch, 1 = dinner).
+     * @return The meal corresponding to the specified day and time.
+     */
     public Repas getRepas(int jour, int moment) {
         return listRepas[jour][moment];
     }
 
+    /**
+     * Generates a string representation of the weekly menu.
+     * Displays the meals for each day of the week, including appetizers and main courses.
+     *
+     * @return A string representing the weekly menu.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+        String[] joursSemaine = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
-        sb.append("----- Menu de la Semaine -----\n");
+        sb.append("----- Weekly Menu -----\n");
 
         for (int i = 0; i < listRepas.length; i++) {
-            sb.append("\n").append(joursSemaine[i]).append(" :\n");
+            sb.append("\n").append(joursSemaine[i]).append(":\n");
             sb.append("-------------------------\n");
 
             for (int j = 0; j < listRepas[i].length; j++) {
                 Repas repas = listRepas[i][j];
-                sb.append((j == 0 ? "Midi : " : "Soir : "));
+                sb.append((j == 0 ? "Lunch: " : "Dinner: "));
 
                 if (repas.getEntree() != null) {
                     sb.append(repas.getEntree().getNomProduit()).append(" - ");
@@ -39,6 +51,6 @@ public class Menu {
 
         sb.append("\n------------------------------");
 
-        return sb.toString(); // Retourne la chaîne construite
+        return sb.toString(); // Returns the constructed string
     }
 }

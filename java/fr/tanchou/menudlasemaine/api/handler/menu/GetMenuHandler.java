@@ -60,11 +60,11 @@ public class GetMenuHandler implements HttpHandler {
         xmlBuilder.append("<menuSemaine>\n");
 
         // Parcourir les repas de la semaine
-        for (int jour = 0; jour < menu.getListRepas().length; jour++) {
+        for (int jour = 0; jour < menu.listRepas().length; jour++) {
             xmlBuilder.append("  <jour numero=\"").append(jour + 1).append("\">\n");
 
-            for (int repasIndex = 0; repasIndex < menu.getListRepas()[jour].length; repasIndex++) {
-                Repas repas = menu.getListRepas()[jour][repasIndex];
+            for (int repasIndex = 0; repasIndex < menu.listRepas()[jour].length; repasIndex++) {
+                Repas repas = menu.listRepas()[jour][repasIndex];
 
                 xmlBuilder.append("    <repas>\n");
 

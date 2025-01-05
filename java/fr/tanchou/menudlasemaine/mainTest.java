@@ -11,7 +11,7 @@ public class mainTest {
         Menu newMenu = factory.buildMenu();
         ProduitDAO produitDAO = new ProduitDAO();
         MenuDAO menuDAO = new MenuDAO(produitDAO);
-        menuDAO.updateMenu(newMenu.getListRepas());
+        menuDAO.updateMenu(newMenu.listRepas());
 
         System.out.println(newMenu);
     }

@@ -2,7 +2,6 @@ package fr.tanchou.menudlasemaine.api.handler.menu;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.menu.Menu;
 import fr.tanchou.menudlasemaine.utils.Factory;
 
@@ -37,7 +36,7 @@ public class ChangeMenuHandler implements HttpHandler {
     public String changeMenu() {
 
         Menu newMenu = factory.buildMenu();
-        factory.getWeightManager().getMenuDAO().updateMenu(newMenu.getListRepas());
+        factory.getWeightManager().getMenuDAO().updateMenu(newMenu.listRepas());
 
         return "succes";
     }
