@@ -9,6 +9,9 @@ import java.lang.reflect.Type;
 /**
  * Custom deserializer for the Produits class using Gson.
  * This class is responsible for converting a JSON representation of a Produit object into an instance of the Produits class.
+ *
+ * @author Louis Tanchou
+ * @version 1.4
  */
 public class ProduitsAdapter implements JsonDeserializer<Produits> {
 

@@ -18,6 +18,9 @@ import java.util.Random;
  * This class uses weighted probabilities and compatibility rules
  * to create realistic menus based on the season, time of day, and day of the week.
  * </p>
+ *
+ * @author Louis Tanchou
+ * @version 1.6
  */
 public class Factory {
 

@@ -19,6 +19,9 @@ import javax.sql.DataSource;
  * <p><b>Important:</b> This class is initialized statically. The connection
  * details (such as JDBC URL, username, and password) are hard-coded and
  * should be secured for production environments.</p>
+ *
+ * @author Louis Tanchou
+ * @version 1.2
  */
 public class DatabaseConnectionFakeGit {
 

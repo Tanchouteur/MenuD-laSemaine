@@ -24,6 +24,9 @@ import java.util.Scanner;
 /**
  * Main class that starts the HTTPS server for handling API requests related to menu and product management.
  * It initializes the server with SSL context for secure communication and sets up various API endpoints.
+ *
+ * @author Louis Tanchou
+ * @version 1.7
  */
 public class ApiMain {
 
