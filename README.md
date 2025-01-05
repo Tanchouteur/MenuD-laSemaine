@@ -16,3 +16,5 @@ le projet est divisé en 4 parties :
 ## [API](info/api/README.md)
 
 ## [Interface Graphique](info/interface/README.md)
+
+![UML Simplifier](info/uml.png)
