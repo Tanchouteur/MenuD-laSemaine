@@ -19,14 +19,16 @@ import java.io.FileInputStream;
 import java.net.InetSocketAddress;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.util.Scanner;
 
 public class ApiMain {
     public static void main(String[] args) throws Exception {
         Factory factory = new Factory();
-
+        Scanner scanner = new Scanner(System.in);
         // Chemin vers le fichier keystore contenant le certificat SSL
-        String keystorePath = "/home/ubuntu/MenuSemaine/certificates/keystore.p12"; // Remplace par le chemin absolu ou relatif de ton keystore
-        String keystorePassword = "2112"; // Remplace par le mot de passe de ton keystore
+        String keystorePath = "/home/ubuntu/MenuSemaine/certificates/keystore.p12";
+        System.out.print("Mot de passe du keystore : \n >");
+        String keystorePassword = scanner.nextLine();
 
         // Charger le keystore
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
