@@ -1,4 +1,4 @@
-# MenuD-laSemaine
+# MenuD-laSemaine ![logo](www/favicon.ico)
 Projet-Personnel
 
 Ce project consiste à résoudre un problem de gestion de menu de la semaine pour une famille.
