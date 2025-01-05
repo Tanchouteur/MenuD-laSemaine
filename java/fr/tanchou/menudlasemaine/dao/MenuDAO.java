@@ -1,19 +1,32 @@
 package fr.tanchou.menudlasemaine.dao;
-import fr.tanchou.menudlasemaine.dao.produit.EntreeDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
-import fr.tanchou.menudlasemaine.models.Plat;
-import fr.tanchou.menudlasemaine.models.Repas;
-import fr.tanchou.menudlasemaine.models.produit.Entree;
+import fr.tanchou.menudlasemaine.menu.*;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class MenuDAO {
-    public static void insertMenu(Repas[][] repasParJour) {
+    private Menu menu;
+    private boolean isMenuUpTodate = false;
+    private final ProduitDAO produitDAO;
+
+    public MenuDAO(ProduitDAO produitDAO) {
+        this.produitDAO = produitDAO;
+        this.menu = this.getMenu();
+    }
+
+    public Menu getMenu() {
+        if (!isMenuUpTodate) {
+            menu = getMenuObject();
+            isMenuUpTodate = true;
+        }
+        return menu;
+    }
+
+    public void insertMenu(Repas[][] listRepas) {
 
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
 
@@ -22,21 +35,22 @@ public class MenuDAO {
 
             String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
             String[] moments = {"midi", "soir"};
-            for (int i = 0; i < repasParJour.length; i++) {
-                for (int j = 0; j < repasParJour[i].length; j++) {
+            for (int i = 0; i < listRepas.length; i++) {
+                for (int j = 0; j < listRepas[i].length; j++) {
                     pstmt.setString(1, joursSemaine[i]);
                     pstmt.setString(2, moments[j]); // ou "Soir" selon la position
-                    pstmt.setString(3, repasParJour[i][j].getEntree() != null ? repasParJour[i][j].getEntree().getNom() : "Aucune");
-                    pstmt.setString(4, repasParJour[i][j].getPlat() != null ? repasParJour[i][j].getPlat().getNomPlat() : "Aucun");
+                    pstmt.setString(3, listRepas[i][j].getEntree() != null ? listRepas[i][j].getEntree().getNomProduit() : "Aucune");
+                    pstmt.setString(4, listRepas[i][j].getPlat() != null ? listRepas[i][j].getPlat().getNomPlat() : "Aucun");
                     pstmt.executeUpdate();
                 }
             }
+            isMenuUpTodate = false;
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void updateMenu(Repas[][] repasParJour) {
+    public void updateMenu(Repas[][] listRepas) {
         // SQL pour supprimer les anciens enregistrements
         String deleteSQL = "DELETE FROM Menu";
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
@@ -51,22 +65,23 @@ public class MenuDAO {
             String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
             String[] moments = {"midi", "soir"};
 
-            for (int i = 0; i < repasParJour.length; i++) {
-                for (int j = 0; j < repasParJour[i].length; j++) {
+            for (int i = 0; i < listRepas.length; i++) {
+                for (int j = 0; j < listRepas[i].length; j++) {
                     insertPstmt.setString(1, joursSemaine[i]);
                     insertPstmt.setString(2, moments[j]); // "Midi" ou "Soir" selon la position
-                    insertPstmt.setString(3, repasParJour[i][j].getEntree() != null ? repasParJour[i][j].getEntree().getNom() : "Aucune");
-                    insertPstmt.setString(4, repasParJour[i][j].getPlat() != null ? repasParJour[i][j].getPlat().getNomPlat() : "Aucun");
+                    insertPstmt.setString(3, listRepas[i][j].getEntree() != null ? listRepas[i][j].getEntree().getNomProduit() : "Aucune");
+                    insertPstmt.setString(4, listRepas[i][j].getPlat() != null ? listRepas[i][j].getPlat().getNomPlat() : "Aucun");
                     insertPstmt.executeUpdate();
                 }
             }
+            isMenuUpTodate = false;
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     //methode pour recuperer le menu
-    public static String getMenuAsString() {
+    public String getMenuAsString() {
         StringBuilder menuBuilder = new StringBuilder();
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
 
@@ -98,13 +113,93 @@ public class MenuDAO {
                 menuBuilder.append(plat).append("\n");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de la récupération du menu sous forme de chaine de character." + e.getMessage());
         }
 
         return menuBuilder.toString();
     }
 
-    public static void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
+    //methode pour recuperer le menu
+    private Menu getMenuObject() {
+        Repas[][] listRepas = new Repas[7][2];
+        String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
+
+        try (Connection conn = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectSQL);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            int i = 0;
+            int j = 0;
+            while (rs.next()) {
+                String jour = rs.getString("jour");
+                String momentStr = rs.getString("moment");
+                String entree = rs.getString("entree");
+                String plat = rs.getString("plat");
+
+                MomentJournee moment;
+                try {
+                    moment = MomentJournee.valueOf(momentStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Moment invalide: " + momentStr);
+                    continue; // Passer à la ligne suivante si le moment est invalide
+                }
+
+                // Récupérer l'objet Produits pour l'entrée
+                Produits entreeProduit = (entree != null && !entree.equalsIgnoreCase("Aucune")) ? produitDAO.getProduitByName(entree) : null;
+
+                // Récupérer l'objet Produits pour le plat
+                Produits platCompletProduits = (plat != null && !plat.isEmpty()) ? produitDAO.getProduitByName(plat) : null;
+
+                Accompagnement accompagnement = null;
+                Repas repas;
+
+                if (platCompletProduits == null) { // Si c'est un plat composé
+                    if (plat != null && plat.contains(",")) {
+                        String[] produitsList = plat.split(",");
+
+                        if (produitsList.length < 2) {
+                            System.err.println("Erreur de format pour le plat composé: " + plat);
+                            continue; // Passer à la ligne suivante si le format du plat est incorrect
+                        }
+
+                        Produits viande = produitDAO.getProduitByName(produitsList[0]);
+                        Produits legume = produitDAO.getProduitByName(produitsList[1]);
+                        Produits feculent = (produitsList.length > 2) ? produitDAO.getProduitByName(produitsList[2]) : null;
+
+                        accompagnement = new Accompagnement(legume, feculent);
+                        PlatCompose platCompose = new PlatCompose(viande, accompagnement);
+                        repas = new Repas(entreeProduit, platCompose);
+                    } else {
+                        System.err.println("Erreur de format pour le plat: " + plat);
+                        continue; // Passer à la ligne suivante si le format du plat est incorrect
+                    }
+                } else {
+                    // Cas où c'est un plat complet
+                    PlatComplet platComplet = new PlatComplet(platCompletProduits);
+                    repas = new Repas(entreeProduit, platComplet);
+                }
+
+                listRepas[i][j] = repas;
+
+                j++;
+                if (j == 2) {
+                    j = 0;
+                    i++;
+                }
+            }
+
+            return new Menu(listRepas);
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération du menu. " + e.getMessage());
+        }
+
+        return null;
+    }
+
+
+    public void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
+
         // SQL pour mettre à jour un repas spécifique dans la base de données
         String updateSQL = "UPDATE Menu SET entree = ?, plat = ? WHERE jour = ? AND moment = ?";
 
@@ -112,7 +207,7 @@ public class MenuDAO {
              PreparedStatement updatePstmt = conn.prepareStatement(updateSQL)) {
 
             // Définir les paramètres de la requête SQL
-            updatePstmt.setString(1, repasToUpdate.getEntree() != null ? repasToUpdate.getEntree().getNom() : "Aucune");
+            updatePstmt.setString(1, repasToUpdate.getEntree() != null ? repasToUpdate.getEntree().getNomProduit() : "Aucune");
             updatePstmt.setString(2, repasToUpdate.getPlat() != null ? repasToUpdate.getPlat().getNomPlat() : "Aucun");
             updatePstmt.setString(3, jour); // Le jour (ex : "Lundi")
             updatePstmt.setString(4, moment.toString()); // Le moment ("midi" ou "soir")
@@ -123,12 +218,12 @@ public class MenuDAO {
             // Afficher un message pour indiquer si la mise à jour a réussi
             if (rowsAffected > 0) {
                 //System.out.println("Le repas a été mis à jour avec succès pour " + jour + " - " + moment);
+                isMenuUpTodate = false;
             } else {
                 System.out.println("Aucun repas n'a été trouvé pour " + jour + " - " + moment);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("Erreur lors de la mise à jour du repas.");
+            System.err.println("Erreur lors de la mise à jour du repas. " + e.getMessage());
         }
     }
 

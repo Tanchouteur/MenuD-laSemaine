@@ -11,62 +11,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const jours = xmlDoc.getElementsByTagName("jour");
             const today = new Date();
-            const options = { weekday: 'long' }; // Pour obtenir le nom du jour en texte complet
-            const currentDayName = today.toLocaleDateString('fr-FR', options).toUpperCase(); // Mettre le jour en majuscules
+            const options = { weekday: 'long' };
+            const currentDayName = today.toLocaleDateString('fr-FR', options).toUpperCase();
 
             for (const jour of jours) {
-                const jourName = jour.getAttribute("nom").toUpperCase(); // Convertir en majuscules
+                const jourNumero = jour.getAttribute("numero");
+                const jourName = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"][jourNumero - 1].toUpperCase(); // Convertir le numéro en nom de jour
 
-                // Convertir le nom du jour en un objet Date
-                const jourDate = new Date();
-                jourDate.setDate(today.getDate() + (Array.from(jours).indexOf(jour) - today.getDay())); // Calculer la date à partir du jour de la semaine
-
+                // Créer la carte pour chaque jour
                 const card = document.createElement("div");
                 card.classList.add("card");
-                card.id = jourName
+                card.id = `${jourName}`;
 
                 const jourTitle = document.createElement("h2");
+                jourTitle.textContent = `${jourName}`;
+                card.appendChild(jourTitle);
 
-                // Vérifier si le jour actuel est le même que le jour du menu
-                if (jourName === currentDayName) {
+                if (jourNumero == today.getDay() + 1) {
                     card.classList.add("current-day");
                     jourTitle.classList.add("current-day");
                 }
 
-                jourTitle.textContent = jourName;
-                card.appendChild(jourTitle);
-
-                const midi = jour.getElementsByTagName("midi")[0];
+                // Créer des sections pour le midi et le soir
                 const midiDiv = document.createElement("div");
-
                 midiDiv.classList.add("meal-description");
                 midiDiv.classList.add("MIDI");
-                midiDiv.innerHTML = `
-                <div class="meal-time">Midi : <button class="card-button" id="${jourName}MIDI" onclick="regenerateRepa('${jourName}', 'MIDI')">Regénéré</button></div>
-                <p><b>Entrée : </b>${midi.getElementsByTagName("entree")[0]?.textContent || "Aucune"}</p>
-                <p><b>Plat : </b>${midi.getElementsByTagName("plat")[0]?.textContent || "Aucun"}</p>
-            `;
-                card.appendChild(midiDiv);
+                midiDiv.innerHTML = `<div class="meal-time">Midi : <button class="card-button" id="${jourName}MIDI" onclick="regenerateRepas('${jourName}','MIDI')">Regénérer</button></div>`;
 
-                const soir = jour.getElementsByTagName("soir")[0];
                 const soirDiv = document.createElement("div");
                 soirDiv.classList.add("meal-description");
                 soirDiv.classList.add("SOIR");
-                soirDiv.innerHTML = `
-                <div class="meal-time">Soir : <button class="card-button" id="${jourName}SOIR" onclick="regenerateRepa('${jourName}', 'SOIR')">Regénéré</button></div>
-                <p><b>Entrée : </b>${soir.getElementsByTagName("entree")[0]?.textContent || "Aucune"}</p>
-                <p><b>Plat : </b>${soir.getElementsByTagName("plat")[0]?.textContent || "Aucun"}</p>
-            `;
-                if (jourDate < today) {
-                    card.classList.add("past-day"); // Appliquer la classe pour les jours passés
-                    midi.classList.add("past-day");
-                    soir.classList.add("past-day");
+                soirDiv.innerHTML = `<div class="meal-time">Soir : <button class="card-button" id="${jourName}SOIR" onclick="regenerateRepas('${jourName}','SOIR')">Regénérer</button></div>`;
+
+                // Initialiser le contenu des repas avec "Aucune" par défaut
+                let midiRepasContent = "<p><b>Entrée : </b>Aucune</p><p><b>Plat : </b>Aucune</p>";
+                let soirRepasContent = "<p><b>Entrée : </b>Aucune</p><p><b>Plat : </b>Aucune</p>";
+
+                // Parcourir chaque élément de repas pour le jour
+                const repasElements = jour.getElementsByTagName("repas");
+                for (let i = 0; i < repasElements.length; i++) {
+                    const repas = repasElements[i];
+                    const entree = repas.getElementsByTagName("entree")[0];
+                    const platCompose = repas.getElementsByTagName("platCompose")[0];
+
+                    if (entree) {
+                        // Modifier l'entrée si elle existe
+                        if (i === 0) {
+                            midiRepasContent = `<p><b>Entrée : </b>${entree.textContent}</p><p><b>Plat : </b>Aucune</p>`;
+                        } else {
+                            soirRepasContent = `<p><b>Entrée : </b>${entree.textContent}</p><p><b>Plat : </b>Aucune</p>`;
+                        }
+                    }
+
+                    if (platCompose) {
+                        const viande = platCompose.getElementsByTagName("viande")[0]?.textContent || "Non spécifié";
+                        const accompagnement = platCompose.getElementsByTagName("accompagnement")[0]?.textContent || "Non spécifié";
+
+                        // Modifier le plat dans la section appropriée
+                        if (i === 0) {
+                            midiRepasContent = `<p><b>Entrée : </b>Aucune</p><p><b>Plat : </b> ${viande} - ${accompagnement}</p>`;
+                        } else {
+                            soirRepasContent = `<p><b>Entrée : </b>Aucune</p><p><b>Plat : </b> ${viande} - ${accompagnement}</p>`;
+                        }
+                    }
                 }
+
+                // Remplir les sections avec le contenu ou le texte par défaut
+                midiDiv.innerHTML += midiRepasContent;
+                soirDiv.innerHTML += soirRepasContent;
+
+                card.appendChild(midiDiv);
                 card.appendChild(soirDiv);
 
                 menuContainer.appendChild(card);
             }
-
         })
         .catch(error => {
             menuContainer.innerHTML = "Erreur lors de la récupération du menu.";
@@ -74,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 });
 
-function regenerateRepa(jourName, moment) {
+function regenerateRepas(jourName, moment) {
 
     const buttonElement = document.getElementById(jourName + moment);
     //console.log("bouton : " + buttonElement);
@@ -144,7 +162,7 @@ function updateRepas(xmlDoc, jourName, moment) {
         if (momentDiv) {
             // Mettre à jour le contenu du moment
             momentDiv.innerHTML = `
-                        <div class="meal-time">${moment === "MIDI" ? "Midi" : "Soir"} : <button class="card-button" id="${jourName}${moment}" onclick="regenerateRepa('${jourName}', '${moment}')">Regénéré</button></div>
+                        <div class="meal-time">${moment === "MIDI" ? "Midi" : "Soir"} : <button class="card-button" id="${jourName}${moment}" onclick="regenerateRepas('${jourName}', '${moment}')">Regénéré</button></div>
                         <p><b>Entrée : </b>${entree}</p>
                         <p><b>Plat : </b>${plat}</p>
                     `;

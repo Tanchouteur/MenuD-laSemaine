@@ -27,7 +27,7 @@ on additionne le poids de chaque produit avec un le poid généré par la dernie
 Mais a voir si c'est pas mieux de multiplier plutot que d'additionner
 
 #### Moment de la journée et de la semaine
-![TableMomentJournee.png](TableMomentJournee.png) 
+
 
 
 ```sql

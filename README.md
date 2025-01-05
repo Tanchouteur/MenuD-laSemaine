@@ -1,27 +1,18 @@
 # MenuD-laSemaine
 Projet-Personnel
 
-## [Base de données](info/README.md)
+Ce project consiste à résoudre un problem de gestion de menu de la semaine pour une famille.
 
-## Ajouter un produit : 
-```sql
-PROCEDURE ajouter_produit(
-     IN p_nom_produit VARCHAR(255),
-     IN p_type_produit ENUM('Legume', 'Viande', 'Feculent', 'Entree', 'plat_complet'),
+le projet est divisé en 4 parties :
+- La partie qui gere les menus, les plats, les alliments et les recettes
+- La partie qui gere l'api
+- La partie qui gere la base de données
+- La partie qui gere l'interface graphique (WEB)
 
-     IN p_poids INT,
+## [Plats](info/menu/README.md)
 
-     IN p_poids_midi_semaine INT,
-     IN p_poids_soir_semaine INT,
-     IN p_poids_midi_weekend INT,
-     IN p_poids_soir_weekend INT,
+## [Base de données](info/db/README.md)
 
-     IN p_poids_printemps INT,
-     IN p_poids_ete INT,
-     IN p_poids_automne INT,
-     IN p_poids_hiver INT
- );
+## [API](info/api/README.md)
 
-
-CALL ajouter_produit('Harricot-vert', 'legume', 20, 0, 50, 50, 40 , 0, 0, 0, 100);
-```
+## [Interface Graphique](info/interface/README.md)

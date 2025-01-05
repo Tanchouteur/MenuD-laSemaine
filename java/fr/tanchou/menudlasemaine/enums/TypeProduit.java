@@ -4,6 +4,6 @@ public enum TypeProduit {
     VIANDE,
     FECULENT,
     LEGUME,
-    PLAT_COMPLET,
+    PLATCOMPLET,
     ENTREE,
 }

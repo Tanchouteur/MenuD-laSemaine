@@ -30,4 +30,17 @@ public enum Saison {
             return AUTOMNE;
         }
     }
+
+    // Méthode pour vérifier si une saison est active pour un mois donné
+    public static int getSaisonIndexByMois(int mois) {
+        if (mois >= 12 || mois <= 2) {
+            return 3;
+        } else if (mois >= 3 && mois <= 5) {
+            return 0;
+        } else if (mois >= 6 && mois <= 8) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
 }

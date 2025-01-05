@@ -22,23 +22,9 @@ replay_pid*
 /.idea
 /a delete/*.java
 /out/
-/out/production/
-/out/production/MenuD-laSemaine/
-/out/production/MenuD-laSemaine/fr/
-/out/production/MenuD-laSemaine/fr/tanchou/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/controller/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/dao/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/enums/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/html/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/models/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/probabilitee/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/utils/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/web/
-/out/production/MenuD-laSemaine/fr/tanchou/menudlasemaine/SimpleHttpServer.class
-/out/production/MenuD-laSemaine/decodeMenu.js
-/out/production/MenuD-laSemaine/simplelogger.properties
-/out/production/MenuD-laSemaine/styles.css
+
 /.attach_pid874363
 
 /certificates/keystore.p12
+
+/java/fr/tanchou/menudlasemaine/utils/db/DatabaseConnection.java
