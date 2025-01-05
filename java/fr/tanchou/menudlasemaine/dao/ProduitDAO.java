@@ -14,6 +14,7 @@ import java.util.*;
 public class ProduitDAO {
     private Map<TypeProduit, LinkedList<Produits>> produitListMap;
     private boolean isUpTodate = false;
+
     public ProduitDAO() {
         this.produitListMap = this.getAllProduits();
         isUpTodate = true;
