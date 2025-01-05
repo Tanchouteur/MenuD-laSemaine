@@ -2,7 +2,6 @@ package fr.tanchou.menudlasemaine.api.handler.menu;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import fr.tanchou.menudlasemaine.dao.MenuDAO;
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.enums.MomentSemaine;
 import fr.tanchou.menudlasemaine.enums.Saison;
@@ -89,8 +88,8 @@ public class ChangeRepasHandler implements HttpHandler {
 
         // Ajouter les éléments moment, entree, et plat
         xmlBuilder.append("<").append(moment).append(">")
-                .append("<entree>").append(repas.getEntree() != null ? repas.getEntree() : "").append("</entree>")
-                .append("<plat>").append(repas.getPlat().toString()).append("</plat>")
+                .append("<entree>").append(repas.entree() != null ? repas.entree() : "").append("</entree>")
+                .append("<plat>").append(repas.plat().toString()).append("</plat>")
                 .append("</").append(moment).append(">");
 
 

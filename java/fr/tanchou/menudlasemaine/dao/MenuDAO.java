@@ -39,8 +39,8 @@ public class MenuDAO {
                 for (int j = 0; j < listRepas[i].length; j++) {
                     pstmt.setString(1, joursSemaine[i]);
                     pstmt.setString(2, moments[j]); // ou "Soir" selon la position
-                    pstmt.setString(3, listRepas[i][j].getEntree() != null ? listRepas[i][j].getEntree().getNomProduit() : "Aucune");
-                    pstmt.setString(4, listRepas[i][j].getPlat() != null ? listRepas[i][j].getPlat().getNomPlat() : "Aucun");
+                    pstmt.setString(3, listRepas[i][j].entree() != null ? listRepas[i][j].entree().getNomProduit() : "Aucune");
+                    pstmt.setString(4, listRepas[i][j].plat() != null ? listRepas[i][j].plat().getNomPlat() : "Aucun");
                     pstmt.executeUpdate();
                 }
             }
@@ -69,8 +69,8 @@ public class MenuDAO {
                 for (int j = 0; j < listRepas[i].length; j++) {
                     insertPstmt.setString(1, joursSemaine[i]);
                     insertPstmt.setString(2, moments[j]); // "Midi" ou "Soir" selon la position
-                    insertPstmt.setString(3, listRepas[i][j].getEntree() != null ? listRepas[i][j].getEntree().getNomProduit() : "Aucune");
-                    insertPstmt.setString(4, listRepas[i][j].getPlat() != null ? listRepas[i][j].getPlat().getNomPlat() : "Aucun");
+                    insertPstmt.setString(3, listRepas[i][j].entree() != null ? listRepas[i][j].entree().getNomProduit() : "Aucune");
+                    insertPstmt.setString(4, listRepas[i][j].plat() != null ? listRepas[i][j].plat().getNomPlat() : "Aucun");
                     insertPstmt.executeUpdate();
                 }
             }
@@ -207,8 +207,8 @@ public class MenuDAO {
              PreparedStatement updatePstmt = conn.prepareStatement(updateSQL)) {
 
             // Définir les paramètres de la requête SQL
-            updatePstmt.setString(1, repasToUpdate.getEntree() != null ? repasToUpdate.getEntree().getNomProduit() : "Aucune");
-            updatePstmt.setString(2, repasToUpdate.getPlat() != null ? repasToUpdate.getPlat().getNomPlat() : "Aucun");
+            updatePstmt.setString(1, repasToUpdate.entree() != null ? repasToUpdate.entree().getNomProduit() : "Aucune");
+            updatePstmt.setString(2, repasToUpdate.plat() != null ? repasToUpdate.plat().getNomPlat() : "Aucun");
             updatePstmt.setString(3, jour); // Le jour (ex : "Lundi")
             updatePstmt.setString(4, moment.toString()); // Le moment ("midi" ou "soir")
 

@@ -42,10 +42,10 @@ public record Menu(Repas[][] listRepas) {
                 Repas repas = listRepas[i][j];
                 sb.append((j == 0 ? "Lunch: " : "Dinner: "));
 
-                if (repas.getEntree() != null) {
-                    sb.append(repas.getEntree().getNomProduit()).append(" - ");
+                if (repas.entree() != null) {
+                    sb.append(repas.entree().getNomProduit()).append(" - ");
                 }
-                sb.append(repas.getPlat().getNomPlat()).append("\n");
+                sb.append(repas.plat().getNomPlat()).append("\n");
             }
         }
 

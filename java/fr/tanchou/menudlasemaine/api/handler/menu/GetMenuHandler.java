@@ -69,19 +69,19 @@ public class GetMenuHandler implements HttpHandler {
                 xmlBuilder.append("    <repas>\n");
 
                 // Ajouter l'entrée
-                if (repas.getEntree() != null) {
-                    xmlBuilder.append("      <entree>").append(repas.getEntree().getNomProduit()).append("</entree>\n");
+                if (repas.entree() != null) {
+                    xmlBuilder.append("      <entree>").append(repas.entree().getNomProduit()).append("</entree>\n");
                 }else {
                     xmlBuilder.append("      <entree>").append("Aucune").append("</entree>\n");
                 }
 
                 // Ajouter le plat (gestion des types PlatCompose et PlatComplet)
-                if (repas.getPlat() != null) {
-                    if (repas.getPlat() instanceof PlatComplet) {
-                        PlatComplet platComplet = (PlatComplet) repas.getPlat();
+                if (repas.plat() != null) {
+                    if (repas.plat() instanceof PlatComplet) {
+                        PlatComplet platComplet = (PlatComplet) repas.plat();
                         xmlBuilder.append("      <platComplet>").append(platComplet.getNomPlat()).append("</platComplet>\n");
-                    } else if (repas.getPlat() instanceof PlatCompose) {
-                        PlatCompose platCompose = (PlatCompose) repas.getPlat();
+                    } else if (repas.plat() instanceof PlatCompose) {
+                        PlatCompose platCompose = (PlatCompose) repas.plat();
                         xmlBuilder.append("      <platCompose>\n");
                         if (platCompose.getViande() != null) {
                             xmlBuilder.append("        <viande>").append(platCompose.getViande().getNomProduit()).append("</viande>\n");
