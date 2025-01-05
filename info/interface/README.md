@@ -11,8 +11,8 @@ Elle est mobile first.
 ## Utilisation
 - La page index permet de voir le menu de la semaine.
 
-  ![Index](index.png)
+  ![Index](./index.png)
 - La page produits permet de voir les produits disponibles, en ajouter, en modifier ou en supprimer.
 
-  ![Produits](products.png)
-  ![Produits list](products2.png)
+  ![Produits](./products.png)
+  ![Produits list](./products2.png)
