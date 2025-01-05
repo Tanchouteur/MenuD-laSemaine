@@ -33,6 +33,6 @@ La structure est séparé en plusieurs type de classes :
 ## Les tests
 A venir...
 
-## Les améliorations
+## Les futures améliorations
 - Rajouter des critères pour le choix de l'aliment (prix, temps de préparation, nombre de personne)
 - Rajouter des tests
