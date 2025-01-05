@@ -9,9 +9,23 @@ import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.Random;
 
+/**
+ * Utility class for handling operations related to product weights and compatibility.
+ * <p>
+ * This class provides static methods to compute product weights based on various criteria,
+ * select compatible products, and handle incompatibilities between products.
+ * </p>
+ */
 public class WeightsOperator {
 
-    // Méthode statique pour sélectionner un élément basé sur des poids
+    /**
+     * Selects a product from the list based on their weights.
+     *
+     * @param produitsList The list of products to choose from.
+     * @param moment       The moment of the day (e.g., lunch, dinner, etc.).
+     * @param saison       The season of the year (e.g., spring, summer, etc.).
+     * @return The selected product, or {@code null} if no product is selected.
+     */
     public static Produits selectBasedOnWeights(LinkedList<Produits> produitsList, int moment, int saison) {
 
         int totalWeight = 0;
@@ -50,7 +64,15 @@ public class WeightsOperator {
         return null;
     }
 
-    // Méthode pour slelectionner un élément basé sur l'incompatibilité
+    /**
+     * Selects a compatible product based on the provided base product and desired type.
+     *
+     * @param produitOnBaseTheIncopatibilitie The base product to check incompatibilities against.
+     * @param typeProduitWeWish               The type of product desired (e.g., vegetable, starch).
+     * @param moment                          The moment of the day (e.g., lunch, dinner, etc.).
+     * @param saison                          The season of the year (e.g., spring, summer, etc.).
+     * @return A compatible product, or {@code null} if none is found.
+     */
     public static Produits selectCompatibleProduct(Produits produitOnBaseTheIncopatibilitie, TypeProduit typeProduitWeWish, int moment, int saison){
         // On récupère la liste des produits compatibles
         LinkedList<Produits> compatibleProducts = IncompatibilitesDAO.getProduitsCompatibles(produitOnBaseTheIncopatibilitie.getId(), typeProduitWeWish);
@@ -59,7 +81,13 @@ public class WeightsOperator {
         return selectBasedOnWeights(compatibleProducts, moment, saison);
     }
 
-    // Méthode pour calculer le poids final d'un produit
+    /**
+     * Computes the final weight of a product based on moment, season, and other criteria.
+     *
+     * @param produits The product whose weight is to be calculated.
+     * @param moment   The moment of the day (e.g., lunch, dinner, etc.).
+     * @param saison   The season of the year (e.g., spring, summer, etc.).
+     */
     public static void calculateWeight(Produits produits, int moment, int saison) {
         // Momment 0 = midiSemaine, 1 = soirSemaine, 2 = midiWeekend, 3 = soirWeekend
         // Saison 0 = printemps, 1 = été, 2 = automne, 3 = hiver
@@ -77,7 +105,15 @@ public class WeightsOperator {
                 produits.getPoidsLastUsed());
     }
 
-    // Calcul du poids de dernier utilisation
+    /**
+     * Computes the "last used" weight for a product based on its usage history.
+     * <p>
+     * Products used recently will have lower weights, while those unused for a long time
+     * will have higher weights.
+     * </p>
+     *
+     * @param produit The product for which the last used weight is to be calculated.
+     */
     public static void computeLastUsedWeight(Produits produit) {
 
         // Récupérer la date de dernière utilisation
