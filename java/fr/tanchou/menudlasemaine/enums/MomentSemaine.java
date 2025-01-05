@@ -1,18 +1,14 @@
 package fr.tanchou.menudlasemaine.enums;
 
+/**
+ * Enum representing the two main periods of the week: the week and the weekend.
+ * It contains two constants: SEMAINE (for weekdays) and WEEKEND (for the weekend).
+ */
 public enum MomentSemaine {
-    SEMAINE("semaine"),
-    WEEKEND("weekend");
 
-    private final String description;
+    /** Represents weekdays (from Monday to Friday). */
+    SEMAINE,
 
-    // Constructeur pour assigner une description à chaque moment
-    MomentSemaine(String description) {
-        this.description = description;
-    }
-
-    // Méthode pour obtenir la description
-    public String getDescription() {
-        return description;
-    }
+    /** Represents the weekend (Saturday and Sunday). */
+    WEEKEND
 }

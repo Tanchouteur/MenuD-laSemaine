@@ -1,46 +1,42 @@
 package fr.tanchou.menudlasemaine.enums;
 
+/**
+ * Enum representing the four seasons of the year: Winter, Spring, Summer, and Autumn.
+ * It also provides a method to determine the season index based on a given month.
+ */
 public enum Saison {
-    HIVER("Hiver"),
-    PRINTEMPS("Printemps"),
-    ETE("Ete"),
-    AUTOMNE("Automne");
 
-    private final String description;
+    /** Represents the Winter season. */
+    HIVER,
 
-    // Constructeur pour assigner une description à chaque saison
-    Saison(String description) {
-        this.description = description;
-    }
+    /** Represents the Spring season. */
+    PRINTEMPS,
 
-    // Méthode pour obtenir la description
-    public String getDescription() {
-        return description;
-    }
+    /** Represents the Summer season. */
+    ETE,
 
-    // Méthode pour vérifier si une saison est active pour un mois donné
-    public static Saison getSaisonByMois(int mois) {
-        if (mois >= 12 || mois <= 2) {
-            return HIVER;
-        } else if (mois >= 3 && mois <= 5) {
-            return PRINTEMPS;
-        } else if (mois >= 6 && mois <= 8) {
-            return ETE;
-        } else {
-            return AUTOMNE;
-        }
-    }
+    /** Represents the Autumn season. */
+    AUTOMNE;
 
-    // Méthode pour vérifier si une saison est active pour un mois donné
+    /**
+     * Determines the season index for a given month.
+     *
+     * @param mois The month (1 for January, 12 for December).
+     * @return The index of the season corresponding to the given month:
+     *         - 0 for Spring (March to May),
+     *         - 1 for Summer (June to August),
+     *         - 2 for Autumn (September to November),
+     *         - 3 for Winter (December to February).
+     */
     public static int getSaisonIndexByMois(int mois) {
         if (mois >= 12 || mois <= 2) {
-            return 3;
-        } else if (mois >= 3 && mois <= 5) {
-            return 0;
-        } else if (mois >= 6 && mois <= 8) {
-            return 1;
+            return 3; // Winter
+        } else if (mois <= 5) {
+            return 0; // Spring
+        } else if (mois <= 8) {
+            return 1; // Summer
         } else {
-            return 2;
+            return 2; // Autumn
         }
     }
 }
