@@ -1,4 +1,5 @@
 package fr.tanchou.menudlasemaine.dao;
+
 import fr.tanchou.menudlasemaine.enums.MomentJournee;
 import fr.tanchou.menudlasemaine.menu.*;
 import fr.tanchou.menudlasemaine.utils.db.DatabaseConnection;
@@ -8,16 +9,30 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Cette classe gère l'accès aux données du menu de la semaine.
+ * Elle permet de récupérer, insérer, mettre à jour et afficher le menu.
+ */
 public class MenuDAO {
     private Menu menu;
     private boolean isMenuUpTodate = false;
     private final ProduitDAO produitDAO;
 
+    /**
+     * Constructeur de MenuDAO.
+     *
+     * @param produitDAO Une instance de ProduitDAO pour récupérer les informations des produits.
+     */
     public MenuDAO(ProduitDAO produitDAO) {
         this.produitDAO = produitDAO;
         this.menu = this.getMenu();
     }
 
+    /**
+     * Récupère le menu de la semaine. Si le menu n'est pas à jour, il est rechargé depuis la base de données.
+     *
+     * @return Le menu de la semaine.
+     */
     public Menu getMenu() {
         if (!isMenuUpTodate) {
             menu = getMenuObject();
@@ -26,6 +41,11 @@ public class MenuDAO {
         return menu;
     }
 
+    /**
+     * Insère un nouveau menu dans la base de données.
+     *
+     * @param listRepas Un tableau 2D représentant les repas de la semaine.
+     */
     public void insertMenu(Repas[][] listRepas) {
 
         String insertSQL = "INSERT INTO Menu (jour, moment, entree, plat) VALUES (?, ?, ?, ?)";
@@ -33,23 +53,40 @@ public class MenuDAO {
         try (Connection conn = DatabaseConnection.getDataSource().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
 
-            String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
-            String[] moments = {"midi", "soir"};
-            for (int i = 0; i < listRepas.length; i++) {
-                for (int j = 0; j < listRepas[i].length; j++) {
-                    pstmt.setString(1, joursSemaine[i]);
-                    pstmt.setString(2, moments[j]); // ou "Soir" selon la position
-                    pstmt.setString(3, listRepas[i][j].entree() != null ? listRepas[i][j].entree().getNomProduit() : "Aucune");
-                    pstmt.setString(4, listRepas[i][j].plat() != null ? listRepas[i][j].plat().getNomPlat() : "Aucun");
-                    pstmt.executeUpdate();
-                }
-            }
-            isMenuUpTodate = false;
+            semaine(listRepas, pstmt);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de l'insertion du menu. " + e.getMessage());
         }
     }
 
+    /**
+     * Insère les repas dans la base de données pour chaque jour et moment de la semaine.
+     *
+     * @param listRepas Un tableau 2D représentant les repas de la semaine.
+     * @param pstmt     L'objet PreparedStatement utilisé pour insérer les données.
+     * @throws SQLException Si une erreur SQL se produit.
+     */
+    private void semaine(Repas[][] listRepas, PreparedStatement pstmt) throws SQLException {
+        String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+        String[] moments = {"midi", "soir"};
+        for (int i = 0; i < listRepas.length; i++) {
+            for (int j = 0; j < listRepas[i].length; j++) {
+                pstmt.setString(1, joursSemaine[i]);
+                pstmt.setString(2, moments[j]); // ou "Soir" selon la position
+                pstmt.setString(3, listRepas[i][j].entree() != null ? listRepas[i][j].entree().getNomProduit() : "Aucune");
+                pstmt.setString(4, listRepas[i][j].plat() != null ? listRepas[i][j].plat().getNomPlat() : "Aucun");
+                pstmt.executeUpdate();
+            }
+        }
+        isMenuUpTodate = false;
+    }
+
+    /**
+     * Met à jour le menu de la semaine dans la base de données.
+     * Supprime les anciens repas et insère les nouveaux.
+     *
+     * @param listRepas Un tableau 2D représentant les nouveaux repas de la semaine.
+     */
     public void updateMenu(Repas[][] listRepas) {
         // SQL pour supprimer les anciens enregistrements
         String deleteSQL = "DELETE FROM Menu";
@@ -62,25 +99,19 @@ public class MenuDAO {
             // Supprimer tous les anciens enregistrements
             deletePstmt.executeUpdate();
 
-            String[] joursSemaine = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
-            String[] moments = {"midi", "soir"};
-
-            for (int i = 0; i < listRepas.length; i++) {
-                for (int j = 0; j < listRepas[i].length; j++) {
-                    insertPstmt.setString(1, joursSemaine[i]);
-                    insertPstmt.setString(2, moments[j]); // "Midi" ou "Soir" selon la position
-                    insertPstmt.setString(3, listRepas[i][j].entree() != null ? listRepas[i][j].entree().getNomProduit() : "Aucune");
-                    insertPstmt.setString(4, listRepas[i][j].plat() != null ? listRepas[i][j].plat().getNomPlat() : "Aucun");
-                    insertPstmt.executeUpdate();
-                }
-            }
-            isMenuUpTodate = false;
+            semaine(listRepas, insertPstmt);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("------------------------ Menu - DAO ---------------------------------");
+            System.err.println("Erreur lors de la mise à jour du menu. " + e.getMessage());
+            System.err.println("---------------------------------------------------------------------");
         }
     }
 
-    //methode pour recuperer le menu
+    /**
+     * Récupère le menu sous forme de chaîne de caractères.
+     *
+     * @return Le menu de la semaine sous forme de chaîne de caractères.
+     */
     public String getMenuAsString() {
         StringBuilder menuBuilder = new StringBuilder();
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
@@ -119,7 +150,11 @@ public class MenuDAO {
         return menuBuilder.toString();
     }
 
-    //methode pour recuperer le menu
+    /**
+     * Récupère l'objet Menu représentant les repas de la semaine à partir de la base de données.
+     *
+     * @return Un objet Menu représentant le menu de la semaine.
+     */
     private Menu getMenuObject() {
         Repas[][] listRepas = new Repas[7][2];
         String selectSQL = "SELECT jour, moment, entree, plat FROM Menu ORDER BY FIELD(jour, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'), FIELD(moment, 'midi', 'soir')";
@@ -136,9 +171,8 @@ public class MenuDAO {
                 String entree = rs.getString("entree");
                 String plat = rs.getString("plat");
 
-                MomentJournee moment;
                 try {
-                    moment = MomentJournee.valueOf(momentStr.toUpperCase());
+                    MomentJournee.valueOf(momentStr.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     System.err.println("Moment invalide: " + momentStr);
                     continue; // Passer à la ligne suivante si le moment est invalide
@@ -191,13 +225,21 @@ public class MenuDAO {
             return new Menu(listRepas);
 
         } catch (SQLException e) {
+            System.err.println("------------------------ Menu - DAO ---------------------------------");
             System.err.println("Erreur lors de la récupération du menu. " + e.getMessage());
+            System.err.println("---------------------------------------------------------------------");
         }
 
         return null;
     }
 
-
+    /**
+     * Met à jour un repas spécifique dans la base de données.
+     *
+     * @param repasToUpdate L'objet Repas à mettre à jour.
+     * @param jour          Le jour du repas à mettre à jour.
+     * @param moment        Le moment de la journée du repas à mettre à jour (midi ou soir).
+     */
     public void updateRepas(Repas repasToUpdate, String jour, MomentJournee moment) {
 
         // SQL pour mettre à jour un repas spécifique dans la base de données
@@ -223,9 +265,9 @@ public class MenuDAO {
                 System.out.println("Aucun repas n'a été trouvé pour " + jour + " - " + moment);
             }
         } catch (SQLException e) {
+            System.err.println("------------------------ Menu - DAO ---------------------------------");
             System.err.println("Erreur lors de la mise à jour du repas. " + e.getMessage());
+            System.err.println("---------------------------------------------------------------------");
         }
     }
-
-
 }
