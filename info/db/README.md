@@ -19,6 +19,7 @@
 
 #### Utils
 
-- Une classe qui permet de se connecter a la base de données.
-- Une classe qui permet de lire le fichier de configuration.
-- Une classe qui permet de lire le fichier de log.
+- Une classe qui permet de se connecter a la base de données. (Crée une pool de connexion pour plus de performance)
+
+### Tests
+- A venir ...
