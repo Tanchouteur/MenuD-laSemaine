@@ -1,5 +1,8 @@
 package fr.tanchou.menudlasemaine.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a composed dish (PlatCompose), which consists of a meat product (viande)
  * and an accompaniment (Accompagnement).
@@ -66,6 +69,14 @@ public class PlatCompose extends Plat {
     public String getNomPlat() {
         return (viande != null ? viande.getNomProduit() : "") +
                 (accompagnement != null ? "," + accompagnement.getNomAccompagnement() : "");
+    }
+
+    @Override
+    public List<Produits> getProductPlat() {
+        List<Produits> list = new ArrayList<>();
+        list.add(viande);
+        list.addAll(accompagnement.getProductUsed());
+        return list;
     }
 
     /**

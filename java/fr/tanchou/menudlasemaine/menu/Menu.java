@@ -1,5 +1,8 @@
 package fr.tanchou.menudlasemaine.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a weekly menu containing meals for each day and each time of the day.
  * This class uses an immutable structure (record) to encapsulate a list of meals.
@@ -19,6 +22,21 @@ public record Menu(Repas[][] listRepas) {
      */
     public Repas getRepas(int jour, int moment) {
         return listRepas[jour][moment];
+    }
+
+    public List<Produits> getProductsUsed() {
+        List<Produits> productsUsed = new ArrayList<>();
+
+        for (Repas[] repas : listRepas) {
+            for (Repas r : repas) {
+                if (r.entree() != null) {
+                    productsUsed.add(r.entree());
+                }
+                productsUsed.addAll(r.plat().getProductPlat());
+            }
+        }
+
+        return productsUsed;
     }
 
     /**

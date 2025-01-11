@@ -7,6 +7,7 @@ import fr.tanchou.menudlasemaine.menu.Produits;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -26,7 +27,8 @@ public class WeightsOperator {
      * @param saison       The season of the year (e.g., spring, summer, etc.).
      * @return The selected product, or {@code null} if no product is selected.
      */
-    public static Produits selectBasedOnWeights(LinkedList<Produits> produitsList, int moment, int saison) {
+    public static Produits selectBasedOnWeights(List<Produits> produitsList, int moment, int saison) {
+
 
         int totalWeight = 0;
         for (Produits produit : produitsList) {

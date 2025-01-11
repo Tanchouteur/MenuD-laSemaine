@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsParameters;
 import com.sun.net.httpserver.HttpsServer;
 import fr.tanchou.menudlasemaine.api.handler.*;
+import fr.tanchou.menudlasemaine.api.handler.info.UsedProductHandler;
 import fr.tanchou.menudlasemaine.api.handler.menu.ChangeMenuHandler;
 import fr.tanchou.menudlasemaine.api.handler.menu.ChangeRepasHandler;
 import fr.tanchou.menudlasemaine.api.handler.menu.GetMenuHandler;
@@ -81,6 +82,7 @@ public class ApiMain {
         server.createContext("/menu/repas/change", new ChangeRepasHandler(factory))
                 .getFilters().add(new CorsFilter());
 
+        // Set up contexts for product management
         server.createContext("/products/get", new GetProductsHandler(factory))
                 .getFilters().add(new CorsFilter());
         server.createContext("/products/add", new AddProductHandler(factory))
@@ -89,6 +91,10 @@ public class ApiMain {
                 .getFilters().add(new CorsFilter());
         /*server.createContext("/products/update", new UpdateProductHandler(factory))
               .getFilters().add(new CorsFilter());*/
+
+        // Set up context for info endpoint
+        server.createContext("/info/getUsedProduct", new UsedProductHandler(factory.getWeightManager().getMenuDAO()))
+                .getFilters().add(new CorsFilter());
 
         // Handle undefined routes
         server.createContext("/", new NotFoundHandler());

@@ -26,7 +26,7 @@ public class ChangeRepasHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
-            //System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
+            System.out.println("Received " + exchange.getRequestURI() + " + param = " + exchange.getRequestURI().getQuery());
             // /menu/repas/change?jours=*&moment=*
 
             // Décomposition de la requete
@@ -58,7 +58,7 @@ public class ChangeRepasHandler implements HttpHandler {
             OutputStream os = exchange.getResponseBody();
             os.write(responseBytes);
             os.close();
-            //System.out.println("Response : " + response);
+            System.out.println("Response : " + response);
 
         } else if ("OPTIONS".equals(exchange.getRequestMethod())) {
             // Réponse pour les requêtes OPTIONS (pré-vol)

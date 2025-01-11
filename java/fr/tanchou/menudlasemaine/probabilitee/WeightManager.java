@@ -40,8 +40,12 @@ public class WeightManager {
      * @param typeProduit The type of products to retrieve (e.g., entrée, légume, viande).
      * @return A {@code LinkedList} containing products of the specified type.
      */
-    public LinkedList<Produits> getProduitsByType(TypeProduit typeProduit) {
-        return produitDAO.getProduitsByType(typeProduit);
+    public List<Produits> getProduitsByType(TypeProduit typeProduit) {
+
+        List<Produits> produits = produitDAO.getProduitsByType(typeProduit);
+        produits.removeAll(menuDAO.getMenu().getProductsUsed());
+
+        return produits;
     }
 
     /**

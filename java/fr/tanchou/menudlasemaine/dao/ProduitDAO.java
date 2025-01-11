@@ -168,14 +168,10 @@ public class ProduitDAO {
      * @param produit L'objet Produit à ajouter dans la base de données.
      */
     public void addProduit(Produits produit) {
-        String query = "{CALL ajouter_produit(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}"; // Utilisation de paramètres pour éviter les erreurs
+        String query = "{CALL ajouter_produit(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-        try {
-            // Obtenir la connexion
-            Connection connection = DatabaseConnection.getDataSource().getConnection();
-
-            // Préparer la requête
-            PreparedStatement statement = connection.prepareStatement(query);
+        try (Connection connection = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
             // Remplir les paramètres
             statement.setString(1, produit.getNomProduit());
@@ -202,6 +198,7 @@ public class ProduitDAO {
         }
     }
 
+
     /**
      * Supprime un produit de la base de données en appelant une procédure stockée.
      *
@@ -210,9 +207,9 @@ public class ProduitDAO {
      */
     public boolean deleteProduit(String nomProduit) {
         String query = "{CALL supprimer_produit('" + nomProduit + "')}";
-        try {
-            Connection connection = DatabaseConnection.getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
+        try (Connection connection = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
             statement.executeUpdate();
             this.isUpTodate = false;
             return true;
@@ -235,9 +232,8 @@ public class ProduitDAO {
         String query = "{CALL updateProduit(" + nomProduit + ", " + typeProduit + ", " + poidsArbitraire + ", " + String.valueOf(poidsMoment[0]) + ", " + String.valueOf(poidsMoment[1]) + ", " + String.valueOf(poidsMoment[2]) + ", " + String.valueOf(poidsMoment[3]) + ", " + poidsSaison[0] + ", " + poidsSaison[1] + ", " + poidsSaison[2] + ", " + poidsSaison[3] + ")}";
         query = query.replace("[", "").replace("]", "");
         query = query.replace(" ", "");
-        try {
-            Connection connection = DatabaseConnection.getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
+        try (Connection connection = DatabaseConnection.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.executeUpdate();
             this.isUpTodate = false;
         } catch (Exception e) {

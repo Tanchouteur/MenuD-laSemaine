@@ -1,5 +1,8 @@
 package fr.tanchou.menudlasemaine.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents an accompaniment, which is a combination of a vegetable and a starch.
  */
@@ -65,5 +68,16 @@ public record Accompagnement(Produits legume, Produits feculent) {
                 "legume=" + legume +
                 ", feculent=" + feculent +
                 '}';
+    }
+
+    public List<Produits> getProductUsed() {
+        List<Produits> products = new ArrayList<>();
+        if (legume != null) {
+            products.add(legume);
+        }
+        if (feculent != null) {
+            products.add(feculent);
+        }
+        return products;
     }
 }

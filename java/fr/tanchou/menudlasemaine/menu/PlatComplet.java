@@ -1,5 +1,8 @@
 package fr.tanchou.menudlasemaine.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a complete dish (PlatComplet), which is a dish made from a single product.
  * Extends the abstract class {@link Plat}.
@@ -34,5 +37,12 @@ public class PlatComplet extends Plat {
     @Override
     public String getNomPlat() {
         return plat.getNomProduit();
+    }
+
+    @Override
+    public List<Produits> getProductPlat() {
+        List<Produits> list = new ArrayList<>();
+        list.add(plat);
+        return list;
     }
 }

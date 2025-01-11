@@ -24,7 +24,7 @@ public class GetProductsHandler implements HttpHandler {
 
         // Extraire le type de produit de l'URL (par exemple : /products/entree)
         String productType = requestURI.split("/")[3];
-        System.out.println("productType : " + productType);
+        //System.out.println("productType : " + productType);
         // Récupérer les produits du type demandé
 
         TypeProduit type = TypeProduit.valueOf(productType.toUpperCase());
