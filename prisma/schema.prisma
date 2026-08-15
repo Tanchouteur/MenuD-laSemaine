@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PlanStatus {
+  DRAFT
+  CONFIRMED
+  ARCHIVED
+}
+
+enum MealTime {
+  LUNCH
+  DINNER
+}
+
+enum SlotType {
+  EMPTY
+  COMPOSED
+  RECIPE
+  LEFTOVERS
+  EATING_OUT
+  CUSTOM
+}
+
+enum Season {
+  WINTER
+  SPRING
+  SUMMER
+  AUTUMN
+}
+
+enum IngredientCategory {
+  PROTEIN
+  STARCH
+  VEGETABLE
+  GROCERY
+  DAIRY
+  OTHER
+}
+
+enum QuantityUnit {
+  GRAM
+  KILOGRAM
+  MILLILITER
+  CENTILITER
+  LITER
+  PIECE
+  SLICE
+  CAN
+}
+
+model WeeklyPlan {
+  id               String              @id @default(cuid())
+  startDate        DateTime            @unique @db.Date
+  status           PlanStatus          @default(DRAFT)
+  isFavorite       Boolean             @default(false)
+  duplicatedFromId String?
+  duplicatedFrom   WeeklyPlan?         @relation("PlanDuplicates", fields: [duplicatedFromId], references: [id], onDelete: SetNull)
+  duplicates       WeeklyPlan[]        @relation("PlanDuplicates")
+  slots            MealSlot[]
+  shoppingEntries  ShoppingListEntry[]
+  version          Int                 @default(1)
+  confirmedAt      DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([status, startDate])
+}
+
+model MealSlot {
+  id            String     @id @default(cuid())
+  weeklyPlanId  String
+  weeklyPlan    WeeklyPlan @relation(fields: [weeklyPlanId], references: [id], onDelete: Cascade)
+  mealDate      DateTime   @db.Date
+  mealTime      MealTime
+  guestCount    Int        @default(1)
+  isLocked      Boolean    @default(false)
+  slotType      SlotType   @default(EMPTY)
+  customLabel   String?
+  mealSignature String?
+  mealSnapshot  Json?
+
+  recipeId            String?
+  recipe              Recipe?     @relation(fields: [recipeId], references: [id], onDelete: Restrict)
+  proteinId           String?
+  protein             Ingredient? @relation("MealProtein", fields: [proteinId], references: [id], onDelete: Restrict)
+  starchId            String?
+  starch              Ingredient? @relation("MealStarch", fields: [starchId], references: [id], onDelete: Restrict)
+  vegetableId         String?
+  vegetable           Ingredient? @relation("MealVegetable", fields: [vegetableId], references: [id], onDelete: Restrict)
+  leftoversFromSlotId String?
+  leftoversFromSlot   MealSlot?   @relation("MealLeftovers", fields: [leftoversFromSlotId], references: [id], onDelete: SetNull)
+  leftoverUsages      MealSlot[]  @relation("MealLeftovers")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([weeklyPlanId, mealDate, mealTime])
+  @@index([mealSignature, mealDate])
+  @@index([recipeId])
+  @@index([proteinId])
+  @@index([starchId])
+  @@index([vegetableId])
+}
+
+model Ingredient {
+  id               String             @id @default(cuid())
+  name             String             @unique
+  category         IngredientCategory
+  subFamily        String?
+  rating           Int                @default(3)
+  isActive         Boolean            @default(true)
+  portionPerPerson Decimal?           @db.Decimal(10, 3)
+  unit             QuantityUnit?
+  aisleId          String?
+  aisle            Aisle?             @relation(fields: [aisleId], references: [id], onDelete: SetNull)
+  seasons          Season[]           @default([WINTER, SPRING, SUMMER, AUTUMN])
+  okLunchWeekday   Boolean            @default(true)
+  okDinnerWeekday  Boolean            @default(true)
+  okLunchWeekend   Boolean            @default(true)
+  okDinnerWeekend  Boolean            @default(true)
+
+  recipeIngredients         RecipeIngredient[]
+  proteinSlots              MealSlot[]         @relation("MealProtein")
+  starchSlots               MealSlot[]         @relation("MealStarch")
+  vegetableSlots            MealSlot[]         @relation("MealVegetable")
+  incompatibilitiesAsFirst  Incompatibility[]  @relation("IncompatibilityFirst")
+  incompatibilitiesAsSecond Incompatibility[]  @relation("IncompatibilitySecond")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category, isActive])
+  @@index([subFamily])
+}
+
+model Recipe {
+  id              String             @id @default(cuid())
+  name            String             @unique
+  style           String?
+  rating          Int                @default(3)
+  prepTimeMinutes Int?
+  cookTimeMinutes Int?
+  basePortions    Int                @default(4)
+  isActive        Boolean            @default(true)
+  seasons         Season[]           @default([WINTER, SPRING, SUMMER, AUTUMN])
+  okLunchWeekday  Boolean            @default(true)
+  okDinnerWeekday Boolean            @default(true)
+  okLunchWeekend  Boolean            @default(true)
+  okDinnerWeekend Boolean            @default(true)
+  ingredients     RecipeIngredient[]
+  mealSlots       MealSlot[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([isActive])
+  @@index([style])
+}
+
+model RecipeIngredient {
+  id           String       @id @default(cuid())
+  recipeId     String
+  recipe       Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient   @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+  quantity     Decimal      @db.Decimal(10, 3)
+  unit         QuantityUnit
+
+  @@unique([recipeId, ingredientId])
+  @@index([ingredientId])
+}
+
+model Aisle {
+  id              String              @id @default(cuid())
+  name            String              @unique
+  sortOrder       Int                 @default(0)
+  ingredients     Ingredient[]
+  shoppingEntries ShoppingListEntry[]
+}
+
+model Incompatibility {
+  id            String     @id @default(cuid())
+  ingredientId1 String
+  ingredient1   Ingredient @relation("IncompatibilityFirst", fields: [ingredientId1], references: [id], onDelete: Restrict)
+  ingredientId2 String
+  ingredient2   Ingredient @relation("IncompatibilitySecond", fields: [ingredientId2], references: [id], onDelete: Restrict)
+  createdAt     DateTime   @default(now())
+
+  @@unique([ingredientId1, ingredientId2])
+  @@index([ingredientId2])
+}
+
+model ShoppingListEntry {
+  id            String        @id @default(cuid())
+  weeklyPlanId  String
+  weeklyPlan    WeeklyPlan    @relation(fields: [weeklyPlanId], references: [id], onDelete: Cascade)
+  stableKey     String
+  label         String
+  quantity      Decimal?      @db.Decimal(12, 3)
+  unit          QuantityUnit?
+  aisleId       String?
+  aisle         Aisle?        @relation(fields: [aisleId], references: [id], onDelete: SetNull)
+  isChecked     Boolean       @default(false)
+  isManual      Boolean       @default(false)
+  sourceSlotIds Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([weeklyPlanId, stableKey])
+  @@index([weeklyPlanId, isChecked])
+  @@index([aisleId])
+}
+
+model AppSettings {
+  id                         String   @id @default("default")
+  defaultGuestsLunchWeekday  Int      @default(2)
+  defaultGuestsDinnerWeekday Int      @default(4)
+  defaultGuestsLunchWeekend  Int      @default(4)
+  defaultGuestsDinnerWeekend Int      @default(4)
+  timezone                   String   @default("Europe/Paris")
+  onboardingCompleted        Boolean  @default(false)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}

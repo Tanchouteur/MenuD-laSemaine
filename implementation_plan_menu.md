@@ -1,6 +1,6 @@
 # Plan d’implémentation — MenuD-laSemaine V2
 
-> Statut : document de référence avant implémentation
+> Statut : MVP V2 implémenté et validé localement le 15 août 2026
 > Public cible : une famille non informaticienne
 > Plateforme principale : application web responsive, conçue mobile-first
 > Langue et calendrier : français, semaine du lundi au dimanche, fuseau Europe/Paris
