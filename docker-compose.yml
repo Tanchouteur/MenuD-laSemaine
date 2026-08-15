@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: menu_de_la_semaine
+      POSTGRES_USER: menu
+      POSTGRES_PASSWORD: menu
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U menu -d menu_de_la_semaine"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - menu_postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://menu:menu@postgres:5432/menu_de_la_semaine?schema=public
+      FAMILY_PASSWORD: ${FAMILY_PASSWORD:-}
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      CALENDAR_TOKEN: ${CALENDAR_TOKEN:-}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  backup:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: menu
+    volumes:
+      - menu_postgres_backups:/backups
+    command: ["sh", "-c", "while true; do pg_dump -h postgres -U menu -d menu_de_la_semaine -Fc -f /backups/menu-$$(date +%Y%m%d-%H%M%S).dump; find /backups -type f -mtime +7 -delete; sleep 86400; done"]
+
+volumes:
+  menu_postgres_data:
+  menu_postgres_backups:

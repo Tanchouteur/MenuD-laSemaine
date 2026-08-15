@@ -1,0 +1,12 @@
+.git
+.idea
+.next
+coverage
+generated
+node_modules
+out
+java
+lib
+www
+.env*
+npm-debug.log*

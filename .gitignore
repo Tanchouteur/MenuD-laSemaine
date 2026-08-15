@@ -28,3 +28,15 @@ replay_pid*
 /certificates/keystore.p12
 
 /java/fr/tanchou/menudlasemaine/utils/db/DatabaseConnection.java
+
+# MenuD-laSemaine V2 (Next.js / Prisma)
+/node_modules/
+/.next/
+/generated/
+/coverage/
+/.env
+/.env.local
+/.env.*.local
+!.env.example
+*.tsbuildinfo
+.DS_Store

@@ -1,0 +1,10 @@
+{
+  "name": "Menu de la semaine",
+  "short_name": "Menus",
+  "description": "Les repas de la famille, simplement organisés.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f2e9",
+  "theme_color": "#245943",
+  "lang": "fr"
+}
