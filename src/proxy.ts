@@ -5,7 +5,7 @@ import { FAMILY_COOKIE, familyAuthConfigured, familyToken } from '@/lib/family-a
 export async function proxy(request: NextRequest) {
   if (!familyAuthConfigured()) return NextResponse.next();
   const pathname = request.nextUrl.pathname;
-  if (pathname === '/connexion' || pathname.startsWith('/api/auth/') || pathname === '/api/calendar') return NextResponse.next();
+  if (pathname === '/connexion' || pathname.startsWith('/api/auth/') || pathname === '/api/calendar' || pathname === '/api/health') return NextResponse.next();
   const expected = await familyToken(process.env.FAMILY_PASSWORD!, process.env.AUTH_SECRET!);
   if (request.cookies.get(FAMILY_COOKIE)?.value === expected) return NextResponse.next();
   if (pathname.startsWith('/api/')) return Response.json({ error: 'Connexion requise.' }, { status: 401 });
