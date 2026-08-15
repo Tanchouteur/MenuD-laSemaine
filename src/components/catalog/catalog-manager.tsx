@@ -10,7 +10,6 @@ const seasons = ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'];
 const seasonLabels: Record<string, string> = { WINTER: 'Hiver', SPRING: 'Printemps', SUMMER: 'Été', AUTUMN: 'Automne' };
 const categories: Record<string, string> = { PROTEIN: 'Protéine', STARCH: 'Féculent', VEGETABLE: 'Légume', GROCERY: 'Épicerie', DAIRY: 'Produit frais', OTHER: 'Autre' };
 const units: Record<string, string> = { GRAM: 'grammes', KILOGRAM: 'kilogrammes', MILLILITER: 'millilitres', CENTILITER: 'centilitres', LITER: 'litres', PIECE: 'pièces', SLICE: 'tranches', CAN: 'boîtes' };
-const defaultMoments = { okLunchWeekday: true, okDinnerWeekday: true, okLunchWeekend: true, okDinnerWeekend: true };
 
 export function CatalogManager({ initialIngredients, initialRecipes, aisles }: { initialIngredients: IngredientDto[]; initialRecipes: RecipeDto[]; aisles: Aisle[] }) {
   const [tab, setTab] = useState<'recipes' | 'ingredients'>('recipes');
@@ -53,6 +52,15 @@ function SeasonFields({ selected, onChange }: { selected: string[]; onChange: (n
   return <fieldset><legend>Saisons</legend><div className="choiceGrid">{seasons.map((season) => <label key={season}><input type="checkbox" checked={selected.includes(season)} onChange={(event) => onChange(event.target.checked ? [...selected, season] : selected.filter((item) => item !== season))} /> {seasonLabels[season]}</label>)}</div></fieldset>;
 }
 
+function MomentFields({ value }: { value: IngredientDto | RecipeDto | null }) {
+  return <fieldset><legend>Quand le proposer ?</legend><div className="choiceGrid">
+    <label><input name="okLunchWeekday" type="checkbox" defaultChecked={value?.okLunchWeekday ?? true} /> Déjeuner en semaine</label>
+    <label><input name="okDinnerWeekday" type="checkbox" defaultChecked={value?.okDinnerWeekday ?? true} /> Dîner en semaine</label>
+    <label><input name="okLunchWeekend" type="checkbox" defaultChecked={value?.okLunchWeekend ?? true} /> Déjeuner le week-end</label>
+    <label><input name="okDinnerWeekend" type="checkbox" defaultChecked={value?.okDinnerWeekend ?? true} /> Dîner le week-end</label>
+  </div><p className="fieldHint">Pour un aliment coûteux ou un plat familial, décochez par exemple « Déjeuner en semaine ».</p></fieldset>;
+}
+
 function IngredientForm({ value, aisles, onClose, onSaved, onError }: { value: IngredientDto | 'new'; aisles: Aisle[]; onClose: () => void; onSaved: (item: IngredientDto) => void; onError: (message: string) => void }) {
   const current = value === 'new' ? null : value;
   const [selectedSeasons, setSelectedSeasons] = useState(current?.seasons ?? seasons);
@@ -60,7 +68,7 @@ function IngredientForm({ value, aisles, onClose, onSaved, onError }: { value: I
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true);
     const data = new FormData(event.currentTarget);
-    const body = { name: data.get('name'), category: data.get('category'), subFamily: data.get('subFamily') || null, rating: Number(data.get('rating')), portionPerPerson: data.get('portion') ? Number(data.get('portion')) : null, unit: data.get('unit') || null, aisleId: data.get('aisleId') || null, seasons: selectedSeasons, ...defaultMoments };
+    const body = { name: data.get('name'), category: data.get('category'), subFamily: data.get('subFamily') || null, rating: Number(data.get('rating')), portionPerPerson: data.get('portion') ? Number(data.get('portion')) : null, unit: data.get('unit') || null, aisleId: data.get('aisleId') || null, seasons: selectedSeasons, okLunchWeekday: data.has('okLunchWeekday'), okDinnerWeekday: data.has('okDinnerWeekday'), okLunchWeekend: data.has('okLunchWeekend'), okDinnerWeekend: data.has('okDinnerWeekend') };
     const response = await fetch(current ? `/api/ingredients/${current.id}` : '/api/ingredients', { method: current ? 'PATCH' : 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (response.ok) onSaved(await response.json()); else onError((await response.json()).error ?? 'Impossible d’enregistrer.'); setBusy(false);
   }
@@ -71,6 +79,7 @@ function IngredientForm({ value, aisles, onClose, onSaved, onError }: { value: I
     <div className="formColumns"><label>Portion par personne<input name="portion" type="number" min="0.01" step="0.01" defaultValue={current?.portionPerPerson ?? ''} /></label><label>Unité<select name="unit" defaultValue={current?.unit ?? ''}><option value="">Non précisée</option>{Object.entries(units).map(([key,label]) => <option key={key} value={key}>{label}</option>)}</select></label></div>
     <label>Rayon<select name="aisleId" defaultValue={current?.aisleId ?? ''}><option value="">Autres</option>{aisles.map((aisle) => <option key={aisle.id} value={aisle.id}>{aisle.name}</option>)}</select></label>
     <SeasonFields selected={selectedSeasons} onChange={setSelectedSeasons} />
+    <MomentFields value={current} />
     <button className="primaryButton" disabled={busy || selectedSeasons.length === 0}>{busy ? 'Enregistrement…' : 'Enregistrer'}</button>
   </form></Modal>;
 }
@@ -82,7 +91,7 @@ function RecipeForm({ value, ingredients, onClose, onSaved, onError }: { value: 
   const [busy, setBusy] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); const data = new FormData(event.currentTarget);
-    const body = { name: data.get('name'), style: data.get('style') || null, rating: Number(data.get('rating')), prepTimeMinutes: data.get('prep') ? Number(data.get('prep')) : null, cookTimeMinutes: data.get('cook') ? Number(data.get('cook')) : null, basePortions: Number(data.get('portions')), seasons: selectedSeasons, ...defaultMoments, ingredients: lines };
+    const body = { name: data.get('name'), style: data.get('style') || null, rating: Number(data.get('rating')), prepTimeMinutes: data.get('prep') ? Number(data.get('prep')) : null, cookTimeMinutes: data.get('cook') ? Number(data.get('cook')) : null, basePortions: Number(data.get('portions')), seasons: selectedSeasons, okLunchWeekday: data.has('okLunchWeekday'), okDinnerWeekday: data.has('okDinnerWeekday'), okLunchWeekend: data.has('okLunchWeekend'), okDinnerWeekend: data.has('okDinnerWeekend'), ingredients: lines };
     const response = await fetch(current ? `/api/recipes/${current.id}` : '/api/recipes', { method: current ? 'PUT' : 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (response.ok) onSaved(await response.json()); else onError((await response.json()).error ?? 'Impossible d’enregistrer.'); setBusy(false);
   }
@@ -93,6 +102,7 @@ function RecipeForm({ value, ingredients, onClose, onSaved, onError }: { value: 
     <div className="formColumns"><label>Portions de base<input name="portions" type="number" min="1" defaultValue={current?.basePortions ?? 4} required /></label><label>Appréciation<select name="rating" defaultValue={current?.rating ?? 3}>{[1,2,3,4,5].map((n) => <option key={n} value={n}>{n} / 5</option>)}</select></label></div>
     <fieldset><legend>Ingrédients</legend><div className="recipeLines">{lines.map((line, index) => <div className="recipeLine" key={index}><select aria-label="Ingrédient" value={line.ingredientId} onChange={(e) => updateLine(index, { ingredientId: e.target.value })}>{ingredients.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select><input aria-label="Quantité" type="number" min="0.01" step="0.01" value={line.quantity} onChange={(e) => updateLine(index, { quantity: Number(e.target.value) })} /><select aria-label="Unité" value={line.unit} onChange={(e) => updateLine(index, { unit: e.target.value })}>{Object.entries(units).map(([key,label]) => <option key={key} value={key}>{label}</option>)}</select><button type="button" aria-label="Retirer la ligne" disabled={lines.length === 1} onClick={() => setLines((items) => items.filter((_, i) => i !== index))}>×</button></div>)}</div><button className="secondaryButton" type="button" onClick={() => setLines((items) => [...items, { ingredientId: ingredients[0]?.id ?? '', quantity: 1, unit: 'PIECE' }])}>＋ Ajouter un ingrédient</button></fieldset>
     <SeasonFields selected={selectedSeasons} onChange={setSelectedSeasons} />
+    <MomentFields value={current} />
     <button className="primaryButton" disabled={busy || selectedSeasons.length === 0 || !lines[0]?.ingredientId}>{busy ? 'Enregistrement…' : 'Enregistrer'}</button>
   </form></Modal>;
 }

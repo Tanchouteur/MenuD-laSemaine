@@ -199,6 +199,8 @@ Une semaine possède un statut :
 
 Une semaine confirmée est en lecture seule, à l’exception de son statut de favori. Une correction exceptionnelle doit passer par une action explicite afin de ne pas modifier l’historique sans avertissement.
 
+L’action explicite **« Annuler la confirmation »** remet la semaine en brouillon après confirmation de l’utilisateur. Elle est conçue pour corriger une validation faite par erreur ; la semaine cesse alors temporairement d’alimenter l’historique jusqu’à sa prochaine confirmation.
+
 ### 4.2. Types de créneaux
 
 | Type | Description |
@@ -237,6 +239,8 @@ Chaque ingrédient et chaque recette propose quatre choix simples, cochés par d
 - dîner le week-end.
 
 Le samedi et le dimanche sont tous les deux considérés comme week-end.
+
+Ces quatre moments sont modifiables dans les formulaires d’ingrédient et de recette. Les produits réservés aux repas familiaux, comme le saumon dans les données de départ, sont désactivés au déjeuner en semaine tout en restant proposés le soir et le week-end.
 
 ### 4.5. Appréciation
 

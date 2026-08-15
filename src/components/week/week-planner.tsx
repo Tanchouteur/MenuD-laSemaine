@@ -196,6 +196,17 @@ export function WeekPlanner({
     );
   }
 
+  function unconfirmWeek() {
+    if (!confirm('Remettre cette semaine en modification ? Elle ne comptera plus dans l’historique tant qu’elle ne sera pas confirmée à nouveau.')) return;
+    void run(
+      () => apiRequest(`/api/plans/${plan.id}/unconfirm`, {
+        method: 'POST',
+        body: JSON.stringify({ version: plan.version }),
+      }),
+      'La confirmation a été annulée. Vous pouvez corriger la semaine.',
+    );
+  }
+
   function toggleFavorite() {
     void run(
       () => apiRequest(`/api/plans/${plan.id}/favorite`, { method: 'POST' }),
@@ -240,9 +251,9 @@ export function WeekPlanner({
         </header>
 
         <nav className="weekSwitcher" aria-label="Changer de semaine">
-          <Link href={`/?week=${previousWeek}`} aria-label="Semaine précédente">←</Link>
+          <Link href={`/?week=${previousWeek}`} prefetch={false} aria-label="Semaine précédente">←</Link>
           <span>{plan.status === 'confirmed' ? 'Semaine confirmée' : `${filledCount}/14 repas choisis`}</span>
-          <Link href={`/?week=${nextWeek}`} aria-label="Semaine suivante">→</Link>
+          <Link href={`/?week=${nextWeek}`} prefetch={false} aria-label="Semaine suivante">→</Link>
         </nav>
 
         <section className="weekIntro" aria-labelledby="week-intro-title">
@@ -263,10 +274,15 @@ export function WeekPlanner({
               {filledCount === 0 ? 'Préparer ma semaine' : 'Régénérer les repas libres'}
             </button>
           ) : (
-            <button className="primaryButton" type="button" onClick={toggleFavorite} disabled={busy}>
-              <span aria-hidden="true">★</span>
-              {plan.isFavorite ? 'Retirer des favorites' : 'Garder comme favorite'}
-            </button>
+            <div className="confirmedActions">
+              <button className="primaryButton" type="button" onClick={toggleFavorite} disabled={busy}>
+                <span aria-hidden="true">★</span>
+                {plan.isFavorite ? 'Retirer des favorites' : 'Garder comme favorite'}
+              </button>
+              <button className="confirmedEditButton" type="button" onClick={unconfirmWeek} disabled={busy}>
+                Annuler la confirmation
+              </button>
+            </div>
           )}
         </section>
 

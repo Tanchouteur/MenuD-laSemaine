@@ -28,4 +28,6 @@ USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=5 \
+  CMD wget -qO- http://127.0.0.1:3000/api/health >/dev/null || exit 1
 CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node server.js"]

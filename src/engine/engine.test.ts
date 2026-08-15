@@ -6,6 +6,7 @@ import {
   generateAlternatives,
   generateWeek,
   hasIncompatibility,
+  isHardEligible,
   momentForSlot,
   scoreCandidate,
   seasonForDate,
@@ -81,6 +82,16 @@ describe('dates et contexte temporel', () => {
     expect(mondayOfCurrentWeek(sundayNightUtc, 'America/New_York')).toBe(
       '2026-08-10',
     );
+  });
+
+  it('réserve un aliment familial au soir lorsqu’il est interdit le midi en semaine', () => {
+    const familyMeal = candidate(99, {
+      name: 'Saumon',
+      allowedMoments: { ...allMoments, lunchWeekday: false },
+    });
+    const [mondayLunch, mondayDinner] = buildWeekSlots('2026-08-10');
+    expect(isHardEligible(familyMeal, mondayLunch, emptyContext(), new Set())).toBe(false);
+    expect(isHardEligible(familyMeal, mondayDinner, emptyContext(), new Set())).toBe(true);
   });
 });
 

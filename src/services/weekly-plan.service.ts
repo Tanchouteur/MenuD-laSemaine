@@ -164,6 +164,27 @@ export async function confirmPlan(planId: string, expectedVersion?: number): Pro
   return planToDto(updated);
 }
 
+export async function unconfirmPlan(planId: string, expectedVersion?: number): Promise<WeeklyPlanDto> {
+  const prisma = getPrisma();
+  const plan = await prisma.weeklyPlan.findUniqueOrThrow({ where: { id: planId } });
+  if (plan.status !== PlanStatus.CONFIRMED) {
+    throw new Error('Seule une semaine confirmée peut être remise en modification.');
+  }
+  if (expectedVersion !== undefined && plan.version !== expectedVersion) {
+    throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
+  }
+  const updated = await prisma.weeklyPlan.update({
+    where: { id: planId },
+    data: {
+      status: PlanStatus.DRAFT,
+      confirmedAt: null,
+      version: { increment: 1 },
+    },
+    include: { slots: true },
+  });
+  return planToDto(updated);
+}
+
 export async function toggleFavorite(planId: string): Promise<WeeklyPlanDto> {
   const plan = await getPrisma().weeklyPlan.findUniqueOrThrow({
     where: { id: planId },

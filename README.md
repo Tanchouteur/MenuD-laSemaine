@@ -17,6 +17,8 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 
 Le cahier d’architecture et les règles métier se trouvent dans [implementation_plan_menu.md](implementation_plan_menu.md).
 
+Le déploiement de production pas à pas est documenté dans [docs/DEPLOIEMENT_COOLIFY.md](docs/DEPLOIEMENT_COOLIFY.md).
+
 ## Démarrage local
 
 Prérequis : Node.js 24, npm et Docker Desktop.

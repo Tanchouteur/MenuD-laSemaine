@@ -73,6 +73,7 @@ async function main() {
         unit,
         aisleId: aisles.get(aisleName),
         isActive: true,
+        okLunchWeekday: name === 'Saumon' ? false : true,
       },
       create: {
         name,
@@ -83,6 +84,7 @@ async function main() {
         unit,
         aisleId: aisles.get(aisleName),
         seasons: everySeason,
+        okLunchWeekday: name === 'Saumon' ? false : true,
       },
     });
     ingredients.set(name, ingredient.id);

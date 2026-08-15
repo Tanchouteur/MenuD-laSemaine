@@ -17,6 +17,7 @@ export default async function HomePage({
 
   return (
     <WeekPlanner
+      key={monday}
       initialPlan={plan}
       previousWeek={addDays(monday, -7)}
       nextWeek={addDays(monday, 7)}

@@ -151,6 +151,26 @@ h1 {
   line-height: 1.5;
 }
 
+.confirmedActions {
+  display: grid;
+  gap: 9px;
+}
+
+.confirmedEditButton {
+  min-height: 46px;
+  padding: 11px 16px;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.confirmedEditButton:hover {
+  background: rgb(255 255 255 / 10%);
+}
+
 .primaryButton,
 .secondaryButton,
 .lockButton,
@@ -926,6 +946,14 @@ legend {
   padding: 0 6px;
   font-size: 0.82rem;
   font-weight: 800;
+}
+
+.fieldHint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1.45;
 }
 
 .choiceGrid {
