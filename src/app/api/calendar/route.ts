@@ -23,6 +23,6 @@ export async function GET(request: Request) {
     const title = slot.assignment?.name ?? slot.customLabel ?? specialLabels[slot.slotType] ?? 'Repas';
     return ['BEGIN:VEVENT', `UID:${slot.id}@menu-de-la-semaine`, `DTSTAMP:${createdAt}`, `DTSTART;TZID=Europe/Paris:${compactDate}${start}`, `DTEND;TZID=Europe/Paris:${compactDate}${end}`, `SUMMARY:${escapeIcal(title)}`, `DESCRIPTION:${slot.guestCount} personne(s)`, 'END:VEVENT'].join('\r\n');
   }));
-  const calendar = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Menu de la semaine//FR', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Menus de la famille', ...events, 'END:VCALENDAR', ''].join('\r\n');
-  return new Response(calendar, { headers: { 'content-type': 'text/calendar; charset=utf-8', 'content-disposition': 'inline; filename="menus-famille.ics"', 'cache-control': 'no-store' } });
+  const calendar = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Menu de la semaine//FR', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Menus de la famille', 'X-WR-TIMEZONE:Europe/Paris', 'REFRESH-INTERVAL;VALUE=DURATION:PT1H', 'X-PUBLISHED-TTL:PT1H', ...events, 'END:VCALENDAR', ''].join('\r\n');
+  return new Response(calendar, { headers: { 'content-type': 'text/calendar; charset=utf-8', 'content-disposition': 'inline; filename="menus-famille.ics"', 'cache-control': 'no-cache, no-store, must-revalidate' } });
 }

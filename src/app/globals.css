@@ -1017,6 +1017,50 @@ legend {
   text-decoration: none;
 }
 
+.calendarBox {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  background: var(--surface);
+  margin-bottom: 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.calendarBox h3 {
+  margin: 0 0 4px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.calendarBox p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.calendarActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.calendarActions a,
+.calendarActions button {
+  font-size: 0.85rem;
+}
+
+.calendarHint {
+  font-size: 0.8rem !important;
+  color: var(--primary) !important;
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
 .logoutButton {
   width: 100%;
   margin-top: 4px;

@@ -29,7 +29,10 @@ export function MoreManager({ plans, ingredients, incompatibilities: initialInco
     <header className="sectionHeader"><div><p className="eyebrow">Votre famille</p><h1>Plus</h1><p>Historique, règles simples et nombres de personnes habituels.</p></div><span className="familyAvatar" aria-hidden="true">•••</span></header>
     {message && <p className="successSummary" role="status">{message}</p>}{error && <p className="errorSummary" role="alert">{error}</p>}
     <div className="segmented three" role="tablist"><button data-active={section === 'history'} onClick={() => setSection('history')}>Historique</button><button data-active={section === 'settings'} onClick={() => setSection('settings')}>Foyer</button><button data-active={section === 'rules'} onClick={() => setSection('rules')}>À éviter</button></div>
-    {section === 'history' && <section><div className="utilityLinks"><a className="secondaryButton" href={calendarUrl}>Ajouter au calendrier</a></div>{confirmed.length === 0 ? <div className="emptyCard"><h2>Aucune semaine confirmée</h2><p>Une fois votre première semaine confirmée, elle restera ici.</p></div> : <div className="catalogList">{confirmed.map((plan) => <article className="catalogCard historyCard" key={plan.id}><div><h2>{formatWeekRange(plan.startDate)}</h2><p>{plan.isFavorite ? '♥ Semaine favorite · ' : ''}14 repas conservés</p></div><div className="cardActions"><Link href={`/?week=${plan.startDate}`}>Voir</Link><button onClick={() => reapply(plan.id)}>Réutiliser</button></div></article>)}</div>}</section>}
+    {section === 'history' && <section>
+      <CalendarSyncBox calendarUrl={calendarUrl} hasConfirmed={confirmed.length > 0} />
+      {confirmed.length === 0 ? <div className="emptyCard"><h2>Aucune semaine confirmée</h2><p>Une fois votre première semaine confirmée, elle restera ici.</p></div> : <div className="catalogList">{confirmed.map((plan) => <article className="catalogCard historyCard" key={plan.id}><div><h2>{formatWeekRange(plan.startDate)}</h2><p>{plan.isFavorite ? '♥ Semaine favorite · ' : ''}14 repas conservés</p></div><div className="cardActions"><Link href={`/?week=${plan.startDate}`}>Voir</Link><button onClick={() => reapply(plan.id)}>Réutiliser</button></div></article>)}</div>}
+    </section>}
     {section === 'settings' && <><SettingsForm value={initialSettings} onMessage={setMessage} onError={setError} /><button className="secondaryButton logoutButton" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/connexion'); router.refresh(); }}>Se déconnecter de cet appareil</button></>}
     {section === 'rules' && <RulesEditor ingredients={ingredients} value={incompatibilities} onChange={setIncompatibilities} onMessage={setMessage} onError={setError} />}
   </main>;
@@ -46,4 +49,56 @@ function RulesEditor({ ingredients, value, onChange, onMessage, onError }: { ing
   async function add(event: FormEvent) { event.preventDefault(); const response = await fetch('/api/incompatibilities', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ firstId, secondId }) }); if (!response.ok) return onError((await response.json()).error ?? 'Impossible d’ajouter cette règle.'); const item = await response.json(); const first = ingredients.find((ingredient) => ingredient.id === firstId); const second = ingredients.find((ingredient) => ingredient.id === secondId); if (!value.some((rule) => rule.id === item.id)) onChange([...value, { id: item.id, firstId, firstName: first?.name ?? '', secondId, secondName: second?.name ?? '' }]); onMessage('Cette association ne sera plus proposée.'); }
   async function remove(id: string) { const response = await fetch(`/api/incompatibilities/${id}`, { method: 'DELETE' }); if (response.ok) onChange(value.filter((item) => item.id !== id)); else onError('Impossible de retirer cette règle.'); }
   return <section><form className="settingsCard stackForm" onSubmit={add}><div><h2>Associations à éviter</h2><p>Par exemple, si deux aliments ne vont jamais bien ensemble chez vous.</p></div><div className="formColumns"><label>Premier aliment<select value={firstId} onChange={(event) => setFirstId(event.target.value)}>{ingredients.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Deuxième aliment<select value={secondId} onChange={(event) => setSecondId(event.target.value)}>{ingredients.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div><button className="primaryButton" disabled={!firstId || !secondId || firstId === secondId}>Ajouter cette règle</button></form><div className="catalogList">{value.map((item) => <article className="catalogCard" key={item.id}><div><h2>{item.firstName} + {item.secondName}</h2><p>Cette association ne sera pas générée.</p></div><button className="textDanger" onClick={() => remove(item.id)}>Retirer</button></article>)}</div></section>;
+}
+
+function CalendarSyncBox({ calendarUrl, hasConfirmed }: { calendarUrl: string; hasConfirmed: boolean }) {
+  const [copied, setCopied] = useState(false);
+
+  function getFullCalendarUrl() {
+    if (typeof window === 'undefined') return calendarUrl;
+    return `${window.location.protocol}//${window.location.host}${calendarUrl}`;
+  }
+
+  function handleAppleCalendarClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (typeof window !== 'undefined') {
+      event.preventDefault();
+      const webcal = `webcal://${window.location.host}${calendarUrl}`;
+      window.location.href = webcal;
+    }
+  }
+
+  async function copyLink() {
+    const url = getFullCalendarUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch {
+      prompt('Lien d’abonnement calendrier :', url);
+    }
+  }
+
+  return (
+    <div className="calendarBox">
+      <div>
+        <h3>Synchronisation Calendrier</h3>
+        <p>
+          Abonnez votre agenda pour voir les repas de la famille se synchroniser automatiquement.
+        </p>
+      </div>
+      <div className="calendarActions">
+        <a className="secondaryButton" href={calendarUrl} onClick={handleAppleCalendarClick}>
+          S’abonner sur Apple Calendrier (iPhone / Mac)
+        </a>
+        <button type="button" className="secondaryButton" onClick={copyLink}>
+          {copied ? '✓ Lien copié !' : 'Copier l’URL (Google Agenda / Outlook)'}
+        </button>
+      </div>
+      {!hasConfirmed && (
+        <p className="calendarHint">
+          💡 <strong>Astuce :</strong> Aucune semaine n’est encore confirmée. Dès que vous cliquerez sur <em>« Confirmer la semaine »</em> dans l’onglet Menu, vos 14 repas apparaîtront automatiquement dans votre agenda.
+        </p>
+      )}
+    </div>
+  );
 }
