@@ -1,0 +1,24 @@
+{
+  "title": "Menu de la Semaine",
+  "description": "Application web mobile-first de planification familiale des 14 repas hebdomadaires, génération déterministe sous contraintes et liste de courses synchronisée.",
+  "longDescription": "# Menu de la Semaine — Planification Familiale & Courses Intelligentes\n\n## Contexte & Genèse du Projet\n\nLa planification des repas au sein d'un foyer représente une charge mentale hebdomadaire récurrente : comment concevoir **14 repas équilibrés et variés** (7 déjeuners et 7 dîners) sans tourner en rond, tout en tenant compte du temps disponible selon les jours, des saisons, des goûts et du nombre de convives ?\n\nNé initialement d'un prototype personnel pour répondre aux besoins concrets de ma famille, le projet a fait l'objet d'une **refonte intégrale (V2)** en architecture web moderne, typée et autonome. L'application combine un **moteur de décision déterministe sous contraintes**, une **liste de courses dynamique** et une **synchronisation agenda en temps réel**.\n\n---\n\n## Fonctionnalités Principales\n\n- **Génération Déterministe Complète** : Création instantanée et cohérente des 14 repas de la semaine en un clic.\n- **Remplacement Intelligent Expliqué** : Pour chaque repas, proposition de trois alternatives pertinentes avec explication contextuelle (ex. *« Rapide pour un midi en semaine »*, *« Légumes de saison »*).\n- **Verrouillage & Régénération Partielle** : Possibilité de figer certains repas choisis et de recalculer uniquement les autres créneaux.\n- **Gestion des Imprévus** : Prise en charge des repas à l'extérieur, des restes, des repas libres et ajustement du nombre de personnes par repas.\n- **Liste de Courses Automatique & Persistante** : Calcul dynamique des quantités selon le nombre réel de convives, regroupement automatique par rayons de supermarché et persistance des articles cochés.\n- **Historique & Réutilisation** : Conservation d'un instantané immuable des semaines confirmées et réapplication en un clic d'anciennes semaines favorites.\n- **Abonnement iCalendar (`webcal://`)** : Synchronisation automatique des menus confirmés avec Apple Calendrier (iPhone / Mac), Google Agenda et Outlook.\n- **Catalogue Complet** : Gestion des ingrédients, recettes multi-composants, rayons de magasin et incompatibilités alimentaires.\n\n---\n\n## Moteur Algorithmique & Résolution sous Contraintes\n\nLe cœur métier repose sur un moteur pur (sans dépendance externe, validé par une suite complète de tests unitaires) capable d'arbitrer parmi de multiples règles croisées :\n\n1. **Saisonnalité** : Filtrage strict selon les saisons calendaires actives pour privilégier les produits de saison.\n2. **Moments de Consommation** : Différenciation des exigences entre déjeuners et dîners, jours de semaine (recettes rapides) et week-ends (plats mijotés ou familiaux).\n3. **Anti-Répétition & Rotation Glissante** : Pénalisation progressive des aliments consommés récemment pour garantir une variété maximale d'une semaine sur l'autre.\n4. **Matrice d'Incompatibilités** : Exclusion formelle des associations d'ingrédients proscrites par le foyer.\n5. **Génération Déterministe** : Capacité à reproduire fidèlement un état de planification à partir d'une graine (*seed*).\n\n---\n\n## Architecture Technique\n\n- **Frontend** : Interface *Mobile-First* développée en Next.js App Router (React Server & Client Components) avec Vanilla CSS moderne, optimisée pour un usage fluide à une main en cuisine ou dans les rayons.\n- **Backend & API** : Next.js Route Handlers avec typage strict TypeScript de bout en bout.\n- **Persistance & Données** : PostgreSQL 17 géré via Prisma ORM avec transactions atomiques pour la validation des semaines et l'état des courses.\n- **Sécurité** : Authentification familiale simplifiée par cookie sécurisé signé par token HMAC-SHA256 (`FAMILY_PASSWORD`).\n- **Conteneurisation & Déploiement** : Image Docker multi-stage optimisée (`node:alpine`), exécution automatique des migrations Prisma au démarrage et déploiement continu sur serveur Coolify avec sauvegardes automatiques de la base de données.\n\n---\n\n## Rétrospective & Enseignements\n\nCette version V2 concrétise les retours d'usage de la première version : suppression des blocages stochastiques grâce à un moteur déterministe prédictible, persistance intégrale de la liste de courses évitant les doubles saisies, et intégration directe dans les agendas partagés du foyer.",
+  "category": "Personal",
+  "status": "Completed",
+  "date": "2026-08",
+  "tags": [
+    "Next.js",
+    "TypeScript",
+    "React",
+    "PostgreSQL",
+    "Prisma",
+    "Docker",
+    "Coolify",
+    "iCalendar",
+    "Vitest"
+  ],
+  "featured": true,
+  "order": 1,
+  "links": {
+    "github": "https://github.com/Tanchouteur/MenuD-laSemaine"
+  }
+}
