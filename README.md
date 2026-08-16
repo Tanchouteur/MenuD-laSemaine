@@ -15,7 +15,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - import idempotent de l’ancienne base MariaDB, avec dry-run ;
 - interface française accessible et pensée d’abord pour le téléphone.
 
-Le cahier d’architecture et les règles métier se trouvent dans [implementation_plan_menu.md](implementation_plan_menu.md).
+Le cahier d’architecture et les règles métier se trouvent dans [implementation_plan_menu.md](docs/implementation_plan_menu.md).
 
 Le déploiement de production pas à pas est documenté dans [docs/DEPLOIEMENT_COOLIFY.md](docs/DEPLOIEMENT_COOLIFY.md).
 
