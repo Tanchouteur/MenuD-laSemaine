@@ -1,0 +1,70 @@
+{
+  "format": "menu-de-la-semaine-enrichment",
+  "version": 1,
+  "ingredients": [
+    { "name": "Poulet", "category": "PROTEIN", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Boucherie" },
+    { "name": "Saumon", "category": "PROTEIN", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Poissonnerie" },
+    { "name": "Œuf", "category": "PROTEIN", "useInComposedMeals": true, "portionPerPerson": 2, "unit": "PIECE", "aisle": "Produits frais" },
+    { "name": "Bœuf haché", "category": "PROTEIN", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Boucherie" },
+    { "name": "Bacon", "category": "PROTEIN", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Boucherie" },
+    { "name": "Jambon", "category": "PROTEIN", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Boucherie" },
+    { "name": "Charcuterie pour raclette", "category": "PROTEIN", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Boucherie" },
+    { "name": "Lardons", "category": "PROTEIN", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Boucherie" },
+    { "name": "Riz", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 70, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Pâtes", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 90, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Nouilles chinoises", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 80, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Pommes de terre", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 250, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Purée", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 250, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Carotte", "category": "VEGETABLE", "useInComposedMeals": true, "portionPerPerson": 120, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Courgette", "category": "VEGETABLE", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Haricots verts", "category": "VEGETABLE", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Poivron", "category": "VEGETABLE", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Tomate", "category": "VEGETABLE", "useInComposedMeals": false, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Petits pois", "category": "VEGETABLE", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Haricots rouges", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CAN", "aisle": "Épicerie" },
+    { "name": "Tomates concassées", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CAN", "aisle": "Épicerie" },
+    { "name": "Tortillas", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Épicerie" },
+    { "name": "Oignon", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Fruits et légumes" },
+    { "name": "Sauce soja", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Épicerie" },
+    { "name": "Croûtons", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Sauce César", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Épicerie" },
+    { "name": "Cornichons (bocal)", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Épicerie" },
+    { "name": "Fines herbes", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Fruits et légumes" },
+    { "name": "Crème", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": 5, "unit": "CENTILITER", "aisle": "Produits frais" },
+    { "name": "Fromage râpé", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Produits frais" },
+    { "name": "Fromage à raclette", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Produits frais" },
+    { "name": "Reblochon", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Produits frais" },
+    { "name": "Parmesan", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Produits frais" },
+    { "name": "Cottage cheese", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Produits frais" },
+    { "name": "Salade romaine", "category": "VEGETABLE", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Fruits et légumes" }
+  ],
+  "recipes": [
+    { "name": "Burritos", "basePortions": 4, "ingredients": [
+      { "name": "Poulet", "quantity": 500, "unit": "GRAM" }, { "name": "Tortillas", "quantity": 8, "unit": "PIECE" }, { "name": "Riz", "quantity": 280, "unit": "GRAM" }, { "name": "Haricots rouges", "quantity": 1, "unit": "CAN" }, { "name": "Poivron", "quantity": 2, "unit": "PIECE" }, { "name": "Oignon", "quantity": 1, "unit": "PIECE" }, { "name": "Fromage râpé", "quantity": 120, "unit": "GRAM" }, { "name": "Crème", "quantity": 10, "unit": "CENTILITER" }
+    ] },
+    { "name": "Chili", "basePortions": 4, "ingredients": [
+      { "name": "Bœuf haché", "quantity": 500, "unit": "GRAM" }, { "name": "Haricots rouges", "quantity": 2, "unit": "CAN" }, { "name": "Tomates concassées", "quantity": 2, "unit": "CAN" }, { "name": "Riz", "quantity": 280, "unit": "GRAM" }, { "name": "Poivron", "quantity": 1, "unit": "PIECE" }, { "name": "Oignon", "quantity": 1, "unit": "PIECE" }
+    ] },
+    { "name": "Gladiator Bowl", "basePortions": 4, "ingredients": [
+      { "name": "Riz", "quantity": 280, "unit": "GRAM" }, { "name": "Bœuf haché", "quantity": 500, "unit": "GRAM" }, { "name": "Bacon", "quantity": 200, "unit": "GRAM" }, { "name": "Œuf", "quantity": 4, "unit": "PIECE" }, { "name": "Cottage cheese", "quantity": 300, "unit": "GRAM" }
+    ] },
+    { "name": "Nouille chinoise", "basePortions": 4, "ingredients": [
+      { "name": "Nouilles chinoises", "quantity": 320, "unit": "GRAM" }, { "name": "Poulet", "quantity": 400, "unit": "GRAM" }, { "name": "Carotte", "quantity": 200, "unit": "GRAM" }, { "name": "Courgette", "quantity": 250, "unit": "GRAM" }, { "name": "Sauce soja", "quantity": 6, "unit": "CENTILITER" }
+    ] },
+    { "name": "Omelette aux fines herbes", "basePortions": 4, "ingredients": [
+      { "name": "Œuf", "quantity": 8, "unit": "PIECE" }, { "name": "Fines herbes", "quantity": 1, "unit": "PIECE" }, { "name": "Crème", "quantity": 10, "unit": "CENTILITER" }
+    ] },
+    { "name": "Raclette", "basePortions": 4, "ingredients": [
+      { "name": "Pommes de terre", "quantity": 1000, "unit": "GRAM" }, { "name": "Fromage à raclette", "quantity": 800, "unit": "GRAM" }, { "name": "Charcuterie pour raclette", "quantity": 600, "unit": "GRAM" }, { "name": "Cornichons (bocal)", "quantity": 1, "unit": "PIECE" }
+    ] },
+    { "name": "Riz cantonais", "basePortions": 4, "ingredients": [
+      { "name": "Riz", "quantity": 280, "unit": "GRAM" }, { "name": "Œuf", "quantity": 4, "unit": "PIECE" }, { "name": "Jambon", "quantity": 200, "unit": "GRAM" }, { "name": "Petits pois", "quantity": 200, "unit": "GRAM" }, { "name": "Carotte", "quantity": 150, "unit": "GRAM" }, { "name": "Sauce soja", "quantity": 4, "unit": "CENTILITER" }
+    ] },
+    { "name": "Salade césard", "basePortions": 4, "ingredients": [
+      { "name": "Poulet", "quantity": 500, "unit": "GRAM" }, { "name": "Salade romaine", "quantity": 2, "unit": "PIECE" }, { "name": "Parmesan", "quantity": 80, "unit": "GRAM" }, { "name": "Croûtons", "quantity": 120, "unit": "GRAM" }, { "name": "Sauce César", "quantity": 20, "unit": "CENTILITER" }
+    ] },
+    { "name": "Tartiflette", "basePortions": 4, "ingredients": [
+      { "name": "Pommes de terre", "quantity": 1000, "unit": "GRAM" }, { "name": "Reblochon", "quantity": 450, "unit": "GRAM" }, { "name": "Lardons", "quantity": 200, "unit": "GRAM" }, { "name": "Oignon", "quantity": 2, "unit": "PIECE" }, { "name": "Crème", "quantity": 20, "unit": "CENTILITER" }
+    ] }
+  ]
+}

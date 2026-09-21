@@ -12,7 +12,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - création, modification et archivage des ingrédients et recettes ;
 - réglages du foyer et associations d’aliments à éviter ;
 - export iCalendar et protection facultative par mot de passe familial ;
-- export JSON du catalogue et des menus pour audit ou enrichissement assisté ;
+- export JSON du catalogue et des menus, puis import prévisualisé d’un enrichissement ciblé ;
 - import idempotent de l’ancienne base MariaDB, avec dry-run ;
 - interface française accessible et pensée d’abord pour le téléphone.
 

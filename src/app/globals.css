@@ -1029,6 +1029,10 @@ legend {
 .setupChoices { display: grid; gap: 7px; }
 .dataExportBox { margin-bottom: 16px; }
 .dataExportBox .primaryButton { text-decoration: none; }
+.dataExportBox hr { width: 100%; border: 0; border-top: 1px solid var(--line); }
+.dataExportBox input[type='file'] { min-height: 0; padding: 10px; }
+.importPreview { display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--green-soft); }
+.importPreview p { margin: 0; }
 
 @media (max-width: 620px) {
   .chooserTabs { grid-template-columns: repeat(2, 1fr); }

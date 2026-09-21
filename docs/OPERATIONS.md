@@ -34,6 +34,12 @@ La page **Plus > Historique** permet de télécharger le catalogue JSON. Cet
 export est une copie de travail lisible, pas un remplacement d’un dump
 PostgreSQL. Il sert à auditer et enrichir les données sans terminal Coolify.
 
+Un fichier au format `menu-de-la-semaine-enrichment` peut être sélectionné dans
+la même section. L’interface affiche d’abord le nombre d’ingrédients et de
+recettes à créer ou mettre à jour. Le bouton d’application apparaît seulement
+après cette validation. L’écriture est atomique et les menus existants ne sont
+pas modifiés.
+
 ## Diagnostic rapide
 
 - `/api/health` non sain : vérifier PostgreSQL et `DATABASE_URL`.

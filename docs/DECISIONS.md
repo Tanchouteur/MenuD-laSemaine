@@ -50,8 +50,9 @@ ne bloquent pas ce choix.
 
 **Statut : accepté le 21 septembre 2026.** L’échange de catalogue passe par un
 fichier JSON téléchargé depuis l’application. Il évite l’exposition de
-PostgreSQL et la dépendance au terminal WebSocket de Coolify. Un futur import
-devra proposer un aperçu et un mode sans écriture avant toute mutation.
+PostgreSQL et la dépendance au terminal WebSocket de Coolify. L’import
+d’enrichissement propose un aperçu avant écriture, vérifie toutes les références
+et applique uniquement les ingrédients et recettes dans une transaction.
 
 ## ADR-009 — Déploiement progressif
 

@@ -30,7 +30,7 @@ export function MoreManager({ plans, ingredients, incompatibilities: initialInco
     {message && <p className="successSummary" role="status">{message}</p>}{error && <p className="errorSummary" role="alert">{error}</p>}
     <div className="segmented three" role="tablist"><button data-active={section === 'history'} onClick={() => setSection('history')}>Historique</button><button data-active={section === 'settings'} onClick={() => setSection('settings')}>Foyer</button><button data-active={section === 'rules'} onClick={() => setSection('rules')}>À éviter</button></div>
     {section === 'history' && <section>
-      <DataExportBox />
+      <DataExportBox onMessage={setMessage} onError={setError} />
       <CalendarSyncBox calendarUrl={calendarUrl} hasConfirmed={confirmed.length > 0} />
       {confirmed.length === 0 ? <div className="emptyCard"><h2>Aucune semaine confirmée</h2><p>Une fois votre première semaine confirmée, elle restera ici.</p></div> : <div className="catalogList">{confirmed.map((plan) => <article className="catalogCard historyCard" key={plan.id}><div><h2>{formatWeekRange(plan.startDate)}</h2><p>{plan.isFavorite ? '♥ Semaine favorite · ' : ''}14 repas conservés</p></div><div className="cardActions"><Link href={`/?week=${plan.startDate}`}>Voir</Link><button onClick={() => reapply(plan.id)}>Réutiliser</button></div></article>)}</div>}
     </section>}
@@ -39,10 +39,48 @@ export function MoreManager({ plans, ingredients, incompatibilities: initialInco
   </main>;
 }
 
-function DataExportBox() {
+type ImportSummary = { ingredientsToCreate: string[]; ingredientsToUpdate: string[]; recipesToCreate: string[]; recipesToUpdate: string[] };
+
+function DataExportBox({ onMessage, onError }: { onMessage: (value: string) => void; onError: (value: string) => void }) {
+  const [document, setDocument] = useState<unknown>(null);
+  const [summary, setSummary] = useState<ImportSummary | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function preview(file: File | undefined) {
+    setSummary(null); setDocument(null); onError('');
+    if (!file) return;
+    try {
+      const parsed: unknown = JSON.parse(await file.text());
+      setBusy(true);
+      const response = await fetch('/api/catalog/import', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mode: 'preview', document: parsed }) });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? 'Le fichier ne peut pas être prévisualisé.');
+      setDocument(parsed); setSummary(body); onMessage('Prévisualisation prête. Vérifiez le résumé avant de l’appliquer.');
+    } catch (error) { onError(error instanceof Error ? error.message : 'Le fichier JSON est invalide.'); }
+    finally { setBusy(false); }
+  }
+
+  async function apply() {
+    if (!document || !summary) return;
+    setBusy(true); onError('');
+    const response = await fetch('/api/catalog/import', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mode: 'apply', document }) });
+    const body = await response.json();
+    if (response.ok) { setSummary(null); setDocument(null); onMessage('Catalogue mis à jour. Les menus existants n’ont pas été modifiés.'); }
+    else onError(body.error ?? 'Le catalogue n’a pas pu être mis à jour.');
+    setBusy(false);
+  }
+
   return <section className="settingsCard dataExportBox" aria-labelledby="data-export-title">
     <div><h2 id="data-export-title">Exporter les données du menu</h2><p>Téléchargez un fichier JSON avec les ingrédients, recettes, règles et menus. Il ne contient aucun mot de passe ni secret Coolify.</p></div>
     <a className="primaryButton" href="/api/catalog/export" download>Télécharger le catalogue</a>
+    <hr />
+    <div><h3>Importer un enrichissement</h3><p>Le fichier est vérifié avant application. Seuls les ingrédients et recettes déclarés sont modifiés.</p></div>
+    <label>Fichier d’enrichissement JSON<input type="file" accept="application/json,.json" disabled={busy} onChange={(event) => preview(event.target.files?.[0])} /></label>
+    {summary && <div className="importPreview" role="status">
+      <p><strong>{summary.ingredientsToCreate.length}</strong> ingrédients à créer · <strong>{summary.ingredientsToUpdate.length}</strong> à mettre à jour</p>
+      <p><strong>{summary.recipesToCreate.length}</strong> recettes à créer · <strong>{summary.recipesToUpdate.length}</strong> à corriger</p>
+      <button type="button" className="primaryButton" disabled={busy} onClick={apply}>{busy ? 'Application…' : 'Appliquer ces changements'}</button>
+    </div>}
   </section>;
 }
 

@@ -57,6 +57,11 @@ dérivé des deux valeurs. `/api/health`, l’authentification et le calendrier 
 exception. L’export JSON suit la protection familiale normale et désactive le
 cache HTTP.
 
+L’import accepte uniquement le format versionné
+`menu-de-la-semaine-enrichment`. Une prévisualisation valide les références et
+annonce les créations et mises à jour. L’application s’exécute ensuite dans une
+transaction PostgreSQL et ne modifie ni les semaines ni leurs instantanés.
+
 ## Observabilité
 
 `/api/health` vérifie réellement PostgreSQL. Les journaux de démarrage indiquent
