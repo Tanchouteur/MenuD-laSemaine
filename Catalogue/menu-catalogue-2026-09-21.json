@@ -1,0 +1,1680 @@
+{
+  "format": "menu-de-la-semaine-catalog",
+  "version": 1,
+  "exportedAt": "2026-09-21T07:46:08.304Z",
+  "settings": {
+    "timezone": "Europe/Paris",
+    "defaultGuestsLunchWeekday": 3,
+    "defaultGuestsDinnerWeekday": 3,
+    "defaultGuestsLunchWeekend": 5,
+    "defaultGuestsDinnerWeekend": 5,
+    "compositionSetupCompleted": true
+  },
+  "aisles": [
+    {
+      "id": "cmta4b63w00007ts3zt2yyyte",
+      "name": "Fruits et légumes",
+      "sortOrder": 0
+    },
+    {
+      "id": "cmta4b64100017ts3973mqsc7",
+      "name": "Boucherie",
+      "sortOrder": 1
+    },
+    {
+      "id": "cmta4b64300027ts33qckbuls",
+      "name": "Poissonnerie",
+      "sortOrder": 2
+    },
+    {
+      "id": "cmta4b64600037ts37zeusoo4",
+      "name": "Produits frais",
+      "sortOrder": 3
+    },
+    {
+      "id": "cmta4b64800047ts3lodeym39",
+      "name": "Épicerie",
+      "sortOrder": 4
+    }
+  ],
+  "ingredients": [
+    {
+      "id": "cmta4b64l00057ts3mbrnbqsx",
+      "name": "Poulet",
+      "category": "PROTEIN",
+      "subFamily": "poultry",
+      "rating": 5,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 150,
+      "unit": "GRAM",
+      "aisle": "Boucherie",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b64x00067ts35c7rqmhs",
+      "name": "Saumon",
+      "category": "PROTEIN",
+      "subFamily": "fish",
+      "rating": 5,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 150,
+      "unit": "GRAM",
+      "aisle": "Poissonnerie",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b65h00087ts3inq2wfmm",
+      "name": "Tofu",
+      "category": "PROTEIN",
+      "subFamily": "vegetarian",
+      "rating": 1,
+      "isActive": false,
+      "useInComposedMeals": false,
+      "portionPerPerson": 140,
+      "unit": "GRAM",
+      "aisle": "Produits frais",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b65900077ts3rh914y6w",
+      "name": "Œuf",
+      "category": "PROTEIN",
+      "subFamily": "egg",
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 2,
+      "unit": "PIECE",
+      "aisle": "Produits frais",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b665000b7ts31n89ptk2",
+      "name": "Pommes de terre",
+      "category": "STARCH",
+      "subFamily": "potato",
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 250,
+      "unit": "GRAM",
+      "aisle": "Fruits et légumes",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmu8oc35b000001qmuxfi8fuc",
+      "name": "Purée",
+      "category": "STARCH",
+      "subFamily": null,
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": null,
+      "unit": "GRAM",
+      "aisle": null,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b65y000a7ts3jqplo71b",
+      "name": "Pâtes",
+      "category": "STARCH",
+      "subFamily": "pasta",
+      "rating": 5,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 90,
+      "unit": "GRAM",
+      "aisle": "Épicerie",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b65m00097ts3yvqckhfx",
+      "name": "Riz",
+      "category": "STARCH",
+      "subFamily": "rice",
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 70,
+      "unit": "GRAM",
+      "aisle": "Épicerie",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b66s000e7ts3a86xps8m",
+      "name": "Carotte",
+      "category": "VEGETABLE",
+      "subFamily": null,
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 120,
+      "unit": "GRAM",
+      "aisle": "Fruits et légumes",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b66e000d7ts332xt7y6e",
+      "name": "Courgette",
+      "category": "VEGETABLE",
+      "subFamily": null,
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 150,
+      "unit": "GRAM",
+      "aisle": "Fruits et légumes",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b66a000c7ts30xum91aw",
+      "name": "Haricots verts",
+      "category": "VEGETABLE",
+      "subFamily": null,
+      "rating": 4,
+      "isActive": true,
+      "useInComposedMeals": true,
+      "portionPerPerson": 150,
+      "unit": "GRAM",
+      "aisle": "Fruits et légumes",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b66v000f7ts3ohfui03u",
+      "name": "Tomate",
+      "category": "VEGETABLE",
+      "subFamily": null,
+      "rating": 5,
+      "isActive": true,
+      "useInComposedMeals": false,
+      "portionPerPerson": 150,
+      "unit": "GRAM",
+      "aisle": "Fruits et légumes",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    },
+    {
+      "id": "cmta4b672000g7ts3k7ink4pp",
+      "name": "Crème",
+      "category": "DAIRY",
+      "subFamily": null,
+      "rating": 3,
+      "isActive": true,
+      "useInComposedMeals": false,
+      "portionPerPerson": 5,
+      "unit": "CENTILITER",
+      "aisle": "Produits frais",
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "id": "cmuaxwlqa000301jyktcjduhf",
+      "name": "Burritos",
+      "style": null,
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": null,
+      "cookTimeMinutes": null,
+      "basePortions": 4,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+          "name": "Poulet",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmua66iau000901qm3v3ssrro",
+      "name": "Chili",
+      "style": "Gros plat",
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 30,
+      "cookTimeMinutes": 120,
+      "basePortions": 4,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": false,
+        "dinnerWeekend": true
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b65m00097ts3yvqckhfx",
+          "name": "Riz",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmua6727e000b01qmfjz9vscn",
+      "name": "Gladiator Bowl",
+      "style": "Recette instagram",
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 15,
+      "cookTimeMinutes": 15,
+      "basePortions": 4,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+          "name": "Poulet",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmuaxa8t6000101pd3sopvsn3",
+      "name": "Nouille chinoise",
+      "style": null,
+      "rating": 2,
+      "isActive": true,
+      "prepTimeMinutes": null,
+      "cookTimeMinutes": null,
+      "basePortions": 1,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": true,
+        "dinnerWeekday": false,
+        "lunchWeekend": false,
+        "dinnerWeekend": false
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+          "name": "Pâtes",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmta4b67g000h7ts3j0rfk9vg",
+      "name": "Omelette aux fines herbes",
+      "style": "pan-fried",
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 5,
+      "cookTimeMinutes": 10,
+      "basePortions": 4,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": false
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b65900077ts3rh914y6w",
+          "name": "Œuf",
+          "quantity": 8,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmuauvveu002001qmriy3ouow",
+      "name": "Raclette",
+      "style": null,
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 15,
+      "cookTimeMinutes": 5,
+      "basePortions": 4,
+      "seasons": [
+        "WINTER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": false,
+        "lunchWeekend": false,
+        "dinnerWeekend": true
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+          "name": "Poulet",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmua653e1000301qmbufxkrr3",
+      "name": "Riz cantonais",
+      "style": "Asiatique",
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 15,
+      "cookTimeMinutes": 15,
+      "basePortions": 4,
+      "seasons": [
+        "WINTER",
+        "SPRING",
+        "SUMMER",
+        "AUTUMN"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": true,
+        "dinnerWeekend": true
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+          "name": "Poulet",
+          "quantity": 1,
+          "unit": "PIECE"
+        },
+        {
+          "ingredientId": "cmta4b65m00097ts3yvqckhfx",
+          "name": "Riz",
+          "quantity": 1,
+          "unit": "PIECE"
+        },
+        {
+          "ingredientId": "cmta4b65900077ts3rh914y6w",
+          "name": "Œuf",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmua63fa5000101qmsfkzir8p",
+      "name": "Salade césard",
+      "style": "Salade",
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 30,
+      "cookTimeMinutes": 10,
+      "basePortions": 4,
+      "seasons": [
+        "SUMMER",
+        "AUTUMN",
+        "SPRING"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": false,
+        "lunchWeekend": true,
+        "dinnerWeekend": false
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+          "name": "Poulet",
+          "quantity": 2,
+          "unit": "PIECE"
+        }
+      ]
+    },
+    {
+      "id": "cmuauwftr002301qmlbmdf4wo",
+      "name": "Tartiflette",
+      "style": "Gratin",
+      "rating": 3,
+      "isActive": true,
+      "prepTimeMinutes": 30,
+      "cookTimeMinutes": 30,
+      "basePortions": 4,
+      "seasons": [
+        "AUTUMN",
+        "WINTER"
+      ],
+      "allowedMoments": {
+        "lunchWeekday": false,
+        "dinnerWeekday": true,
+        "lunchWeekend": false,
+        "dinnerWeekend": true
+      },
+      "ingredients": [
+        {
+          "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+          "name": "Poulet",
+          "quantity": 1,
+          "unit": "PIECE"
+        }
+      ]
+    }
+  ],
+  "incompatibilities": [
+    {
+      "firstIngredientId": "cmta4b64x00067ts35c7rqmhs",
+      "firstIngredientName": "Saumon",
+      "secondIngredientId": "cmta4b672000g7ts3k7ink4pp",
+      "secondIngredientName": "Crème"
+    },
+    {
+      "firstIngredientId": "cmta4b65900077ts3rh914y6w",
+      "firstIngredientName": "Œuf",
+      "secondIngredientId": "cmta4b66v000f7ts3ohfui03u",
+      "secondIngredientName": "Tomate"
+    },
+    {
+      "firstIngredientId": "cmta4b64x00067ts35c7rqmhs",
+      "firstIngredientName": "Saumon",
+      "secondIngredientId": "cmta4b66s000e7ts3a86xps8m",
+      "secondIngredientName": "Carotte"
+    }
+  ],
+  "plans": [
+    {
+      "startDate": "2026-09-21",
+      "status": "DRAFT",
+      "isFavorite": false,
+      "confirmedAt": null,
+      "slots": [
+        {
+          "date": "2026-09-21",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et pommes de terre avec carotte",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmta4b665000b7ts31n89ptk2:cmta4b66s000e7ts3a86xps8m",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b665000b7ts31n89ptk2",
+              "name": "Pommes de terre",
+              "quantityPerPerson": 250,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66s000e7ts3a86xps8m",
+              "name": "Carotte",
+              "quantityPerPerson": 120,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-21",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "RECIPE",
+          "name": "Omelette aux fines herbes",
+          "signature": "recipe:cmta4b67g000h7ts3j0rfk9vg",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-22",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et carotte",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:-:cmta4b66s000e7ts3a86xps8m",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66s000e7ts3a86xps8m",
+              "name": "Carotte",
+              "quantityPerPerson": 120,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-22",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Saumon et courgette",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:-:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-23",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et pâtes avec tomate",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmta4b65y000a7ts3jqplo71b:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-23",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "RECIPE",
+          "name": "Tartiflette",
+          "signature": "recipe:cmuauwftr002301qmlbmdf4wo",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-24",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et pommes de terre avec courgette",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmta4b665000b7ts31n89ptk2:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b665000b7ts31n89ptk2",
+              "name": "Pommes de terre",
+              "quantityPerPerson": 250,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-24",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "RECIPE",
+          "name": "Chili",
+          "signature": "recipe:cmua66iau000901qm3v3ssrro",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-25",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et purée avec tomate",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmu8oc35b000001qmuxfi8fuc:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmu8oc35b000001qmuxfi8fuc",
+              "name": "Purée",
+              "quantityPerPerson": null,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-25",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "RECIPE",
+          "name": "Gladiator Bowl",
+          "signature": "recipe:cmua6727e000b01qmfjz9vscn",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-26",
+          "mealTime": "LUNCH",
+          "guestCount": 5,
+          "slotType": "RECIPE",
+          "name": "Riz cantonais",
+          "signature": "recipe:cmua653e1000301qmbufxkrr3",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b65m00097ts3yvqckhfx",
+              "name": "Riz",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-26",
+          "mealTime": "DINNER",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Poulet et pâtes avec carotte",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmta4b65y000a7ts3jqplo71b:cmta4b66s000e7ts3a86xps8m",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66s000e7ts3a86xps8m",
+              "name": "Carotte",
+              "quantityPerPerson": 120,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-27",
+          "mealTime": "LUNCH",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Poulet et purée",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmu8oc35b000001qmuxfi8fuc:-",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmu8oc35b000001qmuxfi8fuc",
+              "name": "Purée",
+              "quantityPerPerson": null,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-27",
+          "mealTime": "DINNER",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Œuf et pâtes avec tomate",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmta4b65y000a7ts3jqplo71b:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "startDate": "2026-09-14",
+      "status": "DRAFT",
+      "isFavorite": false,
+      "confirmedAt": null,
+      "slots": [
+        {
+          "date": "2026-09-14",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et purée avec courgette",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmu8oc35b000001qmuxfi8fuc:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmu8oc35b000001qmuxfi8fuc",
+              "name": "Purée",
+              "quantityPerPerson": null,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-14",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Saumon et pâtes avec haricots verts",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:cmta4b65y000a7ts3jqplo71b:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-15",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et purée avec tomate",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmu8oc35b000001qmuxfi8fuc:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmu8oc35b000001qmuxfi8fuc",
+              "name": "Purée",
+              "quantityPerPerson": null,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-15",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et pâtes avec tomate",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmta4b65y000a7ts3jqplo71b:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et pâtes avec haricots verts",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmta4b65y000a7ts3jqplo71b:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Saumon et purée avec haricots verts",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:cmu8oc35b000001qmuxfi8fuc:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmu8oc35b000001qmuxfi8fuc",
+              "name": "Purée",
+              "quantityPerPerson": null,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et purée avec haricots verts",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmu8oc35b000001qmuxfi8fuc:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmu8oc35b000001qmuxfi8fuc",
+              "name": "Purée",
+              "quantityPerPerson": null,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Saumon et courgette",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:-:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-18",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et haricots verts",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:-:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-18",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "RECIPE",
+          "name": "Omelette aux fines herbes",
+          "signature": "recipe:cmta4b67g000h7ts3j0rfk9vg",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-19",
+          "mealTime": "LUNCH",
+          "guestCount": 5,
+          "slotType": "RECIPE",
+          "name": "Salade césard",
+          "signature": "recipe:cmua63fa5000101qmsfkzir8p",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.5,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-19",
+          "mealTime": "DINNER",
+          "guestCount": 5,
+          "slotType": "RECIPE",
+          "name": "Gladiator Bowl",
+          "signature": "recipe:cmua6727e000b01qmfjz9vscn",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-20",
+          "mealTime": "LUNCH",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Saumon et tomate",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:-:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-20",
+          "mealTime": "DINNER",
+          "guestCount": 5,
+          "slotType": "RECIPE",
+          "name": "Chili",
+          "signature": "recipe:cmua66iau000901qm3v3ssrro",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 0.25,
+              "unit": "PIECE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "startDate": "2026-08-24",
+      "status": "DRAFT",
+      "isFavorite": false,
+      "confirmedAt": null,
+      "slots": [
+        {
+          "date": "2026-08-24",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et pâtes avec haricots verts",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmta4b65y000a7ts3jqplo71b:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-24",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Saumon et riz avec haricots verts",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:cmta4b65m00097ts3yvqckhfx:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65m00097ts3yvqckhfx",
+              "name": "Riz",
+              "quantityPerPerson": 70,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-25",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Tofu et tomate",
+          "signature": "composed:cmta4b65h00087ts3inq2wfmm:-:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65h00087ts3inq2wfmm",
+              "name": "Tofu",
+              "quantityPerPerson": 140,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-25",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et pommes de terre avec courgette",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmta4b665000b7ts31n89ptk2:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b665000b7ts31n89ptk2",
+              "name": "Pommes de terre",
+              "quantityPerPerson": 250,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-26",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "RECIPE",
+          "name": "Omelette aux fines herbes",
+          "signature": "recipe:cmta4b67g000h7ts3j0rfk9vg",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-26",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Saumon et carotte",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:-:cmta4b66s000e7ts3a86xps8m",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66s000e7ts3a86xps8m",
+              "name": "Carotte",
+              "quantityPerPerson": 120,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-27",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et riz avec tomate",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:cmta4b65m00097ts3yvqckhfx:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b65m00097ts3yvqckhfx",
+              "name": "Riz",
+              "quantityPerPerson": 70,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-27",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Tofu et pommes de terre avec courgette",
+          "signature": "composed:cmta4b65h00087ts3inq2wfmm:cmta4b665000b7ts31n89ptk2:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65h00087ts3inq2wfmm",
+              "name": "Tofu",
+              "quantityPerPerson": 140,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b665000b7ts31n89ptk2",
+              "name": "Pommes de terre",
+              "quantityPerPerson": 250,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-28",
+          "mealTime": "LUNCH",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Poulet et carotte",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:-:cmta4b66s000e7ts3a86xps8m",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66s000e7ts3a86xps8m",
+              "name": "Carotte",
+              "quantityPerPerson": 120,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-28",
+          "mealTime": "DINNER",
+          "guestCount": 3,
+          "slotType": "COMPOSED",
+          "name": "Œuf et courgette",
+          "signature": "composed:cmta4b65900077ts3rh914y6w:-:cmta4b66e000d7ts332xt7y6e",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65900077ts3rh914y6w",
+              "name": "Œuf",
+              "quantityPerPerson": 2,
+              "unit": "PIECE"
+            },
+            {
+              "ingredientId": "cmta4b66e000d7ts332xt7y6e",
+              "name": "Courgette",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-29",
+          "mealTime": "LUNCH",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Poulet et riz avec tomate",
+          "signature": "composed:cmta4b64l00057ts3mbrnbqsx:cmta4b65m00097ts3yvqckhfx:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64l00057ts3mbrnbqsx",
+              "name": "Poulet",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65m00097ts3yvqckhfx",
+              "name": "Riz",
+              "quantityPerPerson": 70,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-29",
+          "mealTime": "DINNER",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Saumon et pommes de terre avec tomate",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:cmta4b665000b7ts31n89ptk2:cmta4b66v000f7ts3ohfui03u",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b665000b7ts31n89ptk2",
+              "name": "Pommes de terre",
+              "quantityPerPerson": 250,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66v000f7ts3ohfui03u",
+              "name": "Tomate",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-30",
+          "mealTime": "LUNCH",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Saumon et pâtes avec haricots verts",
+          "signature": "composed:cmta4b64x00067ts35c7rqmhs:cmta4b65y000a7ts3jqplo71b:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b64x00067ts35c7rqmhs",
+              "name": "Saumon",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b65y000a7ts3jqplo71b",
+              "name": "Pâtes",
+              "quantityPerPerson": 90,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-30",
+          "mealTime": "DINNER",
+          "guestCount": 5,
+          "slotType": "COMPOSED",
+          "name": "Tofu et haricots verts",
+          "signature": "composed:cmta4b65h00087ts3inq2wfmm:-:cmta4b66a000c7ts30xum91aw",
+          "ingredients": [
+            {
+              "ingredientId": "cmta4b65h00087ts3inq2wfmm",
+              "name": "Tofu",
+              "quantityPerPerson": 140,
+              "unit": "GRAM"
+            },
+            {
+              "ingredientId": "cmta4b66a000c7ts30xum91aw",
+              "name": "Haricots verts",
+              "quantityPerPerson": 150,
+              "unit": "GRAM"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
