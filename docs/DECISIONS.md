@@ -53,6 +53,8 @@ fichier JSON téléchargé depuis l’application. Il évite l’exposition de
 PostgreSQL et la dépendance au terminal WebSocket de Coolify. L’import
 d’enrichissement propose un aperçu avant écriture, vérifie toutes les références
 et applique uniquement les ingrédients et recettes dans une transaction.
+Les renommages utilisent le nom précédent comme clé afin de conserver l’identité
+de la recette et les liens existants.
 
 ## ADR-009 — Déploiement progressif
 

@@ -40,6 +40,10 @@ recettes à créer ou mettre à jour. Le bouton d’application apparaît seulem
 après cette validation. L’écriture est atomique et les menus existants ne sont
 pas modifiés.
 
+Une recette peut déclarer `previousName` pour être renommée en conservant son
+identifiant et ses références. Les métadonnées facultatives permettent aussi de
+mettre à jour son style, ses durées, ses saisons et ses moments de proposition.
+
 ## Diagnostic rapide
 
 - `/api/health` non sain : vérifier PostgreSQL et `DATABASE_URL`.

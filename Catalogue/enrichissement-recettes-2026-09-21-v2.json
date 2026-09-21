@@ -1,0 +1,164 @@
+{
+  "format": "menu-de-la-semaine-enrichment",
+  "version": 1,
+  "ingredients": [
+    { "name": "Steak Haché", "category": "PROTEIN", "useInComposedMeals": true, "portionPerPerson": 1, "unit": "PIECE", "aisle": "Boucherie" },
+    { "name": "Fines herbes", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Patate douce", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 250, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Champignons", "category": "VEGETABLE", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Pains à burger", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Épicerie" },
+    { "name": "Cheddar", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "SLICE", "aisle": "Produits frais" },
+    { "name": "Sauce burger", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Épicerie" },
+    { "name": "Farine", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Ail", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Fruits et légumes" },
+    { "name": "Huile d’olive", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Épicerie" },
+    { "name": "Lait de coco", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Épicerie" },
+    { "name": "Curry", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Pâte brisée", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Produits frais" },
+    { "name": "Pain de mie", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "SLICE", "aisle": "Épicerie" },
+    { "name": "Béchamel", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Produits frais" },
+    { "name": "Chapelure", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Riz à risotto", "category": "STARCH", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Bouillon", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "LITER", "aisle": "Épicerie" },
+    { "name": "Lait", "category": "DAIRY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "CENTILITER", "aisle": "Produits frais" },
+    { "name": "Nouilles instantanées (type Yum Yum)", "category": "STARCH", "useInComposedMeals": false, "portionPerPerson": null, "unit": "PIECE", "aisle": "Épicerie" }
+  ],
+  "recipes": [
+    {
+      "name": "Burgers maison", "previousName": "Burger maison normaux", "basePortions": 4,
+      "ingredients": [
+        { "name": "Steak Haché", "quantity": 4, "unit": "PIECE" }, { "name": "Pains à burger", "quantity": 4, "unit": "PIECE" },
+        { "name": "Cheddar", "quantity": 8, "unit": "SLICE" }, { "name": "Tomate", "quantity": 2, "unit": "PIECE" },
+        { "name": "Oignon", "quantity": 1, "unit": "PIECE" }, { "name": "Salade romaine", "quantity": 1, "unit": "PIECE" },
+        { "name": "Sauce burger", "quantity": 8, "unit": "CENTILITER" }, { "name": "Pommes de terre", "quantity": 800, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Burgers healthy au pain de patate douce", "style": "Recette Instagram", "rating": 3, "prepTimeMinutes": 25, "cookTimeMinutes": 25, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"],
+      "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Steak Haché", "quantity": 4, "unit": "PIECE" }, { "name": "Patate douce", "quantity": 700, "unit": "GRAM" },
+        { "name": "Œuf", "quantity": 2, "unit": "PIECE" }, { "name": "Farine", "quantity": 100, "unit": "GRAM" },
+        { "name": "Cottage cheese", "quantity": 120, "unit": "GRAM" }, { "name": "Tomate", "quantity": 2, "unit": "PIECE" },
+        { "name": "Salade romaine", "quantity": 1, "unit": "PIECE" }, { "name": "Oignon", "quantity": 1, "unit": "PIECE" }
+      ]
+    },
+    {
+      "name": "Chili", "basePortions": 4,
+      "ingredients": [
+        { "name": "Bœuf haché", "quantity": 500, "unit": "GRAM" }, { "name": "Haricots rouges", "quantity": 1, "unit": "CAN" },
+        { "name": "Tomates concassées", "quantity": 1, "unit": "CAN" }, { "name": "Riz", "quantity": 280, "unit": "GRAM" },
+        { "name": "Poivron", "quantity": 1, "unit": "PIECE" }, { "name": "Oignon", "quantity": 1, "unit": "PIECE" }
+      ]
+    },
+    {
+      "name": "Omelette aux fines herbes", "basePortions": 4,
+      "ingredients": [
+        { "name": "Œuf", "quantity": 8, "unit": "PIECE" }, { "name": "Fines herbes", "quantity": 10, "unit": "GRAM" },
+        { "name": "Crème", "quantity": 10, "unit": "CENTILITER" }
+      ]
+    },
+    {
+      "name": "Raclette", "basePortions": 4,
+      "ingredients": [
+        { "name": "Pommes de terre", "quantity": 1000, "unit": "GRAM" }, { "name": "Fromage à raclette", "quantity": 800, "unit": "GRAM" },
+        { "name": "Charcuterie pour raclette", "quantity": 600, "unit": "GRAM" }, { "name": "Cornichons (bocal)", "quantity": 12, "unit": "PIECE" }
+      ]
+    },
+    {
+      "name": "Salade César", "previousName": "Salade césard", "basePortions": 4,
+      "ingredients": [
+        { "name": "Poulet", "quantity": 500, "unit": "GRAM" }, { "name": "Salade romaine", "quantity": 2, "unit": "PIECE" },
+        { "name": "Parmesan", "quantity": 80, "unit": "GRAM" }, { "name": "Croûtons", "quantity": 120, "unit": "GRAM" },
+        { "name": "Sauce César", "quantity": 20, "unit": "CENTILITER" }
+      ]
+    },
+    {
+      "name": "Nouilles instantanées (type Yum Yum)", "previousName": "Soupe chinoise", "basePortions": 4,
+      "ingredients": [{ "name": "Nouilles instantanées (type Yum Yum)", "quantity": 4, "unit": "PIECE" }]
+    },
+    {
+      "name": "Pâtes bolognaises", "style": "Plat familial", "rating": 3, "prepTimeMinutes": 15, "cookTimeMinutes": 35, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Pâtes", "quantity": 360, "unit": "GRAM" }, { "name": "Bœuf haché", "quantity": 500, "unit": "GRAM" },
+        { "name": "Tomates concassées", "quantity": 1, "unit": "CAN" }, { "name": "Carotte", "quantity": 150, "unit": "GRAM" },
+        { "name": "Oignon", "quantity": 1, "unit": "PIECE" }, { "name": "Ail", "quantity": 2, "unit": "PIECE" },
+        { "name": "Huile d’olive", "quantity": 3, "unit": "CENTILITER" }
+      ]
+    },
+    {
+      "name": "Poulet curry coco et riz", "style": "Curry", "rating": 3, "prepTimeMinutes": 15, "cookTimeMinutes": 25, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Poulet", "quantity": 600, "unit": "GRAM" }, { "name": "Riz", "quantity": 280, "unit": "GRAM" },
+        { "name": "Lait de coco", "quantity": 40, "unit": "CENTILITER" }, { "name": "Curry", "quantity": 20, "unit": "GRAM" },
+        { "name": "Oignon", "quantity": 1, "unit": "PIECE" }, { "name": "Courgette", "quantity": 300, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Pâtes au saumon et à la crème", "style": "Pâtes", "rating": 3, "prepTimeMinutes": 10, "cookTimeMinutes": 20, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Saumon", "quantity": 500, "unit": "GRAM" }, { "name": "Pâtes", "quantity": 360, "unit": "GRAM" },
+        { "name": "Crème", "quantity": 25, "unit": "CENTILITER" }, { "name": "Parmesan", "quantity": 60, "unit": "GRAM" },
+        { "name": "Courgette", "quantity": 300, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Quiche lorraine", "style": "Tarte salée", "rating": 3, "prepTimeMinutes": 15, "cookTimeMinutes": 35, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Pâte brisée", "quantity": 1, "unit": "PIECE" }, { "name": "Lardons", "quantity": 200, "unit": "GRAM" },
+        { "name": "Œuf", "quantity": 4, "unit": "PIECE" }, { "name": "Crème", "quantity": 20, "unit": "CENTILITER" },
+        { "name": "Fromage râpé", "quantity": 100, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Croque-monsieur", "style": "Repas rapide", "rating": 3, "prepTimeMinutes": 10, "cookTimeMinutes": 15, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Pain de mie", "quantity": 8, "unit": "SLICE" }, { "name": "Jambon", "quantity": 200, "unit": "GRAM" },
+        { "name": "Fromage râpé", "quantity": 120, "unit": "GRAM" }, { "name": "Béchamel", "quantity": 20, "unit": "CENTILITER" }
+      ]
+    },
+    {
+      "name": "Poulet façon fajitas", "style": "Tex-mex", "rating": 3, "prepTimeMinutes": 15, "cookTimeMinutes": 20, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Poulet", "quantity": 500, "unit": "GRAM" }, { "name": "Tortillas", "quantity": 8, "unit": "PIECE" },
+        { "name": "Poivron", "quantity": 2, "unit": "PIECE" }, { "name": "Oignon", "quantity": 1, "unit": "PIECE" },
+        { "name": "Crème", "quantity": 10, "unit": "CENTILITER" }, { "name": "Fromage râpé", "quantity": 100, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Boulettes de bœuf, sauce tomate et pâtes", "style": "Plat familial", "rating": 3, "prepTimeMinutes": 25, "cookTimeMinutes": 30, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Bœuf haché", "quantity": 500, "unit": "GRAM" }, { "name": "Œuf", "quantity": 1, "unit": "PIECE" },
+        { "name": "Chapelure", "quantity": 60, "unit": "GRAM" }, { "name": "Tomates concassées", "quantity": 1, "unit": "CAN" },
+        { "name": "Oignon", "quantity": 1, "unit": "PIECE" }, { "name": "Pâtes", "quantity": 360, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Risotto poulet et champignons", "style": "Risotto", "rating": 3, "prepTimeMinutes": 15, "cookTimeMinutes": 35, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "SUMMER", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Riz à risotto", "quantity": 320, "unit": "GRAM" }, { "name": "Poulet", "quantity": 500, "unit": "GRAM" },
+        { "name": "Champignons", "quantity": 300, "unit": "GRAM" }, { "name": "Bouillon", "quantity": 1, "unit": "LITER" },
+        { "name": "Crème", "quantity": 10, "unit": "CENTILITER" }, { "name": "Parmesan", "quantity": 80, "unit": "GRAM" },
+        { "name": "Oignon", "quantity": 1, "unit": "PIECE" }
+      ]
+    },
+    {
+      "name": "Gratin dauphinois au jambon", "style": "Gratin", "rating": 3, "prepTimeMinutes": 20, "cookTimeMinutes": 60, "basePortions": 4,
+      "seasons": ["WINTER", "SPRING", "AUTUMN"], "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Pommes de terre", "quantity": 1000, "unit": "GRAM" }, { "name": "Jambon", "quantity": 300, "unit": "GRAM" },
+        { "name": "Crème", "quantity": 40, "unit": "CENTILITER" }, { "name": "Lait", "quantity": 40, "unit": "CENTILITER" },
+        { "name": "Ail", "quantity": 2, "unit": "PIECE" }, { "name": "Fromage râpé", "quantity": 150, "unit": "GRAM" }
+      ]
+    }
+  ]
+}

@@ -16,7 +16,19 @@ const ingredientSchema = z.object({
 
 const recipeSchema = z.object({
   name: z.string().trim().min(1).max(120),
+  previousName: z.string().trim().min(1).max(120).optional(),
+  style: z.string().trim().max(60).nullable().optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+  prepTimeMinutes: z.number().int().nonnegative().nullable().optional(),
+  cookTimeMinutes: z.number().int().nonnegative().nullable().optional(),
   basePortions: z.number().int().min(1).max(30),
+  seasons: z.array(z.enum(['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'])).min(1).optional(),
+  allowedMoments: z.object({
+    lunchWeekday: z.boolean(),
+    dinnerWeekday: z.boolean(),
+    lunchWeekend: z.boolean(),
+    dinnerWeekend: z.boolean(),
+  }).optional(),
   ingredients: z.array(z.object({
     name: z.string().trim().min(1).max(100),
     quantity: z.number().positive(),
@@ -66,14 +78,19 @@ export async function previewCatalogEnrichment(input: unknown) {
     .filter((name) => !aisleNames.has(name));
   if (missingReferences.length) throw new Error(`Ingrédients absents : ${missingReferences.join(', ')}.`);
   if (unknownAisles.length) throw new Error(`Rayons inconnus : ${[...new Set(unknownAisles)].join(', ')}.`);
+  for (const recipe of document.recipes) {
+    if (recipe.previousName && recipeNames.has(recipe.name) && recipe.previousName !== recipe.name) {
+      throw new Error(`Impossible de renommer « ${recipe.previousName} » : « ${recipe.name} » existe déjà.`);
+    }
+  }
 
   return {
     document,
     summary: {
       ingredientsToCreate: document.ingredients.filter((item) => !ingredientNames.has(item.name)).map((item) => item.name),
       ingredientsToUpdate: document.ingredients.filter((item) => ingredientNames.has(item.name)).map((item) => item.name),
-      recipesToCreate: document.recipes.filter((item) => !recipeNames.has(item.name)).map((item) => item.name),
-      recipesToUpdate: document.recipes.filter((item) => recipeNames.has(item.name)).map((item) => item.name),
+      recipesToCreate: document.recipes.filter((item) => !recipeNames.has(item.previousName ?? item.name)).map((item) => item.name),
+      recipesToUpdate: document.recipes.filter((item) => recipeNames.has(item.previousName ?? item.name)).map((item) => item.name),
     },
   };
 }
@@ -115,16 +132,29 @@ export async function applyCatalogEnrichment(input: unknown) {
         quantity: entry.quantity,
         unit: entry.unit,
       }));
-      const recipe = await transaction.recipe.findUnique({ where: { name: item.name }, select: { id: true } });
+      const recipe = await transaction.recipe.findUnique({ where: { name: item.previousName ?? item.name }, select: { id: true } });
+      const metadata = {
+        name: item.name,
+        basePortions: item.basePortions,
+        style: item.style,
+        rating: item.rating,
+        prepTimeMinutes: item.prepTimeMinutes,
+        cookTimeMinutes: item.cookTimeMinutes,
+        seasons: item.seasons,
+        okLunchWeekday: item.allowedMoments?.lunchWeekday,
+        okDinnerWeekday: item.allowedMoments?.dinnerWeekday,
+        okLunchWeekend: item.allowedMoments?.lunchWeekend,
+        okDinnerWeekend: item.allowedMoments?.dinnerWeekend,
+      };
       if (recipe) {
         await transaction.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });
         await transaction.recipe.update({
           where: { id: recipe.id },
-          data: { basePortions: item.basePortions, ingredients: { create: ingredientsData } },
+          data: { ...metadata, ingredients: { create: ingredientsData } },
         });
       } else {
         await transaction.recipe.create({
-          data: { name: item.name, basePortions: item.basePortions, ingredients: { create: ingredientsData } },
+          data: { ...metadata, ingredients: { create: ingredientsData } },
         });
       }
     }
