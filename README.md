@@ -23,7 +23,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - [Décisions d’architecture](docs/DECISIONS.md)
 - [Modèle de données](docs/DATA_MODEL.md)
 - [Exploitation et maintenance](docs/OPERATIONS.md)
-- [Stratégie de tests](docs/TESTING.md)
+- [Tests et prévention des régressions](TEST.md)
 - [Déploiement Coolify](docs/DEPLOIEMENT_COOLIFY.md)
 - [Plan d’implémentation V2 historique](docs/implementation_plan_menu.md)
 
@@ -73,11 +73,15 @@ L’import est idempotent. `LEGACY_MENU_WEEK`, s’il contient un lundi au forma
 
 ```bash
 npm run check
+npm run check:full
 npm run build
 npm run db:validate
 ```
 
-`npm run check` exécute ESLint, TypeScript strict et les tests Vitest.
+`npm run check` exécute la boucle rapide. `npm run check:full` ajoute la
+couverture, les tests d’intégration sur PostgreSQL 17, la validation Prisma et le
+build de production. Voir [`TEST.md`](TEST.md) pour les garde-fous de base et le
+périmètre détaillé.
 
 ## Structure
 

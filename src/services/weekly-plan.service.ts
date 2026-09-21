@@ -165,13 +165,23 @@ export async function confirmPlan(planId: string, expectedVersion?: number): Pro
     throw new Error('Chaque créneau doit être choisi avant de confirmer la semaine.');
   }
 
-  const updated = await prisma.weeklyPlan.update({
-    where: { id: planId },
+  const claimed = await prisma.weeklyPlan.updateMany({
+    where: {
+      id: planId,
+      status: PlanStatus.DRAFT,
+      ...(expectedVersion === undefined ? {} : { version: expectedVersion }),
+    },
     data: {
       status: PlanStatus.CONFIRMED,
       confirmedAt: new Date(),
       version: { increment: 1 },
     },
+  });
+  if (claimed.count !== 1) {
+    throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
+  }
+  const updated = await prisma.weeklyPlan.findUniqueOrThrow({
+    where: { id: planId },
     include: { slots: true },
   });
   return planToDto(updated);
@@ -186,13 +196,23 @@ export async function unconfirmPlan(planId: string, expectedVersion?: number): P
   if (expectedVersion !== undefined && plan.version !== expectedVersion) {
     throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
   }
-  const updated = await prisma.weeklyPlan.update({
-    where: { id: planId },
+  const claimed = await prisma.weeklyPlan.updateMany({
+    where: {
+      id: planId,
+      status: PlanStatus.CONFIRMED,
+      ...(expectedVersion === undefined ? {} : { version: expectedVersion }),
+    },
     data: {
       status: PlanStatus.DRAFT,
       confirmedAt: null,
       version: { increment: 1 },
     },
+  });
+  if (claimed.count !== 1) {
+    throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
+  }
+  const updated = await prisma.weeklyPlan.findUniqueOrThrow({
+    where: { id: planId },
     include: { slots: true },
   });
   return planToDto(updated);

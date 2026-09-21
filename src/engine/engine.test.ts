@@ -3,6 +3,7 @@ import {
   canonicalPair,
   coolingFactor,
   createSeededRandom,
+  daysSinceLastConsumption,
   generateAlternatives,
   generateWeek,
   hasIncompatibility,
@@ -12,6 +13,7 @@ import {
   seasonForDate,
   varietyFactor,
   weightedPick,
+  weightedPickMany,
 } from '@/engine';
 import type {
   GenerationContext,
@@ -120,6 +122,15 @@ describe('refroidissement', () => {
     });
     expect(scored.coolingWeight).toBe(1);
   });
+
+  it('retient la consommation passée la plus proche pour la bonne signature', () => {
+    expect(daysSinceLastConsumption('meal:1', '2026-08-20', [
+      { signature: 'meal:1', mealDate: '2026-08-01' },
+      { signature: 'other', mealDate: '2026-08-19' },
+      { signature: 'meal:1', mealDate: '2026-08-15' },
+    ])).toBe(5);
+    expect(daysSinceLastConsumption('absent', '2026-08-20', [])).toBeNull();
+  });
 });
 
 describe('compatibilités et variété', () => {
@@ -142,6 +153,34 @@ describe('compatibilités et variété', () => {
       varietyFactor(candidate(2, { proteinFamily: 'poultry' }), 1, context),
     ).toBe(0.05);
   });
+
+  it.each([
+    [{ isActive: false }, new Set<string>()],
+    [{ seasons: ['winter'] }, new Set<string>()],
+    [{ allowedMoments: { ...allMoments, lunchWeekday: false } }, new Set<string>()],
+    [{ kind: 'composed', ingredientIds: ['a', 'b'] }, new Set([canonicalPair('a', 'b')])],
+  ] as const)('écarte une proposition qui enfreint une contrainte dure', (overrides, incompatibilities) => {
+    const slot = buildWeekSlots('2026-08-10')[0];
+    expect(isHardEligible(candidate(50, overrides), slot, emptyContext(), incompatibilities)).toBe(false);
+  });
+
+  it('écarte une signature rejetée ou déjà affectée', () => {
+    const context = emptyContext();
+    context.rejectedSignatures.add('meal:8');
+    expect(isHardEligible(candidate(8), buildWeekSlots('2026-08-10')[0], context, new Set())).toBe(false);
+    context.rejectedSignatures.clear();
+    context.assignedSlots.set(1, { kind: 'recipe', signature: 'meal:8', name: 'déjà pris' });
+    expect(isHardEligible(candidate(8), buildWeekSlots('2026-08-10')[0], context, new Set())).toBe(false);
+  });
+
+  it('combine les pénalités de protéine, féculent et style sans atteindre zéro', () => {
+    const context = emptyContext();
+    context.assignedSlots.set(4, {
+      kind: 'recipe', signature: 'ancien', name: 'Ancien', proteinFamily: 'p', starchFamily: 's', style: 'wok',
+    });
+    expect(varietyFactor(candidate(1, { proteinFamily: 'p', starchFamily: 's', style: 'wok' }), 5, context)).toBe(0.05);
+    expect(varietyFactor(candidate(1, { proteinFamily: 'autre' }), 5, context)).toBe(1);
+  });
 });
 
 describe('tirage et génération', () => {
@@ -153,6 +192,15 @@ describe('tirage et génération', () => {
     const first = weightedPick(scored, createSeededRandom('stable'));
     const second = weightedPick(scored, createSeededRandom('stable'));
     expect(first?.candidate.signature).toBe(second?.candidate.signature);
+  });
+
+  it('ne choisit jamais un poids nul et ne renvoie pas deux fois le même élément', () => {
+    const slot = buildWeekSlots('2026-08-10')[0];
+    const positive = scoreCandidate(candidate(1), slot, emptyContext());
+    const impossible = { ...scoreCandidate(candidate(2), slot, emptyContext()), score: 0 };
+    expect(weightedPick([impossible], createSeededRandom('zero'))).toBeNull();
+    const picked = weightedPickMany([positive, impossible], 3, createSeededRandom('many'));
+    expect(picked.map((item) => item.candidate.signature)).toEqual(['meal:1']);
   });
 
   it('génère quatorze repas sans doublon exact', () => {
@@ -265,6 +313,20 @@ describe('tirage et génération', () => {
     expect(result.warnings.some((warning) => warning.code === 'LOCKED_DUPLICATE')).toBe(
       true,
     );
+  });
+
+  it('signale un créneau verrouillé mais vide', () => {
+    const slot = { ...buildWeekSlots('2026-08-10')[0], isLocked: true };
+    const result = generateWeek({ candidates: [candidate(1)], slots: [slot], seed: 'locked-empty' });
+    expect(result.complete).toBe(false);
+    expect(result.warnings).toContainEqual(expect.objectContaining({ code: 'LOCKED_SLOT_EMPTY' }));
+  });
+
+  it('ignore les créneaux explicitement exclus de la génération', () => {
+    const slot = { ...buildWeekSlots('2026-08-10')[0], skipGeneration: true };
+    const result = generateWeek({ candidates: [], slots: [slot], seed: 'skipped' });
+    expect(result.complete).toBe(true);
+    expect(result.warnings).toHaveLength(0);
   });
 
   it('propose trois alternatives distinctes sans le repas courant', () => {

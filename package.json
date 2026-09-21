@@ -15,13 +15,17 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "node scripts/run-integration-tests.mjs",
+    "test:all": "npm run test:coverage && npm run test:integration",
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:import-legacy": "tsx scripts/import-legacy.ts",
-    "check": "npm run lint && npm run typecheck && npm run test"
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "check:full": "npm run lint && npm run typecheck && npm run test:all && npm run db:validate && npm run build"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.9.1",
@@ -39,6 +43,7 @@
     "@types/pg": "8.15.6",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.1",
     "prisma": "7.9.1",
