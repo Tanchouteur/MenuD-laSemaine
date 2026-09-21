@@ -12,12 +12,20 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - création, modification et archivage des ingrédients et recettes ;
 - réglages du foyer et associations d’aliments à éviter ;
 - export iCalendar et protection facultative par mot de passe familial ;
+- export JSON du catalogue et des menus pour audit ou enrichissement assisté ;
 - import idempotent de l’ancienne base MariaDB, avec dry-run ;
 - interface française accessible et pensée d’abord pour le téléphone.
 
-Le cahier d’architecture et les règles métier se trouvent dans [implementation_plan_menu.md](docs/implementation_plan_menu.md).
+## Documentation
 
-Le déploiement de production pas à pas est documenté dans [docs/DEPLOIEMENT_COOLIFY.md](docs/DEPLOIEMENT_COOLIFY.md).
+- [Produit et périmètre](docs/PRODUCT.md)
+- [Architecture technique](docs/ARCHITECTURE.md)
+- [Décisions d’architecture](docs/DECISIONS.md)
+- [Modèle de données](docs/DATA_MODEL.md)
+- [Exploitation et maintenance](docs/OPERATIONS.md)
+- [Stratégie de tests](docs/TESTING.md)
+- [Déploiement Coolify](docs/DEPLOIEMENT_COOLIFY.md)
+- [Plan d’implémentation V2 historique](docs/implementation_plan_menu.md)
 
 ## Démarrage local
 

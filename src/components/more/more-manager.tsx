@@ -30,12 +30,20 @@ export function MoreManager({ plans, ingredients, incompatibilities: initialInco
     {message && <p className="successSummary" role="status">{message}</p>}{error && <p className="errorSummary" role="alert">{error}</p>}
     <div className="segmented three" role="tablist"><button data-active={section === 'history'} onClick={() => setSection('history')}>Historique</button><button data-active={section === 'settings'} onClick={() => setSection('settings')}>Foyer</button><button data-active={section === 'rules'} onClick={() => setSection('rules')}>À éviter</button></div>
     {section === 'history' && <section>
+      <DataExportBox />
       <CalendarSyncBox calendarUrl={calendarUrl} hasConfirmed={confirmed.length > 0} />
       {confirmed.length === 0 ? <div className="emptyCard"><h2>Aucune semaine confirmée</h2><p>Une fois votre première semaine confirmée, elle restera ici.</p></div> : <div className="catalogList">{confirmed.map((plan) => <article className="catalogCard historyCard" key={plan.id}><div><h2>{formatWeekRange(plan.startDate)}</h2><p>{plan.isFavorite ? '♥ Semaine favorite · ' : ''}14 repas conservés</p></div><div className="cardActions"><Link href={`/?week=${plan.startDate}`}>Voir</Link><button onClick={() => reapply(plan.id)}>Réutiliser</button></div></article>)}</div>}
     </section>}
     {section === 'settings' && <><SettingsForm value={initialSettings} onMessage={setMessage} onError={setError} /><button className="secondaryButton logoutButton" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/connexion'); router.refresh(); }}>Se déconnecter de cet appareil</button></>}
     {section === 'rules' && <RulesEditor ingredients={ingredients} value={incompatibilities} onChange={setIncompatibilities} onMessage={setMessage} onError={setError} />}
   </main>;
+}
+
+function DataExportBox() {
+  return <section className="settingsCard dataExportBox" aria-labelledby="data-export-title">
+    <div><h2 id="data-export-title">Exporter les données du menu</h2><p>Téléchargez un fichier JSON avec les ingrédients, recettes, règles et menus. Il ne contient aucun mot de passe ni secret Coolify.</p></div>
+    <a className="primaryButton" href="/api/catalog/export" download>Télécharger le catalogue</a>
+  </section>;
 }
 
 function SettingsForm({ value, onMessage, onError }: { value: Settings; onMessage: (value: string) => void; onError: (value: string) => void }) {

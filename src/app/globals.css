@@ -1027,6 +1027,8 @@ legend {
 .setupActions { display: grid; grid-template-columns: auto 1fr; gap: 10px; }
 .setupGroups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
 .setupChoices { display: grid; gap: 7px; }
+.dataExportBox { margin-bottom: 16px; }
+.dataExportBox .primaryButton { text-decoration: none; }
 
 @media (max-width: 620px) {
   .chooserTabs { grid-template-columns: repeat(2, 1fr); }
