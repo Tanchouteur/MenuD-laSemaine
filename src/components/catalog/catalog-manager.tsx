@@ -64,11 +64,12 @@ function MomentFields({ value }: { value: IngredientDto | RecipeDto | null }) {
 function IngredientForm({ value, aisles, onClose, onSaved, onError }: { value: IngredientDto | 'new'; aisles: Aisle[]; onClose: () => void; onSaved: (item: IngredientDto) => void; onError: (message: string) => void }) {
   const current = value === 'new' ? null : value;
   const [selectedSeasons, setSelectedSeasons] = useState(current?.seasons ?? seasons);
+  const [useInComposedMeals, setUseInComposedMeals] = useState(current?.useInComposedMeals ?? false);
   const [busy, setBusy] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true);
     const data = new FormData(event.currentTarget);
-    const body = { name: data.get('name'), category: data.get('category'), subFamily: data.get('subFamily') || null, rating: Number(data.get('rating')), useInComposedMeals: data.has('useInComposedMeals'), portionPerPerson: data.get('portion') ? Number(data.get('portion')) : null, unit: data.get('unit') || null, aisleId: data.get('aisleId') || null, seasons: selectedSeasons, okLunchWeekday: data.has('okLunchWeekday'), okDinnerWeekday: data.has('okDinnerWeekday'), okLunchWeekend: data.has('okLunchWeekend'), okDinnerWeekend: data.has('okDinnerWeekend') };
+    const body = { name: data.get('name'), category: data.get('category'), subFamily: data.get('subFamily') || null, rating: Number(data.get('rating')), useInComposedMeals, portionPerPerson: data.get('portion') ? Number(data.get('portion')) : null, unit: data.get('unit') || null, aisleId: data.get('aisleId') || null, seasons: selectedSeasons, okLunchWeekday: useInComposedMeals ? data.has('okLunchWeekday') : (current?.okLunchWeekday ?? true), okDinnerWeekday: useInComposedMeals ? data.has('okDinnerWeekday') : (current?.okDinnerWeekday ?? true), okLunchWeekend: useInComposedMeals ? data.has('okLunchWeekend') : (current?.okLunchWeekend ?? true), okDinnerWeekend: useInComposedMeals ? data.has('okDinnerWeekend') : (current?.okDinnerWeekend ?? true) };
     const response = await fetch(current ? `/api/ingredients/${current.id}` : '/api/ingredients', { method: current ? 'PATCH' : 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (response.ok) onSaved(await response.json()); else onError((await response.json()).error ?? 'Impossible d’enregistrer.'); setBusy(false);
   }
@@ -78,9 +79,11 @@ function IngredientForm({ value, aisles, onClose, onSaved, onError }: { value: I
     <label>Famille (facultatif)<input name="subFamily" defaultValue={current?.subFamily ?? ''} placeholder="ex. poisson, pâtes…" /></label>
     <div className="formColumns"><label>Portion par personne<input name="portion" type="number" min="0.01" step="0.01" defaultValue={current?.portionPerPerson ?? ''} /></label><label>Unité<select name="unit" defaultValue={current?.unit ?? ''}><option value="">Non précisée</option>{Object.entries(units).map(([key,label]) => <option key={key} value={key}>{label}</option>)}</select></label></div>
     <label>Rayon<select name="aisleId" defaultValue={current?.aisleId ?? ''}><option value="">Autres</option>{aisles.map((aisle) => <option key={aisle.id} value={aisle.id}>{aisle.name}</option>)}</select></label>
-    <label className="checkboxRow"><input name="useInComposedMeals" type="checkbox" defaultChecked={current?.useInComposedMeals ?? false} /><span><strong>Utiliser dans les assiettes automatiques</strong><small>Sans effet sur les recettes et la liste de courses.</small></span></label>
-    <SeasonFields selected={selectedSeasons} onChange={setSelectedSeasons} />
-    <MomentFields value={current} />
+    <label className="checkboxRow"><input name="useInComposedMeals" type="checkbox" checked={useInComposedMeals} onChange={(event) => setUseInComposedMeals(event.target.checked)} /><span><strong>Utiliser dans les assiettes automatiques</strong><small>Sans effet sur les recettes et la liste de courses.</small></span></label>
+    <div className="conditionalFields" hidden={!useInComposedMeals}>
+      <SeasonFields selected={selectedSeasons} onChange={setSelectedSeasons} />
+      <MomentFields value={current} />
+    </div>
     <button className="primaryButton" disabled={busy || selectedSeasons.length === 0}>{busy ? 'Enregistrement…' : 'Enregistrer'}</button>
   </form></Modal>;
 }

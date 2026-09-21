@@ -1033,6 +1033,8 @@ legend {
 .dataExportBox input[type='file'] { min-height: 0; padding: 10px; }
 .importPreview { display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--green-soft); }
 .importPreview p { margin: 0; }
+.conditionalFields { display: grid; gap: 14px; }
+.conditionalFields[hidden] { display: none; }
 
 @media (max-width: 620px) {
   .chooserTabs { grid-template-columns: repeat(2, 1fr); }
