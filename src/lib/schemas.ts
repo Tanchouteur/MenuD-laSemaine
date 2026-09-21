@@ -18,6 +18,7 @@ export const ingredientInputSchema = z.object({
   category: z.enum(categories),
   subFamily: z.string().trim().max(60).nullable().optional(),
   rating: z.number().int().min(1).max(5),
+  useInComposedMeals: z.boolean().optional().default(false),
   portionPerPerson: z.number().positive().nullable().optional(),
   unit: z.enum(units).nullable().optional(),
   aisleId: z.string().nullable().optional(),
@@ -57,4 +58,8 @@ export const settingsSchema = z.object({
   defaultGuestsLunchWeekend: z.number().int().min(1).max(30),
   defaultGuestsDinnerWeekend: z.number().int().min(1).max(30),
   onboardingCompleted: z.boolean().optional(),
+});
+
+export const compositionSetupSchema = z.object({
+  ingredientIds: z.array(z.string()).max(500),
 });

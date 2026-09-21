@@ -20,6 +20,7 @@ export const mealSnapshotSchema = z.object({
   proteinFamily: z.string().optional(),
   starchFamily: z.string().optional(),
   style: z.string().optional(),
+  compositionType: z.enum(['complete', 'starch', 'vegetable']).optional(),
   items: z.array(snapshotItemSchema),
 });
 
@@ -40,6 +41,7 @@ export function snapshotAsAssignment(snapshot: MealSnapshot): AssignedMeal {
     proteinFamily: snapshot.proteinFamily,
     starchFamily: snapshot.starchFamily,
     style: snapshot.style,
+    compositionType: snapshot.compositionType,
   };
 }
 
@@ -53,5 +55,6 @@ export function candidateAsAssignment(candidate: MealCandidate): AssignedMeal {
     proteinFamily: candidate.proteinFamily,
     starchFamily: candidate.starchFamily,
     style: candidate.style,
+    compositionType: candidate.compositionType,
   };
 }

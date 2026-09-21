@@ -13,8 +13,11 @@ type Aggregate = {
   sourceSlotIds: string[];
 };
 
-export async function rebuildShoppingList(planId: string): Promise<void> {
-  const prisma = getPrisma();
+export async function rebuildShoppingList(
+  planId: string,
+  transaction?: Prisma.TransactionClient,
+): Promise<void> {
+  const prisma = transaction ?? getPrisma();
   const plan = await prisma.weeklyPlan.findUniqueOrThrow({
     where: { id: planId },
     include: { slots: true },
@@ -48,8 +51,8 @@ export async function rebuildShoppingList(planId: string): Promise<void> {
   }
 
   const keys = [...aggregates.keys()];
-  await prisma.$transaction(async (transaction) => {
-    await transaction.shoppingListEntry.deleteMany({
+  const persist = async (database: Prisma.TransactionClient) => {
+    await database.shoppingListEntry.deleteMany({
       where: {
         weeklyPlanId: planId,
         isManual: false,
@@ -57,7 +60,7 @@ export async function rebuildShoppingList(planId: string): Promise<void> {
       },
     });
     for (const item of aggregates.values()) {
-      await transaction.shoppingListEntry.upsert({
+      await database.shoppingListEntry.upsert({
         where: {
           weeklyPlanId_stableKey: { weeklyPlanId: planId, stableKey: item.stableKey },
         },
@@ -79,7 +82,9 @@ export async function rebuildShoppingList(planId: string): Promise<void> {
         },
       });
     }
-  });
+  };
+  if (transaction) await persist(transaction);
+  else await getPrisma().$transaction(persist);
 }
 
 export async function getShoppingList(planId: string): Promise<ShoppingEntryDto[]> {

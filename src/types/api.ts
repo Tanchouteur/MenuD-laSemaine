@@ -19,6 +19,19 @@ export type MealSlotDto = {
   customLabel: string | null;
   leftoversFromSlotId: string | null;
   assignment: AssignedMeal | null;
+  restoreState: {
+    slotType: SlotTypeDto;
+    customLabel: string | null;
+    leftoversFromSlotId: string | null;
+    mealSignature: string | null;
+    mealSnapshot: unknown;
+    recipeId: string | null;
+    proteinId: string | null;
+    starchId: string | null;
+    vegetableId: string | null;
+    isLocked: boolean;
+    guestCount: number;
+  };
 };
 
 export type WeeklyPlanDto = {
@@ -29,6 +42,7 @@ export type WeeklyPlanDto = {
   version: number;
   confirmedAt: string | null;
   slots: MealSlotDto[];
+  generationWarnings?: string[];
 };
 
 export type IngredientDto = {
@@ -38,6 +52,7 @@ export type IngredientDto = {
   subFamily: string | null;
   rating: number;
   isActive: boolean;
+  useInComposedMeals: boolean;
   portionPerPerson: number | null;
   unit: string | null;
   aisleId: string | null;

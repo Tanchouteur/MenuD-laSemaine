@@ -187,6 +187,64 @@ describe('tirage et génération', () => {
     expect(result.slots.filter((slot) => slot.assignment).length).toBe(14);
   });
 
+  it('favorise nettement les assiettes complètes sans interdire les autres', () => {
+    const candidates = [
+      ...Array.from({ length: 8 }, (_, index) => candidate(index + 100, {
+        kind: 'composed',
+        compositionType: 'complete',
+      })),
+      ...Array.from({ length: 8 }, (_, index) => candidate(index + 200, {
+        kind: 'composed',
+        compositionType: 'starch',
+      })),
+      ...Array.from({ length: 8 }, (_, index) => candidate(index + 300, {
+        kind: 'composed',
+        compositionType: 'vegetable',
+      })),
+    ];
+    const counts = { complete: 0, starch: 0, vegetable: 0 };
+    for (let index = 0; index < 120; index += 1) {
+      const result = generateWeek({
+        candidates,
+        slots: [buildWeekSlots('2026-08-10')[0]],
+        seed: `composition-${index}`,
+        settings: { attempts: 1 },
+      });
+      const type = candidates.find(
+        (item) => item.signature === result.slots[0].assignment?.signature,
+      )?.compositionType;
+      if (type) counts[type] += 1;
+    }
+    expect(counts.complete).toBeGreaterThan(counts.starch + counts.vegetable);
+    expect(counts.starch).toBeGreaterThan(0);
+    expect(counts.vegetable).toBeGreaterThan(0);
+  });
+
+  it('conserve le repas courant si un petit catalogue ne fournit aucun remplacement', () => {
+    const current = {
+      kind: 'recipe' as const,
+      signature: 'existing-meal',
+      name: 'Repas existant',
+    };
+    const slot = { ...buildWeekSlots('2026-08-10')[0], current };
+    const result = generateWeek({ candidates: [], slots: [slot], seed: 'empty-catalog' });
+    expect(result.slots[0].assignment).toEqual(current);
+    expect(result.warnings[0]?.code).toBe('NO_CANDIDATE');
+  });
+
+  it('ne bloque pas une recette explicitement enregistrée à cause de ses ingrédients', () => {
+    const recipe = candidate(400, {
+      kind: 'recipe',
+      ingredientIds: ['ham', 'carrot'],
+    });
+    expect(isHardEligible(
+      recipe,
+      buildWeekSlots('2026-08-10')[0],
+      emptyContext(),
+      new Set([canonicalPair('ham', 'carrot')]),
+    )).toBe(true);
+  });
+
   it('signale deux repas verrouillés identiques', () => {
     const locked = {
       kind: 'recipe' as const,

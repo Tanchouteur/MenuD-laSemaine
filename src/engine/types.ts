@@ -20,6 +20,7 @@ export type MealCandidate = {
   proteinId?: string;
   starchId?: string;
   vegetableId?: string;
+  compositionType?: 'complete' | 'starch' | 'vegetable';
   ingredientIds: readonly string[];
   proteinFamily?: string;
   starchFamily?: string;
@@ -39,6 +40,7 @@ export type AssignedMeal = {
   proteinFamily?: string;
   starchFamily?: string;
   style?: string;
+  compositionType?: 'complete' | 'starch' | 'vegetable';
 };
 
 export type GenerationSlot = {

@@ -54,5 +54,6 @@ export function isHardEligible(
     }
   }
 
-  return !hasIncompatibility(candidate.ingredientIds, incompatibilities);
+  return candidate.kind === 'recipe' ||
+    !hasIncompatibility(candidate.ingredientIds, incompatibilities);
 }

@@ -65,9 +65,10 @@ export async function loadCandidates(): Promise<MealCandidate[]> {
       include: { ingredients: { include: { ingredient: true } } },
     }),
   ]);
-  const proteins = ingredients.filter((item) => item.category === 'PROTEIN');
-  const starches = ingredients.filter((item) => item.category === 'STARCH');
-  const vegetables = ingredients.filter((item) => item.category === 'VEGETABLE');
+  const compositionIngredients = ingredients.filter((item) => item.useInComposedMeals);
+  const proteins = compositionIngredients.filter((item) => item.category === 'PROTEIN');
+  const starches = compositionIngredients.filter((item) => item.category === 'STARCH');
+  const vegetables = compositionIngredients.filter((item) => item.category === 'VEGETABLE');
   const composed: MealCandidate[] = [];
 
   function addComposed(protein: Ingredient, starch?: Ingredient, vegetable?: Ingredient) {
@@ -83,6 +84,7 @@ export async function loadCandidates(): Promise<MealCandidate[]> {
       proteinId: protein.id,
       starchId: starch?.id,
       vegetableId: vegetable?.id,
+      compositionType: starch && vegetable ? 'complete' : starch ? 'starch' : 'vegetable',
       ingredientIds: items.map((item) => item.id),
       proteinFamily: protein.subFamily ?? undefined,
       starchFamily: starch?.subFamily ?? undefined,
@@ -127,6 +129,71 @@ export async function loadCandidates(): Promise<MealCandidate[]> {
   });
 
   return [...composed, ...recipeCandidates];
+}
+
+export async function loadManualCandidate(input: {
+  recipeId?: string;
+  proteinId?: string;
+  starchId?: string;
+  vegetableId?: string;
+}): Promise<MealCandidate> {
+  if (input.recipeId) {
+    const recipe = (await loadCandidates()).find(
+      (candidate) => candidate.kind === 'recipe' && candidate.recipeId === input.recipeId,
+    );
+    if (!recipe) throw new Error('Cette recette n’est plus disponible.');
+    return recipe;
+  }
+
+  if (!input.proteinId || (!input.starchId && !input.vegetableId)) {
+    throw new Error('Choisissez une protéine et au moins un accompagnement.');
+  }
+  const ids = [input.proteinId, input.starchId, input.vegetableId].filter(
+    (id): id is string => Boolean(id),
+  );
+  if (new Set(ids).size !== ids.length) {
+    throw new Error('Choisissez des ingrédients différents.');
+  }
+  const ingredients = await getPrisma().ingredient.findMany({
+    where: { id: { in: ids }, isActive: true },
+  });
+  const byId = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient]));
+  const protein = byId.get(input.proteinId);
+  const starch = input.starchId ? byId.get(input.starchId) : undefined;
+  const vegetable = input.vegetableId ? byId.get(input.vegetableId) : undefined;
+  if (
+    !protein || protein.category !== 'PROTEIN' ||
+    (input.starchId && (!starch || starch.category !== 'STARCH')) ||
+    (input.vegetableId && (!vegetable || vegetable.category !== 'VEGETABLE'))
+  ) {
+    throw new Error('La composition contient un ingrédient indisponible ou du mauvais type.');
+  }
+  const items = [protein, starch, vegetable].filter(
+    (ingredient): ingredient is Ingredient => Boolean(ingredient),
+  );
+  const parts = [starch, vegetable].filter(
+    (ingredient): ingredient is Ingredient => Boolean(ingredient),
+  );
+  return {
+    kind: 'composed',
+    signature: `composed:${protein.id}:${starch?.id ?? '-'}:${vegetable?.id ?? '-'}`,
+    name: `${protein.name} et ${parts.map((item) => item.name.toLocaleLowerCase('fr-FR')).join(' avec ')}`,
+    description: parts.length === 2
+      ? 'Assiette complète choisie par la famille.'
+      : 'Assiette choisie par la famille.',
+    proteinId: protein.id,
+    starchId: starch?.id,
+    vegetableId: vegetable?.id,
+    compositionType: starch && vegetable ? 'complete' : starch ? 'starch' : 'vegetable',
+    ingredientIds: items.map((item) => item.id),
+    proteinFamily: protein.subFamily ?? undefined,
+    starchFamily: starch?.subFamily ?? undefined,
+    style: 'composed',
+    rating: geometricRating(items),
+    seasons: intersectSeasons(items),
+    allowedMoments: intersectMoments(items),
+    isActive: true,
+  };
 }
 
 export async function loadIncompatibilities(): Promise<Set<string>> {
@@ -177,6 +244,7 @@ export async function buildSnapshot(candidate: MealCandidate): Promise<MealSnaps
       proteinFamily: candidate.proteinFamily,
       starchFamily: candidate.starchFamily,
       style: candidate.style,
+      compositionType: candidate.compositionType,
       items,
     };
   }
@@ -195,6 +263,7 @@ export async function buildSnapshot(candidate: MealCandidate): Promise<MealSnaps
     proteinFamily: candidate.proteinFamily,
     starchFamily: candidate.starchFamily,
     style: candidate.style,
+    compositionType: candidate.compositionType,
     items: ingredients.map(snapshotItem),
   };
 }

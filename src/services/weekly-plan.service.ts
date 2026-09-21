@@ -61,6 +61,19 @@ export function planToDto(plan: PlanWithSlots): WeeklyPlanDto {
         customLabel: slot.customLabel,
         leftoversFromSlotId: slot.leftoversFromSlotId,
         assignment: snapshot ? snapshotAsAssignment(snapshot) : null,
+        restoreState: {
+          slotType: slotTypeMap[slot.slotType],
+          customLabel: slot.customLabel,
+          leftoversFromSlotId: slot.leftoversFromSlotId,
+          mealSignature: slot.mealSignature,
+          mealSnapshot: slot.mealSnapshot,
+          recipeId: slot.recipeId,
+          proteinId: slot.proteinId,
+          starchId: slot.starchId,
+          vegetableId: slot.vegetableId,
+          isLocked: slot.isLocked,
+          guestCount: slot.guestCount,
+        },
       };
     });
 

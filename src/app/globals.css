@@ -969,6 +969,72 @@ legend {
   font-size: 0.8rem;
 }
 
+.stackForm input[type="checkbox"],
+.choiceGrid input[type="checkbox"],
+.checkboxRow input[type="checkbox"] {
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  flex: 0 0 22px;
+  accent-color: var(--green);
+}
+
+.checkboxRow {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 10px !important;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.checkboxRow span { display: grid; gap: 3px; }
+.checkboxRow small { color: var(--muted); font-weight: 500; line-height: 1.35; }
+.formButtonRow { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.mealChooser { max-height: min(88vh, 760px); overflow-y: auto; }
+.chooserTabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 5px;
+  border-radius: 13px;
+  background: var(--green-soft);
+}
+.chooserTabs button {
+  min-height: 42px;
+  padding: 7px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 750;
+}
+.chooserTabs button[data-active="true"] { background: white; box-shadow: 0 2px 8px rgb(28 45 38 / 10%); }
+.chooserPanel { display: grid; gap: 14px; }
+.emptyChooser { margin: 8px 0 16px; color: var(--muted); line-height: 1.5; }
+.warningSummary p { margin: 0; }
+.warningSummary p + p { margin-top: 6px; }
+.compositionSetup { width: min(720px, calc(100% - 24px)); max-height: 90vh; overflow-y: auto; }
+.setupBanner { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 18px; padding: 15px 17px; border: 1px solid #e9cfaa; border-radius: var(--radius-small); background: #fff7e9; }
+.setupBanner p { margin: 4px 0 0; color: var(--muted); font-size: .84rem; line-height: 1.4; }
+.setupBanner button { flex: 0 0 auto; }
+.setupActions { display: grid; grid-template-columns: auto 1fr; gap: 10px; }
+.setupGroups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+.setupChoices { display: grid; gap: 7px; }
+
+@media (max-width: 620px) {
+  .chooserTabs { grid-template-columns: repeat(2, 1fr); }
+  .setupGroups { grid-template-columns: 1fr; }
+  .choiceGrid { grid-template-columns: 1fr; }
+  .setupBanner { align-items: stretch; flex-direction: column; }
+}
+
 .recipeLines {
   display: grid;
   gap: 8px;

@@ -241,6 +241,25 @@ Avant chaque mise à jour importante :
 
 Ne supprimez jamais la ressource PostgreSQL pour mettre à jour l’application.
 
+### Mise à jour des assiettes automatiques
+
+La migration `20260921090000_composed_meal_opt_in` ajoute uniquement deux
+booléens avec la valeur `false` par défaut. Elle ne modifie aucune recette,
+semaine ou ligne de courses existante. Après le premier redéploiement, ouvrez
+l’application et choisissez explicitement les ingrédients autorisés dans les
+assiettes automatiques. Un ingrédient laissé décoché reste utilisable dans les
+recettes et les courses.
+
+Avant ce déploiement, déclenchez une sauvegarde PostgreSQL depuis Coolify et
+vérifiez qu’elle est terminée. Ne relancez ni le seed ni l’import historique.
+Après le démarrage, contrôlez une ancienne semaine, une recette existante et la
+liste de courses avant de préparer une nouvelle semaine.
+
+En cas de retour à l’image applicative précédente, conservez les deux colonnes
+ajoutées : l’ancienne version les ignore et retrouve son ancienne logique de
+génération. La suppression des colonnes n’est donc pas nécessaire au rollback
+et compliquerait inutilement un nouveau déploiement.
+
 ## 15. Restaurer une sauvegarde
 
 Une restauration remplace potentiellement les données actuelles. Faites-la pendant une période où personne n’utilise l’application :

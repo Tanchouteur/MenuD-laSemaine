@@ -48,6 +48,27 @@ export function generateAlternatives(input: SwapInput): ScoredCandidate[] {
     );
   }
 
+  const composed = scored.filter((item) => item.candidate.kind === 'composed');
+  const composedTotal = composed.reduce((sum, item) => sum + Math.max(0, item.score), 0);
+  const groupWeights = { complete: 0.8, starch: 0.1, vegetable: 0.1 } as const;
+  const availableTypes = (Object.keys(groupWeights) as Array<keyof typeof groupWeights>)
+    .filter((type) => composed.some((item) => item.candidate.compositionType === type));
+  const availableWeight = availableTypes.reduce((sum, type) => sum + groupWeights[type], 0);
+  if (composedTotal > 0 && availableWeight > 0) {
+    scored = scored.map((item) => {
+      const type = item.candidate.compositionType;
+      if (item.candidate.kind !== 'composed' || !type) return item;
+      const groupTotal = composed
+        .filter((candidate) => candidate.candidate.compositionType === type)
+        .reduce((sum, candidate) => sum + Math.max(0, candidate.score), 0);
+      if (groupTotal <= 0) return item;
+      return {
+        ...item,
+        score: item.score / groupTotal * composedTotal * groupWeights[type] / availableWeight,
+      };
+    });
+  }
+
   return weightedPickMany(
     scored,
     input.count ?? 3,

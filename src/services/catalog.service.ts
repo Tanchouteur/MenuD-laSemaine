@@ -14,6 +14,7 @@ export type IngredientInput = {
   category: IngredientCategory;
   subFamily?: string | null;
   rating: number;
+  useInComposedMeals?: boolean;
   portionPerPerson?: number | null;
   unit?: QuantityUnit | null;
   aisleId?: string | null;
@@ -50,6 +51,7 @@ function ingredientToDto(ingredient: {
   subFamily: string | null;
   rating: number;
   isActive: boolean;
+  useInComposedMeals: boolean;
   portionPerPerson: { toNumber(): number } | null;
   unit: QuantityUnit | null;
   aisleId: string | null;
@@ -102,6 +104,7 @@ export async function updateIngredient(
     category: input.category ?? current.category,
     subFamily: input.subFamily === undefined ? current.subFamily : input.subFamily,
     rating: input.rating ?? current.rating,
+    useInComposedMeals: input.useInComposedMeals ?? current.useInComposedMeals,
     portionPerPerson:
       input.portionPerPerson === undefined
         ? current.portionPerPerson?.toNumber()
@@ -129,6 +132,34 @@ export async function updateIngredient(
 
 export async function archiveIngredient(id: string): Promise<void> {
   await getPrisma().ingredient.update({ where: { id }, data: { isActive: false } });
+}
+
+export async function completeCompositionSetup(ingredientIds: string[]) {
+  const prisma = getPrisma();
+  const uniqueIds = [...new Set(ingredientIds)];
+  const eligibleCount = await prisma.ingredient.count({
+    where: {
+      id: { in: uniqueIds },
+      isActive: true,
+      category: { in: ['PROTEIN', 'STARCH', 'VEGETABLE'] },
+    },
+  });
+  if (eligibleCount !== uniqueIds.length) {
+    throw new Error('La sélection contient un ingrédient indisponible.');
+  }
+  await prisma.$transaction([
+    prisma.ingredient.updateMany({ data: { useInComposedMeals: false } }),
+    prisma.ingredient.updateMany({
+      where: { id: { in: uniqueIds } },
+      data: { useInComposedMeals: true },
+    }),
+    prisma.appSettings.upsert({
+      where: { id: 'default' },
+      update: { compositionSetupCompleted: true },
+      create: { id: 'default', compositionSetupCompleted: true },
+    }),
+  ]);
+  return { ok: true };
 }
 
 function recipeToDto(recipe: {

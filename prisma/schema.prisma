@@ -115,6 +115,7 @@ model Ingredient {
   subFamily        String?
   rating           Int                @default(3)
   isActive         Boolean            @default(true)
+  useInComposedMeals Boolean           @default(false)
   portionPerPerson Decimal?           @db.Decimal(10, 3)
   unit             QuantityUnit?
   aisleId          String?
@@ -224,6 +225,7 @@ model AppSettings {
   defaultGuestsDinnerWeekend Int      @default(4)
   timezone                   String   @default("Europe/Paris")
   onboardingCompleted        Boolean  @default(false)
+  compositionSetupCompleted  Boolean  @default(false)
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
 }

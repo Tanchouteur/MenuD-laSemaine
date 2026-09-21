@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { formatDay, formatWeekRange } from '@/lib/week';
-import type { MealSlotDto, WeeklyPlanDto } from '@/types/api';
+import type { IngredientDto, MealSlotDto, RecipeDto, WeeklyPlanDto } from '@/types/api';
 
 type AlternativeDto = {
   signature: string;
@@ -25,6 +25,9 @@ type WeekPlannerProps = {
   previousWeek: string;
   nextWeek: string;
   initialOnboardingCompleted: boolean;
+  initialCompositionSetupCompleted: boolean;
+  ingredients: IngredientDto[];
+  recipes: RecipeDto[];
 };
 
 async function apiRequest<T>(url: string, init?: RequestInit): Promise<T> {
@@ -68,23 +71,49 @@ export function WeekPlanner({
   previousWeek,
   nextWeek,
   initialOnboardingCompleted,
+  initialCompositionSetupCompleted,
+  ingredients,
+  recipes,
 }: WeekPlannerProps) {
   const [plan, setPlan] = useState(initialPlan);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [alternativeSheet, setAlternativeSheet] = useState<AlternativeSheet | null>(null);
+  const [chooserTab, setChooserTab] = useState<'suggestions' | 'recipes' | 'compose' | 'custom'>('suggestions');
+  const [recipeSearch, setRecipeSearch] = useState('');
+  const [proteinId, setProteinId] = useState('');
+  const [starchId, setStarchId] = useState('');
+  const [vegetableId, setVegetableId] = useState('');
   const [actionSlot, setActionSlot] = useState<MealSlotDto | null>(null);
   const [customLabel, setCustomLabel] = useState('');
   const [showOnboarding, setShowOnboarding] = useState(!initialOnboardingCompleted);
+  const [showCompositionSetup, setShowCompositionSetup] = useState(!initialCompositionSetupCompleted);
+  const [compositionSetupCompleted, setCompositionSetupCompleted] = useState(initialCompositionSetupCompleted);
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [undoSlot, setUndoSlot] = useState<MealSlotDto | null>(null);
   const isDraft = plan.status === 'draft';
+  const proteins = useMemo(() => ingredients.filter((item) => item.category === 'PROTEIN'), [ingredients]);
+  const starches = useMemo(() => ingredients.filter((item) => item.category === 'STARCH'), [ingredients]);
+  const vegetables = useMemo(() => ingredients.filter((item) => item.category === 'VEGETABLE'), [ingredients]);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return;
+      if (alternativeSheet) setAlternativeSheet(null);
+      else if (actionSlot) setActionSlot(null);
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [alternativeSheet, actionSlot]);
 
   async function run(action: () => Promise<WeeklyPlanDto>, success: string) {
     setBusy(true);
     setError(null);
     try {
-      setPlan(await action());
+      const updated = await action();
+      setPlan(updated);
+      setWarnings(updated.generationWarnings ?? []);
       setMessage(success);
       return true;
     } catch (caught) {
@@ -121,6 +150,7 @@ export function WeekPlanner({
       success,
     );
     if (succeeded && previous) setUndoSlot(previous);
+    return succeeded;
   }
 
   async function showAlternatives(
@@ -138,6 +168,7 @@ export function WeekPlanner({
           seed: `${slotId}:page-${page}:rejected-${rejected.size}`,
         }),
       });
+      setChooserTab('suggestions');
       setAlternativeSheet({ slotId, items, rejected, page });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Impossible de proposer des idées.');
@@ -157,7 +188,6 @@ export function WeekPlanner({
     if (!alternativeSheet) return;
     const slotId = alternativeSheet.slotId;
     const previous = plan.slots.find((slot) => slot.id === slotId) ?? null;
-    setAlternativeSheet(null);
     void run(
       () =>
         apiRequest(`/api/slots/${slotId}/choose`, {
@@ -165,7 +195,41 @@ export function WeekPlanner({
           body: JSON.stringify({ signature: item.signature, version: plan.version }),
         }),
       'Le repas a été remplacé.',
-    ).then((succeeded) => { if (succeeded && previous) setUndoSlot(previous); });
+    ).then((succeeded) => {
+      if (!succeeded) return;
+      setAlternativeSheet(null);
+      if (previous) setUndoSlot(previous);
+    });
+  }
+
+  async function chooseCustom() {
+    if (!alternativeSheet || !customLabel.trim()) return;
+    const succeeded = await patchSlot(
+      alternativeSheet.slotId,
+      { slotType: 'custom', customLabel: customLabel.trim(), isLocked: true },
+      'Votre idée est enregistrée et sera conservée.',
+    );
+    if (succeeded) {
+      setCustomLabel('');
+      setAlternativeSheet(null);
+    }
+  }
+
+  function chooseManual(selection: object) {
+    if (!alternativeSheet) return;
+    const slotId = alternativeSheet.slotId;
+    const previous = plan.slots.find((slot) => slot.id === slotId) ?? null;
+    void run(
+      () => apiRequest(`/api/slots/${slotId}/choose`, {
+        method: 'POST',
+        body: JSON.stringify({ ...selection, version: plan.version }),
+      }),
+      'Votre repas est choisi et sera conservé.',
+    ).then((succeeded) => {
+      if (!succeeded) return;
+      setAlternativeSheet(null);
+      if (previous) setUndoSlot(previous);
+    });
   }
 
   async function undoLastSlotChange() {
@@ -175,13 +239,10 @@ export function WeekPlanner({
     setBusy(true);
     setError(null);
     try {
-      let restored: WeeklyPlanDto;
-      if (previous.assignment) {
-        restored = await apiRequest(`/api/slots/${previous.id}/choose`, { method: 'POST', body: JSON.stringify({ signature: previous.assignment.signature }) });
-      } else {
-        restored = await apiRequest(`/api/slots/${previous.id}`, { method: 'PATCH', body: JSON.stringify({ slotType: previous.slotType, customLabel: previous.customLabel, leftoversFromSlotId: previous.leftoversFromSlotId }) });
-      }
-      restored = await apiRequest(`/api/slots/${previous.id}`, { method: 'PATCH', body: JSON.stringify({ isLocked: previous.isLocked, guestCount: previous.guestCount }) });
+      const restored = await apiRequest<WeeklyPlanDto>(`/api/slots/${previous.id}/restore`, {
+        method: 'POST',
+        body: JSON.stringify({ state: previous.restoreState, version: plan.version }),
+      });
       setPlan(restored);
       setMessage('La dernière modification a été annulée.');
     } catch (caught) {
@@ -286,7 +347,10 @@ export function WeekPlanner({
           )}
         </section>
 
+        {!compositionSetupCompleted && <section className="setupBanner"><div><strong>Choisissez les aliments des assiettes automatiques</strong><p>Vos recettes restent disponibles. Tant que cette sélection n’est pas faite, seules les recettes alimentent les suggestions.</p></div><button className="secondaryButton" type="button" onClick={() => setShowCompositionSetup(true)}>Configurer</button></section>}
+
         {message && <p className="successSummary undoSummary" role="status"><span>{message}</span>{undoSlot && isDraft && <button type="button" onClick={() => void undoLastSlotChange()}>Annuler</button>}</p>}
+        {warnings.length > 0 && <div className="warningSummary" role="status">{warnings.map((warning, index) => <p key={`${index}:${warning}`}>{warning}</p>)}</div>}
         {error && <p className="errorSummary" role="alert">{error}</p>}
 
         <section className="daysList" aria-label="Repas de la semaine">
@@ -316,10 +380,10 @@ export function WeekPlanner({
                             <button
                               className="secondaryButton"
                               type="button"
-                              disabled={busy || !slot.assignment}
+                              disabled={busy}
                               onClick={() => void showAlternatives(slot.id)}
                             >
-                              Remplacer
+                              {slot.slotType === 'empty' ? 'Choisir' : 'Modifier'}
                             </button>
                             <button
                               className="lockButton"
@@ -368,13 +432,17 @@ export function WeekPlanner({
 
       {alternativeSheet && (
         <div className="sheetBackdrop">
-          <section className="alternativeSheet" role="dialog" aria-modal="true" aria-labelledby="alternative-title">
+          <section className="alternativeSheet mealChooser" role="dialog" aria-modal="true" aria-labelledby="alternative-title">
             <div className="sheetHandle" aria-hidden="true" />
             <header className="sheetHeader">
-              <div><p className="eyebrow">Autres idées</p><h2 id="alternative-title">Quel repas vous tente ?</h2></div>
+              <div><p className="eyebrow">Choisir ce repas</p><h2 id="alternative-title">Qu’est-ce qui vous tente ?</h2></div>
               <button className="closeButton" type="button" aria-label="Fermer" autoFocus onClick={() => setAlternativeSheet(null)}>×</button>
             </header>
-            <div className="alternativeList">
+            <div className="chooserTabs" role="tablist" aria-label="Type de choix">
+              {([['suggestions','Suggestions'],['recipes','Mes recettes'],['compose','Composer'],['custom','Idée libre']] as const).map(([key,label]) => <button key={key} type="button" role="tab" aria-selected={chooserTab === key} data-active={chooserTab === key} onClick={() => setChooserTab(key)}>{label}</button>)}
+            </div>
+            {chooserTab === 'suggestions' && <><div className="alternativeList">
+              {alternativeSheet.items.length === 0 && <p className="emptyChooser">Aucune suggestion compatible. Vous pouvez choisir une recette, composer une assiette ou saisir votre idée.</p>}
               {alternativeSheet.items.map((item) => (
                 <button className="alternativeCard" key={item.signature} type="button" onClick={() => chooseAlternative(item)}>
                   <span className="alternativeTitle">{item.name}</span>
@@ -382,8 +450,10 @@ export function WeekPlanner({
                   <span className="reasonList">{item.reasons.slice(0, 2).map((reason) => <span key={reason}>{reason}</span>)}</span>
                 </button>
               ))}
-            </div>
-            <button className="secondaryButton wideButton" type="button" onClick={showMoreAlternatives}>Voir trois autres idées</button>
+            </div><button className="secondaryButton wideButton" type="button" onClick={showMoreAlternatives}>Voir trois autres idées</button></>}
+            {chooserTab === 'recipes' && <div className="chooserPanel"><label className="fieldLabel">Rechercher une recette<input value={recipeSearch} onChange={(event) => setRecipeSearch(event.target.value)} placeholder="Ex. riz cantonais" /></label><div className="alternativeList">{recipes.filter((recipe) => recipe.name.toLocaleLowerCase('fr-FR').includes(recipeSearch.toLocaleLowerCase('fr-FR'))).map((recipe) => <button className="alternativeCard" type="button" key={recipe.id} onClick={() => chooseManual({ recipeId: recipe.id })}><span className="alternativeTitle">{recipe.name}</span><span className="alternativeDescription">{recipe.ingredientCount} ingrédient(s)</span></button>)}</div></div>}
+            {chooserTab === 'compose' && <div className="chooserPanel stackForm"><label>Protéine<select value={proteinId} onChange={(event) => setProteinId(event.target.value)}><option value="">Choisir…</option>{proteins.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Féculent (facultatif si un légume est choisi)<select value={starchId} onChange={(event) => setStarchId(event.target.value)}><option value="">Aucun</option>{starches.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Légume (facultatif si un féculent est choisi)<select value={vegetableId} onChange={(event) => setVegetableId(event.target.value)}><option value="">Aucun</option>{vegetables.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><p className="fieldHint">Ce choix est prioritaire. Les courses seront calculées avec les portions renseignées dans le catalogue.</p><button className="primaryButton" type="button" disabled={!proteinId || (!starchId && !vegetableId)} onClick={() => chooseManual({ proteinId, starchId: starchId || undefined, vegetableId: vegetableId || undefined })}>Utiliser cette assiette</button></div>}
+            {chooserTab === 'custom' && <div className="chooserPanel stackForm"><label>Nom du repas<input value={customLabel} onChange={(event) => setCustomLabel(event.target.value)} placeholder="Ex. Croque-monsieur" /></label><p className="fieldHint">Les ingrédients ne seront pas ajoutés automatiquement aux courses. Vous pourrez les ajouter depuis la liste de courses.</p><button className="primaryButton" type="button" disabled={!customLabel.trim()} onClick={() => void chooseCustom()}>Utiliser cette idée</button></div>}
           </section>
         </div>
       )}
@@ -414,19 +484,52 @@ export function WeekPlanner({
             <div className="specialActionGrid">
               <button type="button" onClick={() => markLeftovers(actionSlot)}>Prévoir des restes</button>
               <button type="button" onClick={() => { setActionSlot(null); void patchSlot(actionSlot.id, { slotType: 'eating_out', customLabel: 'Repas à l’extérieur' }, 'Repas extérieur enregistré.'); }}>Repas à l’extérieur</button>
+              <button type="button" onClick={() => { setActionSlot(null); void patchSlot(actionSlot.id, { slotType: 'empty', isLocked: false }, 'Le créneau est de nouveau vide.'); }}>Vider ce créneau</button>
             </div>
-            <label className="fieldLabel">
-              Choix libre
-              <input value={customLabel} onChange={(event) => setCustomLabel(event.target.value)} placeholder="Ex. Croque-monsieur" />
-            </label>
-            <button className="primaryButton" type="button" disabled={!customLabel.trim()} onClick={() => { const label = customLabel; setCustomLabel(''); setActionSlot(null); void patchSlot(actionSlot.id, { slotType: 'custom', customLabel: label }, 'Repas libre enregistré.'); }}>Utiliser ce choix</button>
           </section>
         </div>
       )}
 
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}
+      {showCompositionSetup && !showOnboarding && <CompositionSetup ingredients={ingredients} onCancel={() => setShowCompositionSetup(false)} onDone={() => { setCompositionSetupCompleted(true); setShowCompositionSetup(false); }} />}
     </>
   );
+}
+
+function CompositionSetup({ ingredients, onDone, onCancel }: { ingredients: IngredientDto[]; onDone: () => void; onCancel: () => void }) {
+  const eligible = ingredients.filter((item) => ['PROTEIN', 'STARCH', 'VEGETABLE'].includes(item.category));
+  const [selected, setSelected] = useState(() => new Set(eligible.filter((item) => item.useInComposedMeals).map((item) => item.id)));
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const groups = [
+    ['PROTEIN', 'Protéines'],
+    ['STARCH', 'Féculents'],
+    ['VEGETABLE', 'Légumes'],
+  ] as const;
+  async function save() {
+    setBusy(true);
+    setError('');
+    try {
+      await apiRequest('/api/settings/compositions', {
+        method: 'POST',
+        body: JSON.stringify({ ingredientIds: [...selected] }),
+      });
+      onDone();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Impossible d’enregistrer la sélection.');
+    } finally {
+      setBusy(false);
+    }
+  }
+  return <div className="onboardingBackdrop"><section className="onboardingCard compositionSetup" role="dialog" aria-modal="true" aria-labelledby="composition-title">
+    <p className="eyebrow">Assiettes automatiques</p>
+    <h2 id="composition-title">Quels aliments peut-on associer ?</h2>
+    <p>Cochez uniquement les aliments qui peuvent constituer un repas. Un ingrédient non coché reste disponible dans vos recettes et vos courses.</p>
+    {error && <p className="errorSummary" role="alert">{error}</p>}
+    <div className="setupGroups">{groups.map(([category, label]) => <fieldset key={category}><legend>{label}</legend><div className="setupChoices">{eligible.filter((item) => item.category === category).map((item) => <label className="checkboxRow" key={item.id}><input type="checkbox" checked={selected.has(item.id)} onChange={(event) => setSelected((current) => { const next = new Set(current); if (event.target.checked) next.add(item.id); else next.delete(item.id); return next; })} /><span>{item.name}</span></label>)}</div></fieldset>)}</div>
+    <p className="fieldHint">Vous pourrez modifier ce réglage plus tard depuis chaque ingrédient.</p>
+    <div className="setupActions"><button className="secondaryButton" type="button" disabled={busy} onClick={onCancel}>Plus tard</button><button className="primaryButton" type="button" disabled={busy} onClick={() => void save()}>{busy ? 'Enregistrement…' : 'Enregistrer ma sélection'}</button></div>
+  </section></div>;
 }
 
 function Onboarding({ onDone }: { onDone: () => void }) {

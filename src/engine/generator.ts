@@ -40,6 +40,7 @@ function asAssignment(candidate: MealCandidate): AssignedMeal {
     proteinFamily: candidate.proteinFamily,
     starchFamily: candidate.starchFamily,
     style: candidate.style,
+    compositionType: candidate.compositionType,
   };
 }
 
@@ -77,14 +78,38 @@ function pickRespectingKind(
     (item) => item.score > 0 && item.candidate.kind === 'composed',
   );
 
-  if (recipes.length === 0) return weightedPick(composed, random);
+  const pickComposed = () => {
+    const groups = [
+      { type: 'complete', weight: 0.8 },
+      { type: 'starch', weight: 0.1 },
+      { type: 'vegetable', weight: 0.1 },
+    ] as const;
+    const available = groups.filter((group) =>
+      composed.some((item) => item.candidate.compositionType === group.type),
+    );
+    if (available.length === 0) return weightedPick(composed, random);
+    const total = available.reduce((sum, group) => sum + group.weight, 0);
+    let target = random.next() * total;
+    const selected = available.find((group) => {
+      target -= group.weight;
+      return target <= 0;
+    }) ?? available.at(-1)!;
+    return weightedPick(
+      composed.filter((item) => item.candidate.compositionType === selected.type),
+      random,
+    );
+  };
+
+  if (recipes.length === 0) return pickComposed();
   if (composed.length === 0) return weightedPick(recipes, random);
 
   const preferred =
     random.next() < recipeProbability(slot, context) ? recipes : composed;
   const fallback = preferred === recipes ? composed : recipes;
 
-  return weightedPick(preferred, random) ?? weightedPick(fallback, random);
+  const pick = (items: readonly ScoredCandidate[]) =>
+    items === composed ? pickComposed() : weightedPick(items, random);
+  return pick(preferred) ?? pick(fallback);
 }
 
 function selectForSlot(
@@ -221,6 +246,10 @@ function generateAttempt(
         code: 'NO_CANDIDATE',
         message: 'Aucun repas compatible n’a été trouvé pour ce créneau.',
       });
+      if (slot.current) {
+        assignments.set(slot.slotIndex, slot.current);
+        context.assignedSlots.set(slot.slotIndex, slot.current);
+      }
       continue;
     }
 
@@ -268,8 +297,8 @@ export function generateWeek(input: GenerateWeekInput): GenerationResult {
     const firstFilled = first.slots.filter((slot) => slot.assignment).length;
     const secondFilled = second.slots.filter((slot) => slot.assignment).length;
     return (
-      secondFilled - firstFilled ||
       first.warnings.length - second.warnings.length ||
+      secondFilled - firstFilled ||
       second.quality - first.quality
     );
   });
