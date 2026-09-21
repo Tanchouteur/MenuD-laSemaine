@@ -103,7 +103,7 @@ l'administrateur de :
 
 - créer un foyer et choisir son catalogue initial ;
 - modifier son nom, son slug et ses réglages par défaut ;
-- remplacer son code d'accès partagé ;
+- définir ou modifier individuellement le code d'accès partagé de chaque foyer ;
 - révoquer les sessions déjà autorisées sur ce foyer ;
 - créer, révoquer ou renouveler ses liens calendrier ;
 - copier son catalogue vers un autre foyer ;
@@ -203,6 +203,31 @@ La suppression définitive mérite des protections supplémentaires :
 Changer le code administrateur n'a aucun effet sur les codes des foyers. À
 l'inverse, changer le code d'un foyer peut révoquer ses sessions existantes sans
 affecter les autres foyers ni la session d'administration.
+
+### Modification du code d'accès d'un foyer
+
+Depuis `/administration/foyers`, l'administrateur choisit le foyer concerné,
+par exemple `Tanchou`, puis saisit et confirme son nouveau code. L'opération ne
+modifie que ce foyer : les codes de `Couple` et `Béthisie` restent valides.
+
+Le comportement recommandé est le suivant :
+
+- le nouveau code remplace immédiatement l'ancien et est stocké uniquement sous
+  forme hachée ;
+- l'ancien code ne permet plus de déverrouiller le foyer ;
+- l'administrateur choisit s'il conserve les appareils déjà autorisés ou s'il
+  les déconnecte tous ;
+- en cas de doute sur une fuite du code, l'option « déconnecter tous les
+  appareils » est cochée par défaut ;
+- les abonnements calendrier restent valides, car leurs jetons sont indépendants
+  du code d'accès du foyer ; ils peuvent être révoqués séparément ;
+- l'opération demande une nouvelle validation de la session administrateur afin
+  qu'une personne trouvant brièvement un appareil déverrouillé ne puisse pas
+  changer les accès familiaux.
+
+Il n'est pas nécessaire de connaître l'ancien code du foyer : l'autorisation
+vient du code administrateur. L'interface ne doit jamais afficher le code
+actuel, puisqu'il n'est pas conservé en clair.
 
 ## Isolation des données
 
@@ -386,6 +411,8 @@ Les tests d'isolation sont plus importants que les tests du sélecteur visuel :
 - un jeton révoqué est refusé ;
 - un code de foyer ne permet pas d'appeler les routes d'administration ;
 - une session administrateur expirée ne peut plus créer, modifier ou supprimer ;
+- modifier le code d'un foyer invalide l'ancien sans changer celui des autres ;
+- la révocation optionnelle des appareils ne concerne que le foyer modifié ;
 - l'archivage conserve les données et la suppression les efface uniquement
   après la confirmation renforcée ;
 - le dernier foyer actif ne peut pas être supprimé ;
