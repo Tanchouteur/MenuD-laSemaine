@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { BottomNavigation } from '@/components/navigation/bottom-navigation';
 import './globals.css';
 
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="fr">
       <body>
         {children}
-        <BottomNavigation />
+        <Suspense fallback={null}><BottomNavigation /></Suspense>
       </body>
     </html>
   );

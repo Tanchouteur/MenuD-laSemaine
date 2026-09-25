@@ -3,13 +3,14 @@
 import { useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { ShoppingEntryDto } from '@/types/api';
+import { formatWeekRange } from '@/lib/week';
 
 const units: Record<string, string> = {
   GRAM: 'g', KILOGRAM: 'kg', MILLILITER: 'ml', CENTILITER: 'cl',
   LITER: 'L', PIECE: 'pièce(s)', SLICE: 'tranche(s)', CAN: 'boîte(s)',
 };
 
-export function ShoppingList({ planId, initialEntries }: { planId: string; initialEntries: ShoppingEntryDto[] }) {
+export function ShoppingList({ planId, startDate, initialEntries }: { planId: string; startDate: string; initialEntries: ShoppingEntryDto[] }) {
   const [entries, setEntries] = useState(initialEntries);
   const [hideChecked, setHideChecked] = useState(false);
   const [label, setLabel] = useState('');
@@ -63,7 +64,7 @@ export function ShoppingList({ planId, initialEntries }: { planId: string; initi
   return (
     <main className="pageShell catalogPage">
       <header className="sectionHeader">
-        <div><p className="eyebrow">Cette semaine</p><h1>Courses</h1><p>La liste se met à jour avec les repas prévus.</p></div>
+        <div><p className="eyebrow">{formatWeekRange(startDate)}</p><h1>Courses</h1><p>La liste se met à jour avec les repas confirmés.</p></div>
         <span className="familyAvatar" aria-hidden="true">✓</span>
       </header>
       {error && <p className="errorSummary" role="alert">{error}</p>}

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const items = [
   { href: '/', label: 'Semaine', icon: '▦' },
@@ -12,6 +12,9 @@ const items = [
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selectedWeek = searchParams.get('week');
+  const weekQuery = selectedWeek && /^\d{4}-\d{2}-\d{2}$/.test(selectedWeek) ? `?week=${selectedWeek}` : '';
 
   if (pathname === '/connexion') return null;
 
@@ -25,7 +28,7 @@ export function BottomNavigation() {
           <Link
             className="bottomNavItem"
             data-active={isActive}
-            href={item.href}
+            href={`${item.href}${weekQuery}`}
             key={item.href}
             aria-current={isActive ? 'page' : undefined}
           >

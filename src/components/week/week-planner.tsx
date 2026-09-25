@@ -126,6 +126,13 @@ export function WeekPlanner({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [alternativeSheet, starterSlotId, actionSlot]);
 
+  useEffect(() => {
+    if (!alternativeSheet && !starterSlotId && !actionSlot) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [alternativeSheet, starterSlotId, actionSlot]);
+
   async function run(action: () => Promise<WeeklyPlanDto>, success: string) {
     setBusy(true);
     setError(null);
@@ -324,6 +331,7 @@ export function WeekPlanner({
     dayIndex,
     slots: plan.slots.filter((slot) => Math.floor(slot.slotIndex / 2) === dayIndex),
   }));
+  const shortWeekRange = `${formatDay(days[0].slots[0].date).date} – ${formatDay(days[6].slots[0].date).date}`;
   const filledCount = plan.slots.filter((slot) => slot.slotType !== 'empty').length;
 
   return (
@@ -332,7 +340,7 @@ export function WeekPlanner({
         <header className="weekHeader">
           <div>
             <p className="eyebrow">Notre menu</p>
-            <h1>Cette semaine</h1>
+            <h1>Menus de la semaine</h1>
             <p className="weekRange">{formatWeekRange(plan.startDate)}</p>
           </div>
           <div className="familyAvatar" aria-label="Menu de la famille">
@@ -340,24 +348,21 @@ export function WeekPlanner({
           </div>
         </header>
 
-        <nav className="weekSwitcher" aria-label="Changer de semaine">
-          <Link href={`/?week=${previousWeek}`} prefetch={false} aria-label="Semaine précédente">←</Link>
-          <span>{plan.status === 'confirmed' ? 'Semaine confirmée' : `${filledCount}/14 repas choisis`}</span>
-          <Link href={`/?week=${nextWeek}`} prefetch={false} aria-label="Semaine suivante">→</Link>
-        </nav>
+        <div className="weekNavigation">
+          <nav className="weekSwitcher" aria-label="Changer de semaine">
+            <Link href={`/?week=${previousWeek}`} prefetch={false} aria-label="Semaine précédente">←</Link>
+            <span>{shortWeekRange}</span>
+            <Link href={`/?week=${nextWeek}`} prefetch={false} aria-label="Semaine suivante">→</Link>
+          </nav>
+          <nav className="dayShortcuts" aria-label="Aller à un jour">
+            {days.map(({ dayIndex, slots }) => <a key={dayIndex} href={`#jour-${dayIndex}`} aria-label={`Aller à ${formatDay(slots[0].date).weekday}`}>
+              <span>{formatDay(slots[0].date).weekday.slice(0, 3)}</span><strong>{Number(slots[0].date.slice(-2))}</strong>
+            </a>)}
+          </nav>
+        </div>
 
-        <section className="weekIntro" aria-labelledby="week-intro-title">
-          <div>
-            <p className="introKicker">{isDraft ? 'Menu en préparation' : 'Menu enregistré'}</p>
-            <h2 id="week-intro-title">
-              {isDraft ? 'Une semaine variée, sans prise de tête.' : 'Votre semaine est prête.'}
-            </h2>
-            <p>
-              {isDraft
-                ? 'Gardez vos idées préférées, puis régénérez seulement le reste.'
-                : 'Elle compte désormais dans l’historique des repas de la famille.'}
-            </p>
-          </div>
+        <section className="weekActionBar" aria-label="Actions de la semaine">
+          <div className="weekActionStatus"><strong>{isDraft ? `${filledCount}/14 repas choisis` : 'Semaine confirmée'}</strong><span>{isDraft ? 'Gardez les repas à conserver avant de régénérer.' : 'Les repas et les courses sont prêts.'}</span></div>
           {isDraft ? (
             <button className="primaryButton" type="button" onClick={regenerate} disabled={busy}>
               <span aria-hidden="true">✦</span>
@@ -386,7 +391,7 @@ export function WeekPlanner({
           {days.map(({ dayIndex, slots }) => {
             const day = formatDay(slots[0].date);
             return (
-              <article className="dayCard" key={dayIndex}>
+              <article className="dayCard" id={`jour-${dayIndex}`} key={dayIndex} style={{ animationDelay: `${Math.min(dayIndex * 35, 210)}ms` }}>
                 <header className="dayHeader">
                   <h2>{day.weekday}</h2>
                   <time dateTime={slots[0].date}>{day.date}</time>
@@ -499,9 +504,9 @@ export function WeekPlanner({
 
       {starterSlotId && (
         <div className="sheetBackdrop" onClick={(event) => { if (event.target === event.currentTarget) setStarterSlotId(null); }}>
-          <section className="alternativeSheet mealChooser" role="dialog" aria-modal="true" aria-labelledby="starter-title">
+          <section className="alternativeSheet mealChooser starterChooser" role="dialog" aria-modal="true" aria-labelledby="starter-title">
             <div className="sheetHandle" aria-hidden="true" />
-            <header className="sheetHeader"><h2 id="starter-title">Choisir une entrée</h2><button className="closeButton" type="button" aria-label="Fermer" onClick={() => setStarterSlotId(null)}>×</button></header>
+            <header className="sheetHeader"><h2 id="starter-title">Choisir une entrée</h2><button className="closeButton" type="button" aria-label="Fermer" autoFocus onClick={() => setStarterSlotId(null)}>×</button></header>
             <label className="fieldLabel">Rechercher une entrée<input type="search" value={starterSearch} onChange={(event) => setStarterSearch(event.target.value)} placeholder="Asperges, cœurs de palmiers…" /></label>
             <div className="alternativeList">
               {[...starterIngredients.map((item) => ({ id: item.id, name: item.name, kind: 'ingredient' as const })), ...starterRecipes.map((item) => ({ id: item.id, name: item.name, kind: 'recipe' as const }))].filter((item) => item.name.toLocaleLowerCase('fr-FR').includes(starterSearch.toLocaleLowerCase('fr-FR'))).map((item) => <button className="alternativeCard" type="button" key={`${item.kind}:${item.id}`} onClick={() => void chooseStarter(item.kind === 'ingredient' ? item.id : undefined, item.kind === 'recipe' ? item.id : undefined)}>{item.name}</button>)}

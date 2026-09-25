@@ -22,6 +22,10 @@ partir du nombre de convives. L’expérience de référence est le téléphone.
 5. Cocher les courses, consulter l’historique et réutiliser une semaine.
 6. Exporter les données en JSON pour les relire ou préparer un enrichissement.
 
+Sur la page Semaine, le changement de semaine et les raccourcis vers les jours
+restent visibles au défilement. L’onglet Courses reprend la semaine sélectionnée
+et indique clairement si elle attend encore une confirmation.
+
 ## Règles visibles
 
 - Un ingrédient est un produit acheté ; une recette décrit une préparation et peut être un plat, une entrée ou un accompagnement.

@@ -177,8 +177,10 @@ version affectant l’interface, vérifier au minimum :
 3. génération, alternatives, choix manuel et annulation ;
 4. conflit visible entre deux onglets ;
 5. confirmation et persistance des coches de courses ;
-6. mise en page mobile, clavier et libellés longs ;
-7. abonnement calendrier.
+6. changement de semaine depuis le sélecteur fixe, raccourcis vers les sept jours et retour depuis Courses vers la même semaine ;
+7. fermeture des panneaux par le fond et Échap, mise en page mobile, clavier et libellés longs ;
+8. animations normales puis avec « Réduire les animations » activé ;
+9. abonnement calendrier.
 
 Une future suite Playwright pourra automatiser ces parcours. Elle devra démarrer
 l’application et PostgreSQL de manière isolée, sans viser le domaine de
