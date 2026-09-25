@@ -19,13 +19,19 @@ partir du nombre de convives. L’expérience de référence est le téléphone.
 2. Choisir les ingrédients utilisables dans les assiettes automatiques.
 3. Générer une semaine puis conserver, remplacer ou saisir chaque repas.
 4. Confirmer la semaine afin qu’elle alimente l’historique et les courses.
-5. Cocher les courses, consulter l’historique et réutiliser une semaine.
+5. Cocher les courses, compléter les achats manuels avec quantité et rayon, consulter l’historique et réutiliser une semaine.
 6. Exporter les données en JSON pour les relire ou préparer un enrichissement.
 7. Imprimer une semaine choisie ou l’enregistrer en PDF depuis la vue dédiée.
 
 Sur la page Semaine, le changement de semaine et les raccourcis vers les jours
 restent visibles au défilement. L’onglet Courses reprend la semaine sélectionnée
 et indique clairement si elle attend encore une confirmation.
+
+Quand les quatorze créneaux sont remplis, la confirmation est proposée près du
+haut de la page. Depuis l’historique, la réutilisation passe par un choix de
+date et demande un accord explicite avant de remplacer les repas d’un brouillon
+déjà commencé. Les données et le calendrier ont leur propre rubrique dans
+« Plus » ; les recettes et les ingrédients restent séparés dans « Recettes ».
 
 ## Règles visibles
 

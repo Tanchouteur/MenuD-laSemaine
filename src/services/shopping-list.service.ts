@@ -1,5 +1,5 @@
 import 'server-only';
-import { PlanStatus, type Prisma } from '../../generated/prisma/client';
+import { PlanStatus, QuantityUnit, type Prisma } from '../../generated/prisma/client';
 import { parseMealSnapshot } from '@/domain/meal-snapshot';
 import { getPrisma } from '@/lib/prisma';
 import type { ShoppingEntryDto } from '@/types/api';
@@ -132,14 +132,30 @@ export async function toggleShoppingEntry(entryId: string): Promise<void> {
 export async function addManualShoppingEntry(
   planId: string,
   label: string,
+  options: { quantity?: number | null; unit?: string | null; aisleId?: string | null } = {},
 ): Promise<void> {
   const trimmed = label.trim();
   if (!trimmed) throw new Error('Le libellé est obligatoire.');
+  const quantity = options.quantity ?? null;
+  if (quantity !== null && (!Number.isFinite(quantity) || quantity <= 0)) {
+    throw new Error('La quantité doit être supérieure à zéro.');
+  }
+  const unit = quantity === null ? null : (options.unit ?? QuantityUnit.PIECE);
+  if (unit !== null && !Object.values(QuantityUnit).includes(unit as QuantityUnit)) {
+    throw new Error('L’unité est invalide.');
+  }
+  const aisleId = options.aisleId || null;
+  if (aisleId && !(await getPrisma().aisle.findUnique({ where: { id: aisleId }, select: { id: true } }))) {
+    throw new Error('Le rayon choisi est introuvable.');
+  }
   await getPrisma().shoppingListEntry.create({
     data: {
       weeklyPlanId: planId,
       stableKey: `manual:${crypto.randomUUID()}`,
       label: trimmed,
+      quantity,
+      unit: unit as QuantityUnit | null,
+      aisleId,
       isManual: true,
     },
   });

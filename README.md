@@ -8,7 +8,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - remplacement par trois idées expliquées, verrouillage et régénération partielle ;
 - repas libres, restes, repas à l’extérieur et nombre de convives par repas ;
 - confirmation, historique et correction manuelle d’une semaine confirmée, favoris et réapplication ;
-- liste de courses visible seulement après confirmation, regroupée par rayon et ajustée aux portions ;
+- liste de courses visible seulement après confirmation, regroupée par rayon et ajustée aux portions, avec quantité et rayon pour les ajouts manuels ;
 - création, modification et archivage des ingrédients et recettes ;
 - entrées à fréquence réglable, recettes à accompagner et variantes liées par le refroidissement ;
 - version imprimable des menus par semaine, enregistrable en PDF depuis le navigateur ;

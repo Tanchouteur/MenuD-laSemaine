@@ -10,7 +10,7 @@ const units: Record<string, string> = {
   LITER: 'L', PIECE: 'pièce(s)', SLICE: 'tranche(s)', CAN: 'boîte(s)',
 };
 
-export function ShoppingList({ planId, startDate, initialEntries }: { planId: string; startDate: string; initialEntries: ShoppingEntryDto[] }) {
+export function ShoppingList({ planId, startDate, initialEntries, aisles }: { planId: string; startDate: string; initialEntries: ShoppingEntryDto[]; aisles: Array<{ id: string; name: string }> }) {
   const [entries, setEntries] = useState(initialEntries);
   const [hideChecked, setHideChecked] = useState(false);
   const [label, setLabel] = useState('');
@@ -38,13 +38,16 @@ export function ShoppingList({ planId, startDate, initialEntries }: { planId: st
   async function add(event: FormEvent) {
     event.preventDefault();
     if (!label.trim()) return;
+    const form = event.currentTarget as HTMLFormElement;
+    const data = new FormData(form);
+    const quantity = data.get('quantity');
     setBusy('add');
     const response = await fetch('/api/shopping', {
       method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ planId, label }),
+      body: JSON.stringify({ planId, label, quantity: quantity ? Number(quantity) : null, unit: data.get('unit'), aisleId: data.get('aisleId') || null }),
     });
-    if (response.ok) { setEntries(await response.json()); setLabel(''); }
-    else setError('Impossible d’ajouter cet article.');
+    if (response.ok) { setEntries(await response.json()); setLabel(''); form.reset(); setError(''); }
+    else setError((await response.json()).error ?? 'Impossible d’ajouter cet article.');
     setBusy(null);
   }
 
@@ -72,12 +75,16 @@ export function ShoppingList({ planId, startDate, initialEntries }: { planId: st
         <span>{entries.filter((item) => item.isChecked).length} sur {entries.length} cochés</span>
         <div className="toolbarActions"><label className="switchLabel"><input type="checkbox" checked={hideChecked} onChange={(event) => setHideChecked(event.target.checked)} /> Masquer les cochés</label>{entries.some((item) => item.isChecked) && <button type="button" onClick={() => void uncheckAll()}>Tout décocher</button>}</div>
       </div>
-      <form className="inlineForm" onSubmit={add}>
-        <label className="srOnly" htmlFor="manual-item">Ajouter un article</label>
-        <input id="manual-item" value={label} onChange={(event) => setLabel(event.target.value)} placeholder="Ajouter un article…" />
-        <button className="primaryButton" disabled={busy === 'add'}>Ajouter</button>
+      <form className="manualShoppingForm" onSubmit={add}>
+        <label>Ajouter un article<input value={label} onChange={(event) => setLabel(event.target.value)} placeholder="Ex. pain" required /></label>
+        <div className="manualShoppingFields">
+          <label>Quantité (facultatif)<input name="quantity" type="number" min="0.01" step="0.01" placeholder="Ex. 2" /></label>
+          <label>Unité<select name="unit" defaultValue="PIECE">{Object.entries(units).map(([value, name]) => <option key={value} value={value}>{name}</option>)}</select></label>
+          <label>Rayon<select name="aisleId" defaultValue=""><option value="">Autres</option>{aisles.map((aisle) => <option key={aisle.id} value={aisle.id}>{aisle.name}</option>)}</select></label>
+        </div>
+        <button className="primaryButton" disabled={busy === 'add'}>Ajouter à la liste</button>
       </form>
-      {groups.length === 0 ? <div className="emptyCard"><h2>Tout est prêt</h2><p>{entries.length ? 'Tous les articles sont cochés.' : 'Préparez d’abord les repas de la semaine.'}</p></div> : groups.map(([aisle, items]) => (
+      {groups.length === 0 ? <div className="emptyCard"><h2>{entries.length ? 'Tout est prêt' : 'Aucun article pour cette semaine'}</h2><p>{entries.length ? 'Tous les articles sont cochés.' : 'Ajoutez ici les produits nécessaires aux repas saisis librement.'}</p></div> : groups.map(([aisle, items]) => (
         <section className="shoppingGroup" key={aisle}>
           <h2>{aisle}</h2>
           {items.map((entry) => (

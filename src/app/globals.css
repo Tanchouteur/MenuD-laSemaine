@@ -630,28 +630,6 @@ button:disabled {
   width: 100%;
 }
 
-.confirmPanel {
-  display: grid;
-  gap: 18px;
-  margin-top: 22px;
-  padding: 24px;
-  border: 1px solid #bad1c2;
-  border-radius: var(--radius-large);
-  background: var(--green-soft);
-}
-
-.confirmPanel h2 {
-  margin-bottom: 8px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.55rem;
-}
-
-.confirmPanel p:last-child {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
 .actionSheet {
   display: grid;
   gap: 16px;
@@ -807,27 +785,44 @@ button:disabled {
   accent-color: var(--green);
 }
 
-.inlineForm {
+.manualShoppingForm {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-medium);
+  background: var(--surface);
 }
 
-.inlineForm input {
+.manualShoppingForm label,
+.recipeAdvancedFields > label,
+.recipeAdvancedFields .formColumns > label {
+  display: grid;
+  gap: 7px;
+  font-size: .82rem;
+  font-weight: 800;
+}
+
+.manualShoppingForm input,
+.manualShoppingForm select {
+  width: 100%;
   min-width: 0;
-  min-height: 50px;
-  padding: 12px 15px;
+  min-height: 48px;
+  padding: 10px 12px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-small);
+  border-radius: 11px;
   background: white;
-  color: var(--ink);
   font: inherit;
 }
 
-.inlineForm .primaryButton {
-  width: auto;
+.manualShoppingFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: 10px;
 }
+
+.manualShoppingForm > .primaryButton { width: fit-content; }
 
 .shoppingGroup {
   margin-bottom: 20px;
@@ -894,6 +889,10 @@ button:disabled {
 
 .segmented.three {
   grid-template-columns: repeat(3, 1fr);
+}
+
+.segmented.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .segmented button {
@@ -1115,6 +1114,11 @@ legend {
 .importPreview pre { max-width: 100%; overflow-wrap: anywhere; white-space: pre-wrap; font-size: .75rem; }
 .conditionalFields { display: grid; gap: 14px; }
 .conditionalFields[hidden] { display: none; }
+.recipeAdvanced { padding: 14px; border: 1px solid var(--line); border-radius: 14px; }
+.recipeAdvanced > summary { cursor: pointer; font-weight: 800; }
+.recipeAdvancedFields { display: grid; gap: 16px; padding-top: 18px; }
+.copyWeekSheet { max-height: min(88vh, 760px); overflow-y: auto; }
+.copyWeekSheet .stackForm > p { margin: 0; line-height: 1.5; }
 
 @media (max-width: 620px) {
   .chooserTabs { grid-template-columns: repeat(2, 1fr); }
@@ -1349,6 +1353,10 @@ legend {
   .cardActions { width: 100%; justify-content: flex-start; }
   .toolbarCard { align-items: flex-start; flex-direction: column; }
   .segmented.three button { font-size: 0.74rem; }
+  .segmented.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .manualShoppingFields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .manualShoppingFields label:last-child { grid-column: 1 / -1; }
+  .manualShoppingForm > .primaryButton { width: 100%; }
   .loginCard { padding: 26px 20px; }
 }
 
@@ -1373,15 +1381,6 @@ legend {
 
   .daysList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .confirmPanel {
-    grid-template-columns: 1fr auto;
-    align-items: center;
-  }
-
-  .confirmPanel .primaryButton {
-    width: auto;
   }
 
   .sheetBackdrop {

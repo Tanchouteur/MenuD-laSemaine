@@ -5,37 +5,50 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { IngredientDto, WeeklyPlanDto } from '@/types/api';
-import { addDays, formatWeekRange, mondayOfCurrentWeek } from '@/lib/week';
+import { addDays, formatWeekRange, mondayOfCurrentWeek, mondayOfIsoDate } from '@/lib/week';
 
 type Settings = { defaultGuestsLunchWeekday: number; defaultGuestsDinnerWeekday: number; defaultGuestsLunchWeekend: number; defaultGuestsDinnerWeekend: number; starterTargetPerWeek: number };
 type Incompatibility = { id: string; firstId: string; firstName: string; secondId: string; secondName: string };
 
 export function MoreManager({ plans, ingredients, incompatibilities: initialIncompatibilities, initialSettings, calendarUrl }: { plans: WeeklyPlanDto[]; ingredients: IngredientDto[]; incompatibilities: Incompatibility[]; initialSettings: Settings; calendarUrl: string }) {
   const router = useRouter();
-  const [section, setSection] = useState<'history' | 'settings' | 'rules'>('history');
+  const [section, setSection] = useState<'history' | 'settings' | 'rules' | 'data'>('history');
   const [incompatibilities, setIncompatibilities] = useState(initialIncompatibilities);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [copySourceId, setCopySourceId] = useState<string | null>(null);
+  const [copyDate, setCopyDate] = useState(addDays(mondayOfCurrentWeek(), 7));
+  const [replaceDraft, setReplaceDraft] = useState(false);
+  const [copyBusy, setCopyBusy] = useState(false);
+  const [copyError, setCopyError] = useState('');
   const confirmed = plans.filter((plan) => plan.status === 'confirmed');
-  async function reapply(planId: string) {
-    const suggested = addDays(mondayOfCurrentWeek(), 7);
-    const target = prompt('Lundi de la semaine à préparer (AAAA-MM-JJ)', suggested);
-    if (!target) return;
-    const response = await fetch(`/api/plans/${planId}/reapply`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ targetStartDate: target }) });
-    if (response.ok) router.push(`/?week=${target}`);
-    else setError((await response.json()).error ?? 'La semaine n’a pas pu être copiée.');
+  const targetWeek = mondayOfIsoDate(copyDate);
+  const targetPlan = plans.find((plan) => plan.startDate === targetWeek);
+  const targetHasMeals = targetPlan?.status === 'draft' && targetPlan.slots.some((slot) => slot.slotType !== 'empty');
+
+  async function reapply(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!copySourceId || !targetWeek || targetPlan?.status === 'confirmed' || targetPlan?.status === 'archived' || (targetHasMeals && !replaceDraft)) return;
+    setCopyBusy(true); setCopyError('');
+    try {
+      const response = await fetch(`/api/plans/${copySourceId}/reapply`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ targetStartDate: targetWeek, replaceDraft, targetVersion: targetPlan?.version ?? null }) });
+      if (!response.ok) throw new Error((await response.json()).error ?? 'La semaine n’a pas pu être copiée.');
+      router.push(`/?week=${targetWeek}`);
+    } catch (caught) {
+      setCopyError(caught instanceof Error ? caught.message : 'La semaine n’a pas pu être copiée.');
+    } finally { setCopyBusy(false); }
   }
   return <main className="pageShell catalogPage">
     <header className="sectionHeader"><div><p className="eyebrow">Votre famille</p><h1>Plus</h1><p>Historique, règles simples et nombres de personnes habituels.</p></div><span className="familyAvatar" aria-hidden="true">•••</span></header>
     {message && <p className="successSummary" role="status">{message}</p>}{error && <p className="errorSummary" role="alert">{error}</p>}
-    <div className="segmented three" role="tablist"><button data-active={section === 'history'} onClick={() => setSection('history')}>Historique</button><button data-active={section === 'settings'} onClick={() => setSection('settings')}>Foyer</button><button data-active={section === 'rules'} onClick={() => setSection('rules')}>À éviter</button></div>
+    <div className="segmented four" aria-label="Rubriques supplémentaires"><button type="button" aria-pressed={section === 'history'} data-active={section === 'history'} onClick={() => setSection('history')}>Historique</button><button type="button" aria-pressed={section === 'settings'} data-active={section === 'settings'} onClick={() => setSection('settings')}>Foyer</button><button type="button" aria-pressed={section === 'rules'} data-active={section === 'rules'} onClick={() => setSection('rules')}>À éviter</button><button type="button" aria-pressed={section === 'data'} data-active={section === 'data'} onClick={() => setSection('data')}>Données et calendrier</button></div>
     {section === 'history' && <section>
-      <DataExportBox onMessage={setMessage} onError={setError} />
-      <CalendarSyncBox calendarUrl={calendarUrl} hasConfirmed={confirmed.length > 0} />
-      {confirmed.length === 0 ? <div className="emptyCard"><h2>Aucune semaine confirmée</h2><p>Une fois votre première semaine confirmée, elle restera ici.</p></div> : <div className="catalogList">{confirmed.map((plan) => <article className="catalogCard historyCard" key={plan.id}><div><h2>{formatWeekRange(plan.startDate)}</h2><p>{plan.isFavorite ? '♥ Semaine favorite · ' : ''}14 repas conservés</p></div><div className="cardActions"><Link href={`/?week=${plan.startDate}`}>Voir</Link><button onClick={() => reapply(plan.id)}>Réutiliser</button></div></article>)}</div>}
+      {confirmed.length === 0 ? <div className="emptyCard"><h2>Aucune semaine confirmée</h2><p>Une fois votre première semaine confirmée, elle restera ici.</p></div> : <div className="catalogList">{confirmed.map((plan) => <article className="catalogCard historyCard" key={plan.id}><div><h2>{formatWeekRange(plan.startDate)}</h2><p>{plan.isFavorite ? '♥ Semaine favorite · ' : ''}14 repas conservés</p></div><div className="cardActions"><Link href={`/?week=${plan.startDate}`}>Voir</Link><button type="button" onClick={() => { setCopySourceId(plan.id); setCopyDate(addDays(mondayOfCurrentWeek(), 7)); setReplaceDraft(false); setCopyError(''); }}>Réutiliser</button></div></article>)}</div>}
     </section>}
     {section === 'settings' && <><SettingsForm value={initialSettings} onMessage={setMessage} onError={setError} /><button className="secondaryButton logoutButton" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/connexion'); router.refresh(); }}>Se déconnecter de cet appareil</button></>}
     {section === 'rules' && <RulesEditor ingredients={ingredients} value={incompatibilities} onChange={setIncompatibilities} onMessage={setMessage} onError={setError} />}
+    {section === 'data' && <section><CalendarSyncBox calendarUrl={calendarUrl} hasConfirmed={confirmed.length > 0} /><DataExportBox onMessage={setMessage} onError={setError} /></section>}
+    {copySourceId && <div className="sheetBackdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setCopySourceId(null); }}><section className="alternativeSheet copyWeekSheet" role="dialog" aria-modal="true" aria-labelledby="copy-week-title"><div className="sheetHandle" aria-hidden="true" /><header className="sheetHeader"><h2 id="copy-week-title">Réutiliser cette semaine</h2><button className="closeButton" type="button" aria-label="Fermer" onClick={() => setCopySourceId(null)}>×</button></header><form className="stackForm" onSubmit={reapply}><p>Les 14 repas de la semaine choisie seront copiés dans un brouillon.</p><label>Choisir une date de la semaine à préparer<input type="date" value={copyDate} onChange={(event) => { setCopyDate(event.target.value); setReplaceDraft(false); setCopyError(''); }} required /></label>{targetWeek && <p className="fieldHint">Destination : {formatWeekRange(targetWeek)}.</p>}{targetPlan?.status === 'confirmed' || targetPlan?.status === 'archived' ? <p className="errorSummary">Cette semaine est déjà confirmée. Choisissez une autre date.</p> : targetHasMeals ? <label className="checkboxRow"><input type="checkbox" checked={replaceDraft} onChange={(event) => setReplaceDraft(event.target.checked)} /><span><strong>Remplacer les repas du brouillon existant</strong><small>Les choix déjà présents dans cette semaine seront perdus.</small></span></label> : <p className="fieldHint">La destination est un brouillon vide ou une nouvelle semaine.</p>}{copyError && <p className="errorSummary" role="alert">{copyError}</p>}<button className="primaryButton" type="submit" disabled={copyBusy || !targetWeek || targetPlan?.status === 'confirmed' || targetPlan?.status === 'archived' || Boolean(targetHasMeals && !replaceDraft)}>{copyBusy ? 'Copie…' : 'Copier les repas'}</button></form></section></div>}
   </main>;
 }
 

@@ -10,7 +10,7 @@ import { parseMealSnapshot, snapshotAsAssignment } from '@/domain/meal-snapshot'
 import { daysBetween } from '@/engine';
 import { getPrisma } from '@/lib/prisma';
 import { rebuildShoppingList } from '@/services/shopping-list.service';
-import { addDays } from '@/lib/week';
+import { addDays, mondayOfIsoDate } from '@/lib/week';
 import type { MealSlotDto, SlotTypeDto, WeeklyPlanDto } from '@/types/api';
 
 type PlanWithSlots = WeeklyPlan & { slots: MealSlot[] };
@@ -244,16 +244,41 @@ export async function toggleFavorite(planId: string): Promise<WeeklyPlanDto> {
 export async function reapplyPlan(
   sourcePlanId: string,
   targetStartDate: string,
+  replaceDraft = false,
+  expectedTargetVersion?: number | null,
 ): Promise<WeeklyPlanDto> {
+  if (mondayOfIsoDate(targetStartDate) !== targetStartDate) {
+    throw new Error('Choisissez une date valide dans la semaine à préparer.');
+  }
   const prisma = getPrisma();
   const source = await prisma.weeklyPlan.findUniqueOrThrow({
     where: { id: sourcePlanId },
     include: { slots: true },
   });
+  if (source.status !== PlanStatus.CONFIRMED) throw new Error('Seule une semaine confirmée peut être réutilisée.');
+  const existingTarget = await getPlanByStartDate(targetStartDate);
+  if (existingTarget?.status === 'draft' && existingTarget.slots.some((slot) => slot.slotType !== 'empty') && !replaceDraft) {
+    throw new Error('La semaine cible contient déjà des repas. Confirmez leur remplacement.');
+  }
   const target = await ensureWeeklyPlan(targetStartDate);
   if (target.status !== 'draft') throw new Error('La semaine cible doit être un brouillon.');
+  if (typeof expectedTargetVersion === 'number' && target.version !== expectedTargetVersion) {
+    throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
+  }
+
+  const targetSlotBySourceId = new Map(source.slots.map((sourceSlot) => [
+    sourceSlot.id,
+    target.slots.find((slot) => slot.date === addDays(targetStartDate, daysBetween(dateToIso(source.startDate), dateToIso(sourceSlot.mealDate))) && slot.mealTime === (sourceSlot.mealTime === MealTime.LUNCH ? 'lunch' : 'dinner'))?.id ?? null,
+  ]));
 
   await prisma.$transaction(async (transaction) => {
+    const claimed = await transaction.weeklyPlan.updateMany({
+      where: { id: target.id, status: PlanStatus.DRAFT, version: target.version },
+      data: { duplicatedFromId: source.id, version: { increment: 1 } },
+    });
+    if (claimed.count !== 1) {
+      throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
+    }
     for (const sourceSlot of source.slots) {
       const sourceDay = daysBetween(dateToIso(source.startDate), dateToIso(sourceSlot.mealDate));
       const targetDate = asDate(addDays(targetStartDate, sourceDay));
@@ -282,14 +307,10 @@ export async function reapplyPlan(
           starterRecipeId: sourceSlot.starterRecipeId,
           starterSnapshot: sourceSlot.starterSnapshot ?? Prisma.JsonNull,
           starterIsLocked: sourceSlot.starterIsLocked,
-          leftoversFromSlotId: null,
+          leftoversFromSlotId: sourceSlot.leftoversFromSlotId ? targetSlotBySourceId.get(sourceSlot.leftoversFromSlotId) ?? null : null,
         },
       });
     }
-    await transaction.weeklyPlan.update({
-      where: { id: target.id },
-      data: { duplicatedFromId: source.id, version: { increment: 1 } },
-    });
     await rebuildShoppingList(target.id, transaction);
   });
 

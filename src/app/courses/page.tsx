@@ -5,6 +5,7 @@ import { ShoppingList } from '@/components/shopping/shopping-list';
 import { formatWeekRange, mondayOfCurrentWeek } from '@/lib/week';
 import { getShoppingList, rebuildShoppingList } from '@/services/shopping-list.service';
 import { getPlanByStartDate } from '@/services/weekly-plan.service';
+import { listAisles } from '@/services/catalog.service';
 
 export const metadata: Metadata = { title: 'Courses' };
 
@@ -19,6 +20,6 @@ export default async function ShoppingListPage({ searchParams }: { searchParams:
     <div className="emptyCard"><h2>La liste sera prête après confirmation</h2><p>Terminez votre menu, puis confirmez la semaine pour voir les articles à acheter.</p><Link className="primaryButton" href={`/?week=${selectedWeek}`}>Voir la semaine</Link></div>
   </main>;
   await rebuildShoppingList(plan.id);
-  const entries = await getShoppingList(plan.id);
-  return <ShoppingList planId={plan.id} startDate={plan.startDate} initialEntries={entries} />;
+  const [entries, aisles] = await Promise.all([getShoppingList(plan.id), listAisles()]);
+  return <ShoppingList planId={plan.id} startDate={plan.startDate} initialEntries={entries} aisles={aisles.map(({ id, name }) => ({ id, name }))} />;
 }

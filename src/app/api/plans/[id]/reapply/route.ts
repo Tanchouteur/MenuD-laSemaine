@@ -6,10 +6,10 @@ export async function POST(
   context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const body = (await readJson(request)) as { targetStartDate?: string };
+    const body = (await readJson(request)) as { targetStartDate?: string; replaceDraft?: boolean; targetVersion?: number | null };
     if (!body.targetStartDate) throw new Error('La semaine cible est obligatoire.');
     return Response.json(
-      await reapplyPlan((await context.params).id, body.targetStartDate),
+      await reapplyPlan((await context.params).id, body.targetStartDate, body.replaceDraft === true, body.targetVersion),
     );
   } catch (error) {
     return apiError(error);

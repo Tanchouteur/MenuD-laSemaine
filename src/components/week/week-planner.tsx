@@ -313,6 +313,8 @@ export function WeekPlanner({
   }));
   const shortWeekRange = `${formatDay(days[0].slots[0].date).date} – ${formatDay(days[6].slots[0].date).date}`;
   const filledCount = plan.slots.filter((slot) => slot.slotType !== 'empty').length;
+  const firstEmptySlot = plan.slots.find((slot) => slot.slotType === 'empty');
+  const firstEmptyDay = firstEmptySlot ? Math.floor(firstEmptySlot.slotIndex / 2) : null;
 
   return (
     <>
@@ -343,12 +345,13 @@ export function WeekPlanner({
         </div>
 
         <section className="weekActionBar" aria-label="Actions de la semaine">
-          <div className="weekActionStatus"><strong>{isDraft ? `${filledCount}/14 repas choisis` : 'Semaine confirmée'}</strong><span>{isDraft ? 'Gardez les repas à conserver avant de régénérer.' : 'Les repas et les courses sont prêts.'}</span></div>
+          <div className="weekActionStatus"><strong>{isDraft ? `${filledCount}/14 repas prévus` : 'Semaine confirmée'}</strong><span>{isDraft ? filledCount === 14 ? 'Tous les créneaux sont remplis. Vous pouvez confirmer la semaine.' : 'Gardez les repas à conserver avant de régénérer.' : 'Les repas et les courses sont prêts.'}</span></div>
           <div className="weekActionButtons">{isDraft ? (<>
-            <button className="primaryButton" type="button" onClick={regenerate} disabled={busy}>
+            {filledCount === 14 ? <><button className="primaryButton" type="button" onClick={confirmWeek} disabled={busy}>Confirmer ma semaine</button><button className="secondaryButton" type="button" onClick={regenerate} disabled={busy}>Régénérer les repas libres</button></> : <button className="primaryButton" type="button" onClick={regenerate} disabled={busy}>
               <span aria-hidden="true">✦</span>
               {filledCount === 0 ? 'Préparer ma semaine' : 'Régénérer les repas libres'}
-            </button>
+            </button>}
+            {firstEmptyDay !== null && filledCount > 0 && <a className="printWeekLink" href={`#jour-${firstEmptyDay}`}>Voir le prochain repas à choisir</a>}
             <Link className="printWeekLink" href={`/imprimer?week=${plan.startDate}`}>Imprimer / PDF</Link>
           </>) : (<>
             <Link className="printWeekLink" href={`/imprimer?week=${plan.startDate}`}>Imprimer / PDF</Link>
@@ -443,18 +446,6 @@ export function WeekPlanner({
           })}
         </section>
 
-        {isDraft && filledCount === 14 && (
-          <section className="confirmPanel">
-            <div>
-              <p className="eyebrow">Tout est prêt</p>
-              <h2>Confirmer cette semaine ?</h2>
-              <p>Elle alimentera l’historique et la liste de courses définitive.</p>
-            </div>
-            <button className="primaryButton" type="button" disabled={busy} onClick={confirmWeek}>
-              Confirmer ma semaine
-            </button>
-          </section>
-        )}
       </main>
 
       {alternativeSheet && (

@@ -34,6 +34,7 @@ import {
   confirmPlan,
   ensureWeeklyPlan,
   getPlanByStartDate,
+  reapplyPlan,
   unconfirmPlan,
 } from '@/services/weekly-plan.service';
 
@@ -484,17 +485,35 @@ describe('génération, instantanés et liste de courses', () => {
     expect(entries).toHaveLength(1);
     expect(entries[0]).toMatchObject({ quantity: 500, unit: 'GRAM', sourceCount: 2, isChecked: false });
     await toggleShoppingEntry(entries[0].id);
-    await addManualShoppingEntry(plan.id, '  Papier cuisson  ');
+    const aisle = await prisma.aisle.create({ data: { name: 'Épicerie', sortOrder: 1 } });
+    await addManualShoppingEntry(plan.id, '  Papier cuisson  ', { quantity: 2, unit: 'PIECE', aisleId: aisle.id });
     await prisma.mealSlot.update({ where: { id: second.id }, data: { guestCount: 4 } });
     await rebuildShoppingList(plan.id);
     entries = await getShoppingList(plan.id);
     expect(entries.find((entry) => !entry.isManual)).toMatchObject({ quantity: 600, isChecked: true });
     const manual = entries.find((entry) => entry.isManual)!;
-    expect(manual.label).toBe('Papier cuisson');
+    expect(manual).toMatchObject({ label: 'Papier cuisson', quantity: 2, unit: 'PIECE', aisleName: 'Épicerie' });
+    await expect(addManualShoppingEntry(plan.id, 'Erreur', { quantity: -1 })).rejects.toThrow('quantité');
     await expect(deleteManualShoppingEntry(entries.find((entry) => !entry.isManual)!.id))
       .rejects.toThrow('ajouts manuels');
     await deleteManualShoppingEntry(manual.id);
     expect((await getShoppingList(plan.id)).filter((entry) => entry.isManual)).toHaveLength(0);
+  });
+
+  it('préserve un brouillon lors de la réutilisation et relie ses restes copiés', async () => {
+    const source = await ensureWeeklyPlan('2026-09-21');
+    await prisma.mealSlot.updateMany({ where: { weeklyPlanId: source.id }, data: { slotType: 'CUSTOM', customLabel: 'Repas prévu' } });
+    await prisma.mealSlot.update({ where: { id: source.slots[1].id }, data: { slotType: 'LEFTOVERS', customLabel: null, leftoversFromSlotId: source.slots[0].id } });
+    await confirmPlan(source.id, source.version);
+    const target = await ensureWeeklyPlan('2026-09-28');
+    await prisma.mealSlot.update({ where: { id: target.slots[0].id }, data: { slotType: 'CUSTOM', customLabel: 'À conserver' } });
+    await expect(reapplyPlan(source.id, '2026-09-28')).rejects.toThrow('remplacement');
+    expect((await getPlanByStartDate('2026-09-28'))?.slots[0].customLabel).toBe('À conserver');
+    await prisma.weeklyPlan.update({ where: { id: target.id }, data: { version: { increment: 1 } } });
+    await expect(reapplyPlan(source.id, '2026-09-28', true, target.version)).rejects.toThrow('autre appareil');
+    const copied = await reapplyPlan(source.id, '2026-09-28', true, target.version + 1);
+    expect(copied.slots[0].customLabel).toBe('Repas prévu');
+    expect(copied.slots[1]).toMatchObject({ slotType: 'leftovers', leftoversFromSlotId: copied.slots[0].id });
   });
 
   it('restaure exactement un instantané valide et refuse un état incohérent', async () => {

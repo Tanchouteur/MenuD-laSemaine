@@ -33,10 +33,10 @@ export async function PATCH(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = (await readJson(request)) as { planId?: string; label?: string };
+    const body = (await readJson(request)) as { planId?: string; label?: string; quantity?: number | null; unit?: string | null; aisleId?: string | null };
     if (!body.planId || !body.label) throw new Error('Le libellé est obligatoire.');
     await requireConfirmedShoppingPlan(body.planId);
-    await addManualShoppingEntry(body.planId, body.label);
+    await addManualShoppingEntry(body.planId, body.label, { quantity: body.quantity, unit: body.unit, aisleId: body.aisleId });
     return Response.json(await getShoppingList(body.planId), { status: 201 });
   } catch (error) {
     return apiError(error);
