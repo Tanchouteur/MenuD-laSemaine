@@ -82,6 +82,12 @@ export function WeekPlanner({
   const [alternativeSheet, setAlternativeSheet] = useState<AlternativeSheet | null>(null);
   const [chooserTab, setChooserTab] = useState<'suggestions' | 'recipes' | 'compose' | 'custom'>('suggestions');
   const [recipeSearch, setRecipeSearch] = useState('');
+  const [starterSearch, setStarterSearch] = useState('');
+  const [starterSlotId, setStarterSlotId] = useState<string | null>(null);
+  const [selectedRecipeId, setSelectedRecipeId] = useState('');
+  const [proteinSearch, setProteinSearch] = useState('');
+  const [starchSearch, setStarchSearch] = useState('');
+  const [vegetableSearch, setVegetableSearch] = useState('');
   const [proteinId, setProteinId] = useState('');
   const [starchId, setStarchId] = useState('');
   const [vegetableId, setVegetableId] = useState('');
@@ -96,16 +102,29 @@ export function WeekPlanner({
   const proteins = useMemo(() => ingredients.filter((item) => item.category === 'PROTEIN'), [ingredients]);
   const starches = useMemo(() => ingredients.filter((item) => item.category === 'STARCH'), [ingredients]);
   const vegetables = useMemo(() => ingredients.filter((item) => item.category === 'VEGETABLE'), [ingredients]);
+  const starterIngredients = useMemo(() => ingredients.filter((item) => item.useAsStarter), [ingredients]);
+  const starterRecipes = useMemo(() => recipes.filter((item) => item.role === 'STARTER'), [recipes]);
+  const starchRecipes = useMemo(() => recipes.filter((item) => item.role === 'SIDE_STARCH'), [recipes]);
+  const vegetableRecipes = useMemo(() => recipes.filter((item) => item.role === 'SIDE_VEGETABLE'), [recipes]);
+  const mainRecipes = useMemo(() => recipes.filter((item) => item.role === 'MAIN'), [recipes]);
+
+  function sideSelection() {
+    return {
+      ...(starchId.startsWith('r:') ? { starchRecipeId: starchId.slice(2) } : starchId ? { starchId } : {}),
+      ...(vegetableId.startsWith('r:') ? { vegetableRecipeId: vegetableId.slice(2) } : vegetableId ? { vegetableId } : {}),
+    };
+  }
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== 'Escape') return;
       if (alternativeSheet) setAlternativeSheet(null);
+      else if (starterSlotId) setStarterSlotId(null);
       else if (actionSlot) setActionSlot(null);
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [alternativeSheet, actionSlot]);
+  }, [alternativeSheet, starterSlotId, actionSlot]);
 
   async function run(action: () => Promise<WeeklyPlanDto>, success: string) {
     setBusy(true);
@@ -161,14 +180,15 @@ export function WeekPlanner({
     setBusy(true);
     setError(null);
     try {
-      const items = await apiRequest<AlternativeDto[]>(`/api/slots/${slotId}/alternatives`, {
+      const items = plan.status === 'confirmed' ? [] : await apiRequest<AlternativeDto[]>(`/api/slots/${slotId}/alternatives`, {
         method: 'POST',
         body: JSON.stringify({
           rejectedSignatures: [...rejected],
           seed: `${slotId}:page-${page}:rejected-${rejected.size}`,
         }),
       });
-      setChooserTab('suggestions');
+      setChooserTab(plan.status === 'confirmed' ? 'recipes' : 'suggestions');
+      setSelectedRecipeId('');
       setAlternativeSheet({ slotId, items, rejected, page });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Impossible de proposer des idées.');
@@ -230,6 +250,15 @@ export function WeekPlanner({
       setAlternativeSheet(null);
       if (previous) setUndoSlot(previous);
     });
+  }
+
+  async function chooseStarter(ingredientId?: string, recipeId?: string, automatic = false) {
+    if (!starterSlotId) return;
+    const previous = plan.slots.find((slot) => slot.id === starterSlotId) ?? null;
+    const succeeded = await run(() => apiRequest(`/api/slots/${starterSlotId}/starter`, {
+      method: 'PUT', body: JSON.stringify({ ingredientId, recipeId, automatic, version: plan.version }),
+    }), 'Entrée mise à jour.');
+    if (succeeded) { setStarterSlotId(null); if (previous) setUndoSlot(previous); }
   }
 
   async function undoLastSlotChange() {
@@ -349,7 +378,7 @@ export function WeekPlanner({
 
         {!compositionSetupCompleted && <section className="setupBanner"><div><strong>Choisissez les aliments des assiettes automatiques</strong><p>Vos recettes restent disponibles. Tant que cette sélection n’est pas faite, seules les recettes alimentent les suggestions.</p></div><button className="secondaryButton" type="button" onClick={() => setShowCompositionSetup(true)}>Configurer</button></section>}
 
-        {message && <p className="successSummary undoSummary" role="status"><span>{message}</span>{undoSlot && isDraft && <button type="button" onClick={() => void undoLastSlotChange()}>Annuler</button>}</p>}
+        {message && <p className="successSummary undoSummary" role="status"><span>{message}</span>{undoSlot && <button type="button" onClick={() => void undoLastSlotChange()}>Annuler</button>}</p>}
         {warnings.length > 0 && <div className="warningSummary" role="status">{warnings.map((warning, index) => <p key={`${index}:${warning}`}>{warning}</p>)}</div>}
         {error && <p className="errorSummary" role="alert">{error}</p>}
 
@@ -375,7 +404,8 @@ export function WeekPlanner({
                         </div>
                         <h3>{meal.name}</h3>
                         <p>{meal.description}</p>
-                        {isDraft && (
+                        {slot.starter && <p className="starterSummary"><strong>Entrée :</strong> {slot.starter.name}</p>}
+                        {plan.status !== 'archived' && (
                           <div className="mealActions threeActions">
                             <button
                               className="secondaryButton"
@@ -385,6 +415,8 @@ export function WeekPlanner({
                             >
                               {slot.slotType === 'empty' ? 'Choisir' : 'Modifier'}
                             </button>
+                            {slot.slotType !== 'empty' && slot.slotType !== 'leftovers' && slot.slotType !== 'eating_out' && <button className="secondaryButton" type="button" disabled={busy} onClick={() => setStarterSlotId(slot.id)}>{slot.starter ? 'Changer l’entrée' : 'Ajouter une entrée'}</button>}
+                            {isDraft && (
                             <button
                               className="lockButton"
                               data-locked={slot.isLocked}
@@ -402,6 +434,7 @@ export function WeekPlanner({
                               <span aria-hidden="true">{slot.isLocked ? '●' : '○'}</span>
                               {slot.isLocked ? 'Gardé' : 'Garder'}
                             </button>
+                            )}
                             <button className="moreButton" type="button" onClick={() => setActionSlot(slot)}>
                               Options
                             </button>
@@ -451,9 +484,23 @@ export function WeekPlanner({
                 </button>
               ))}
             </div><button className="secondaryButton wideButton" type="button" onClick={showMoreAlternatives}>Voir trois autres idées</button></>}
-            {chooserTab === 'recipes' && <div className="chooserPanel"><label className="fieldLabel">Rechercher une recette<input value={recipeSearch} onChange={(event) => setRecipeSearch(event.target.value)} placeholder="Ex. riz cantonais" /></label><div className="alternativeList">{recipes.filter((recipe) => recipe.name.toLocaleLowerCase('fr-FR').includes(recipeSearch.toLocaleLowerCase('fr-FR'))).map((recipe) => <button className="alternativeCard" type="button" key={recipe.id} onClick={() => chooseManual({ recipeId: recipe.id })}><span className="alternativeTitle">{recipe.name}</span><span className="alternativeDescription">{recipe.ingredientCount} ingrédient(s)</span></button>)}</div></div>}
-            {chooserTab === 'compose' && <div className="chooserPanel stackForm"><label>Protéine<select value={proteinId} onChange={(event) => setProteinId(event.target.value)}><option value="">Choisir…</option>{proteins.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Féculent (facultatif si un légume est choisi)<select value={starchId} onChange={(event) => setStarchId(event.target.value)}><option value="">Aucun</option>{starches.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Légume (facultatif si un féculent est choisi)<select value={vegetableId} onChange={(event) => setVegetableId(event.target.value)}><option value="">Aucun</option>{vegetables.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><p className="fieldHint">Ce choix est prioritaire. Les courses seront calculées avec les portions renseignées dans le catalogue.</p><button className="primaryButton" type="button" disabled={!proteinId || (!starchId && !vegetableId)} onClick={() => chooseManual({ proteinId, starchId: starchId || undefined, vegetableId: vegetableId || undefined })}>Utiliser cette assiette</button></div>}
+            {chooserTab === 'recipes' && <div className="chooserPanel"><label className="fieldLabel">Rechercher une recette<input type="search" value={recipeSearch} onChange={(event) => setRecipeSearch(event.target.value)} placeholder="Ex. riz cantonais" /></label>{selectedRecipeId ? <div className="chooserPanel stackForm"><button className="secondaryButton" type="button" onClick={() => setSelectedRecipeId('')}>← Toutes les recettes</button><h3>{mainRecipes.find((item) => item.id === selectedRecipeId)?.name}</h3>{mainRecipes.find((item) => item.id === selectedRecipeId)?.allowStarchSide && <SearchChoice label="Féculent" options={[...starches.map((item) => ({ value: item.id, label: item.name })), ...starchRecipes.map((item) => ({ value: `r:${item.id}`, label: item.name }))]} value={starchId} onChange={setStarchId} query={starchSearch} onQuery={setStarchSearch} />}{mainRecipes.find((item) => item.id === selectedRecipeId)?.allowVegetableSide && <SearchChoice label="Légume" options={[...vegetables.map((item) => ({ value: item.id, label: item.name })), ...vegetableRecipes.map((item) => ({ value: `r:${item.id}`, label: item.name }))]} value={vegetableId} onChange={setVegetableId} query={vegetableSearch} onQuery={setVegetableSearch} />}<button className="primaryButton" type="button" disabled={!starchId && !vegetableId} onClick={() => chooseManual({ recipeId: selectedRecipeId, ...sideSelection() })}>Utiliser ce plat</button></div> : <div className="alternativeList">{mainRecipes.filter((recipe) => recipe.name.toLocaleLowerCase('fr-FR').includes(recipeSearch.toLocaleLowerCase('fr-FR'))).map((recipe) => <button className="alternativeCard" type="button" key={recipe.id} onClick={() => { if (recipe.allowStarchSide || recipe.allowVegetableSide) { setStarchId(''); setVegetableId(''); setSelectedRecipeId(recipe.id); } else chooseManual({ recipeId: recipe.id }); }}><span className="alternativeTitle">{recipe.name}</span><span className="alternativeDescription">{recipe.variantOfId ? `Variante de ${recipes.find((item) => item.id === recipe.variantOfId)?.name ?? 'une recette'} · ` : ''}{recipe.allowStarchSide || recipe.allowVegetableSide ? 'À accompagner' : `${recipe.ingredientCount} produit(s)`}</span></button>)}</div>}</div>}
+            {chooserTab === 'compose' && <div className="chooserPanel stackForm"><SearchChoice label="Protéine" options={proteins.map((item) => ({ value: item.id, label: item.name }))} value={proteinId} onChange={setProteinId} query={proteinSearch} onQuery={setProteinSearch} required /><SearchChoice label="Féculent" options={[...starches.map((item) => ({ value: item.id, label: item.name })), ...starchRecipes.map((item) => ({ value: `r:${item.id}`, label: item.name }))]} value={starchId} onChange={setStarchId} query={starchSearch} onQuery={setStarchSearch} /><SearchChoice label="Légume" options={[...vegetables.map((item) => ({ value: item.id, label: item.name })), ...vegetableRecipes.map((item) => ({ value: `r:${item.id}`, label: item.name }))]} value={vegetableId} onChange={setVegetableId} query={vegetableSearch} onQuery={setVegetableSearch} /><p className="fieldHint">Les courses utilisent les portions des produits et des recettes choisis.</p><button className="primaryButton" type="button" disabled={!proteinId || (!starchId && !vegetableId)} onClick={() => chooseManual({ proteinId, ...sideSelection() })}>Utiliser cette assiette</button></div>}
             {chooserTab === 'custom' && <div className="chooserPanel stackForm"><label>Nom du repas<input value={customLabel} onChange={(event) => setCustomLabel(event.target.value)} placeholder="Ex. Croque-monsieur" /></label><p className="fieldHint">Les ingrédients ne seront pas ajoutés automatiquement aux courses. Vous pourrez les ajouter depuis la liste de courses.</p><button className="primaryButton" type="button" disabled={!customLabel.trim()} onClick={() => void chooseCustom()}>Utiliser cette idée</button></div>}
+          </section>
+        </div>
+      )}
+
+      {starterSlotId && (
+        <div className="sheetBackdrop">
+          <section className="alternativeSheet mealChooser" role="dialog" aria-modal="true" aria-labelledby="starter-title">
+            <div className="sheetHandle" aria-hidden="true" />
+            <header className="sheetHeader"><h2 id="starter-title">Choisir une entrée</h2><button className="closeButton" type="button" aria-label="Fermer" onClick={() => setStarterSlotId(null)}>×</button></header>
+            <label className="fieldLabel">Rechercher une entrée<input type="search" value={starterSearch} onChange={(event) => setStarterSearch(event.target.value)} placeholder="Asperges, cœurs de palmiers…" /></label>
+            <div className="alternativeList">
+              {[...starterIngredients.map((item) => ({ id: item.id, name: item.name, kind: 'ingredient' as const })), ...starterRecipes.map((item) => ({ id: item.id, name: item.name, kind: 'recipe' as const }))].filter((item) => item.name.toLocaleLowerCase('fr-FR').includes(starterSearch.toLocaleLowerCase('fr-FR'))).map((item) => <button className="alternativeCard" type="button" key={`${item.kind}:${item.id}`} onClick={() => void chooseStarter(item.kind === 'ingredient' ? item.id : undefined, item.kind === 'recipe' ? item.id : undefined)}>{item.name}</button>)}
+            </div>
+            <div className="formButtonRow"><button className="secondaryButton" type="button" onClick={() => void chooseStarter()}>Sans entrée</button><button className="secondaryButton" type="button" onClick={() => void chooseStarter(undefined, undefined, true)}>Laisser proposer à la prochaine génération</button></div>
           </section>
         </div>
       )}
@@ -484,7 +531,7 @@ export function WeekPlanner({
             <div className="specialActionGrid">
               <button type="button" onClick={() => markLeftovers(actionSlot)}>Prévoir des restes</button>
               <button type="button" onClick={() => { setActionSlot(null); void patchSlot(actionSlot.id, { slotType: 'eating_out', customLabel: 'Repas à l’extérieur' }, 'Repas extérieur enregistré.'); }}>Repas à l’extérieur</button>
-              <button type="button" onClick={() => { setActionSlot(null); void patchSlot(actionSlot.id, { slotType: 'empty', isLocked: false }, 'Le créneau est de nouveau vide.'); }}>Vider ce créneau</button>
+              {isDraft && <button type="button" onClick={() => { setActionSlot(null); void patchSlot(actionSlot.id, { slotType: 'empty', isLocked: false }, 'Le créneau est de nouveau vide.'); }}>Vider ce créneau</button>}
             </div>
           </section>
         </div>
@@ -496,8 +543,17 @@ export function WeekPlanner({
   );
 }
 
+function SearchChoice({ label, options, value, onChange, query, onQuery, required = false }: {
+  label: string; options: { value: string; label: string }[]; value: string;
+  onChange: (value: string) => void; query: string; onQuery: (value: string) => void; required?: boolean;
+}) {
+  const filtered = options.filter((item) => item.value === value || item.label.toLocaleLowerCase('fr-FR').includes(query.toLocaleLowerCase('fr-FR')));
+  return <div className="searchChoice"><label className="fieldLabel">{label}<input type="search" value={query} onChange={(event) => onQuery(event.target.value)} placeholder={`Rechercher ${label.toLocaleLowerCase('fr-FR')}…`} /></label><select aria-label={label} value={value} onChange={(event) => onChange(event.target.value)}><option value="">{required ? 'Choisir…' : 'Aucun'}</option>{filtered.map((item) => <option value={item.value} key={item.value}>{item.label}</option>)}</select></div>;
+}
+
 function CompositionSetup({ ingredients, onDone, onCancel }: { ingredients: IngredientDto[]; onDone: () => void; onCancel: () => void }) {
   const eligible = ingredients.filter((item) => ['PROTEIN', 'STARCH', 'VEGETABLE'].includes(item.category));
+  const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(() => new Set(eligible.filter((item) => item.useInComposedMeals).map((item) => item.id)));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -526,7 +582,8 @@ function CompositionSetup({ ingredients, onDone, onCancel }: { ingredients: Ingr
     <h2 id="composition-title">Quels aliments peut-on associer ?</h2>
     <p>Cochez uniquement les aliments qui peuvent constituer un repas. Un ingrédient non coché reste disponible dans vos recettes et vos courses.</p>
     {error && <p className="errorSummary" role="alert">{error}</p>}
-    <div className="setupGroups">{groups.map(([category, label]) => <fieldset key={category}><legend>{label}</legend><div className="setupChoices">{eligible.filter((item) => item.category === category).map((item) => <label className="checkboxRow" key={item.id}><input type="checkbox" checked={selected.has(item.id)} onChange={(event) => setSelected((current) => { const next = new Set(current); if (event.target.checked) next.add(item.id); else next.delete(item.id); return next; })} /><span>{item.name}</span></label>)}</div></fieldset>)}</div>
+    <label className="fieldLabel">Rechercher un produit<input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex. poulet, riz…" /></label>
+    <div className="setupGroups">{groups.map(([category, label]) => <fieldset key={category}><legend>{label}</legend><div className="setupChoices">{eligible.filter((item) => item.category === category && item.name.toLocaleLowerCase('fr-FR').includes(search.toLocaleLowerCase('fr-FR'))).map((item) => <label className="checkboxRow" key={item.id}><input type="checkbox" checked={selected.has(item.id)} onChange={(event) => setSelected((current) => { const next = new Set(current); if (event.target.checked) next.add(item.id); else next.delete(item.id); return next; })} /><span>{item.name}</span></label>)}</div></fieldset>)}</div>
     <p className="fieldHint">Vous pourrez modifier ce réglage plus tard depuis chaque ingrédient.</p>
     <div className="setupActions"><button className="secondaryButton" type="button" disabled={busy} onClick={onCancel}>Plus tard</button><button className="primaryButton" type="button" disabled={busy} onClick={() => void save()}>{busy ? 'Enregistrement…' : 'Enregistrer ma sélection'}</button></div>
   </section></div>;

@@ -1,6 +1,7 @@
 import 'server-only';
 import {
   IngredientCategory,
+  RecipeRole,
   QuantityUnit,
   Season,
   type Prisma,
@@ -15,6 +16,7 @@ export type IngredientInput = {
   subFamily?: string | null;
   rating: number;
   useInComposedMeals?: boolean;
+  useAsStarter?: boolean;
   portionPerPerson?: number | null;
   unit?: QuantityUnit | null;
   aisleId?: string | null;
@@ -27,6 +29,10 @@ export type IngredientInput = {
 
 export type RecipeInput = {
   name: string;
+  role?: RecipeRole;
+  allowStarchSide?: boolean;
+  allowVegetableSide?: boolean;
+  variantOfId?: string | null;
   style?: string | null;
   rating: number;
   prepTimeMinutes?: number | null;
@@ -52,6 +58,7 @@ function ingredientToDto(ingredient: {
   rating: number;
   isActive: boolean;
   useInComposedMeals: boolean;
+  useAsStarter: boolean;
   portionPerPerson: { toNumber(): number } | null;
   unit: QuantityUnit | null;
   aisleId: string | null;
@@ -105,6 +112,7 @@ export async function updateIngredient(
     subFamily: input.subFamily === undefined ? current.subFamily : input.subFamily,
     rating: input.rating ?? current.rating,
     useInComposedMeals: input.useInComposedMeals ?? current.useInComposedMeals,
+    useAsStarter: input.useAsStarter ?? current.useAsStarter,
     portionPerPerson:
       input.portionPerPerson === undefined
         ? current.portionPerPerson?.toNumber()
@@ -165,6 +173,10 @@ export async function completeCompositionSetup(ingredientIds: string[]) {
 function recipeToDto(recipe: {
   id: string;
   name: string;
+  role: RecipeRole;
+  allowStarchSide: boolean;
+  allowVegetableSide: boolean;
+  variantOfId: string | null;
   style: string | null;
   rating: number;
   prepTimeMinutes: number | null;
@@ -186,6 +198,10 @@ function recipeToDto(recipe: {
   return {
     id: recipe.id,
     name: recipe.name,
+    role: recipe.role,
+    allowStarchSide: recipe.allowStarchSide,
+    allowVegetableSide: recipe.allowVegetableSide,
+    variantOfId: recipe.variantOfId,
     style: recipe.style,
     rating: recipe.rating,
     prepTimeMinutes: recipe.prepTimeMinutes,
@@ -225,13 +241,34 @@ function validateRecipe(input: RecipeInput) {
   if (new Set(input.ingredients.map((item) => item.ingredientId)).size !== input.ingredients.length) {
     throw new Error('Un ingrédient ne peut apparaître qu’une fois dans une recette.');
   }
+  if ((input.role ?? RecipeRole.MAIN) !== RecipeRole.MAIN && (input.allowStarchSide || input.allowVegetableSide)) {
+    throw new Error('Seul un plat peut être une recette à accompagner.');
+  }
+}
+
+async function variantRoot(id: string | null | undefined, editingId?: string): Promise<string | null> {
+  if (!id) return null;
+  if (id === editingId) throw new Error('Une recette ne peut pas être sa propre variante.');
+  const parent = await getPrisma().recipe.findUniqueOrThrow({ where: { id } });
+  const rootId = parent.variantOfId ?? parent.id;
+  if (rootId === editingId) throw new Error('Une recette principale ne peut pas devenir la variante de sa variante.');
+  return rootId;
 }
 
 export async function createRecipe(input: RecipeInput): Promise<RecipeDto> {
   validateRecipe(input);
+  const variantOfId = await variantRoot(input.variantOfId);
+  if (variantOfId) {
+    const parent = await getPrisma().recipe.findUniqueOrThrow({ where: { id: variantOfId } });
+    if (parent.role !== (input.role ?? RecipeRole.MAIN)) throw new Error('Les variantes doivent avoir le même rôle.');
+  }
   const recipe = await getPrisma().recipe.create({
     data: {
       name: input.name.trim(),
+      role: input.role ?? RecipeRole.MAIN,
+      allowStarchSide: input.allowStarchSide ?? false,
+      allowVegetableSide: input.allowVegetableSide ?? false,
+      variantOfId,
       style: input.style?.trim() || null,
       rating: input.rating,
       prepTimeMinutes: input.prepTimeMinutes,
@@ -254,12 +291,28 @@ export async function updateRecipe(
   input: RecipeInput,
 ): Promise<RecipeDto> {
   validateRecipe(input);
+  const variantOfId = await variantRoot(input.variantOfId, id);
+  const current = await getPrisma().recipe.findUniqueOrThrow({ where: { id } });
+  if (variantOfId) {
+    const parent = await getPrisma().recipe.findUniqueOrThrow({ where: { id: variantOfId } });
+    if (parent.role !== (input.role ?? RecipeRole.MAIN)) throw new Error('Les variantes doivent avoir le même rôle.');
+  }
+  if (current.role !== (input.role ?? RecipeRole.MAIN) && await getPrisma().mealSlot.count({
+    where: { OR: [{ recipeId: id }, { starterRecipeId: id }, { starchRecipeId: id }, { vegetableRecipeId: id }] },
+  }) > 0) throw new Error('Le rôle d’une recette déjà utilisée ne peut pas changer.');
+  if (current.role !== (input.role ?? RecipeRole.MAIN) && await getPrisma().recipe.count({ where: { variantOfId: id } }) > 0) {
+    throw new Error('Le rôle d’une recette ayant des variantes ne peut pas changer.');
+  }
   const recipe = await getPrisma().$transaction(async (transaction) => {
     await transaction.recipeIngredient.deleteMany({ where: { recipeId: id } });
     return transaction.recipe.update({
       where: { id },
       data: {
         name: input.name.trim(),
+        role: input.role ?? RecipeRole.MAIN,
+        allowStarchSide: input.allowStarchSide ?? false,
+        allowVegetableSide: input.allowVegetableSide ?? false,
+        variantOfId,
         style: input.style?.trim() || null,
         rating: input.rating,
         prepTimeMinutes: input.prepTimeMinutes,

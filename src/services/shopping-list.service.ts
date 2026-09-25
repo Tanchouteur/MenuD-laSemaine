@@ -26,10 +26,10 @@ export async function rebuildShoppingList(
 
   for (const slot of plan.slots) {
     if (slot.slotType === 'LEFTOVERS' || slot.slotType === 'EATING_OUT') continue;
-    const snapshot = parseMealSnapshot(slot.mealSnapshot);
-    if (!snapshot) continue;
-
-    for (const item of snapshot.items) {
+    const snapshots = [parseMealSnapshot(slot.mealSnapshot), parseMealSnapshot(slot.starterSnapshot)].filter(
+      (item): item is NonNullable<typeof item> => item !== null,
+    );
+    for (const item of snapshots.flatMap((snapshot) => snapshot.items)) {
       const stableKey = `ingredient:${item.ingredientId}:${item.unit ?? 'unknown'}`;
       const current = aggregates.get(stableKey);
       const amount =
@@ -45,7 +45,7 @@ export async function rebuildShoppingList(
             : (current?.quantity ?? 0) + amount,
         unit: item.unit,
         aisleId: item.aisleId,
-        sourceSlotIds: [...(current?.sourceSlotIds ?? []), slot.id],
+        sourceSlotIds: [...new Set([...(current?.sourceSlotIds ?? []), slot.id])],
       });
     }
   }

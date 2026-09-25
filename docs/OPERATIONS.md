@@ -40,6 +40,12 @@ recettes à créer ou mettre à jour. Le bouton d’application apparaît seulem
 après cette validation. L’écriture est atomique et les menus existants ne sont
 pas modifiés.
 
+Depuis le format d’enrichissement version 2, l’aperçu indique aussi les
+ingrédients à retirer des propositions et les quantités ou portions encore à
+vérifier. Tant qu’une valeur manque, le bouton d’application reste désactivé.
+Le fichier prêt à importer issu du catalogue joint est décrit dans
+`Catalogue/CONVERSION_REPAS_2026-09-25.md`.
+
 Une recette peut déclarer `previousName` pour être renommée en conservant son
 identifiant et ses références. Les métadonnées facultatives permettent aussi de
 mettre à jour son style, ses durées, ses saisons et ses moments de proposition.

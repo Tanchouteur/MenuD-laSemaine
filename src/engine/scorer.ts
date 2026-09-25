@@ -20,11 +20,17 @@ export function scoreCandidate(
 ): ScoredCandidate {
   const appreciationWeight = Math.min(5, Math.max(1, candidate.rating));
   const elapsedDays = daysSinceLastConsumption(
-    candidate.signature,
+    candidate.repeatKey ?? candidate.signature,
     slot.date,
     context.consumedHistory,
   );
-  const coolingWeight = options.ignoreCooling ? 1 : coolingFactor(elapsedDays);
+  const nearestInWeek = [...context.assignedSlots.entries()]
+    .filter(([, assigned]) => (assigned.repeatKey ?? assigned.signature) === (candidate.repeatKey ?? candidate.signature))
+    .map(([index]) => Math.floor(Math.abs(index - slot.slotIndex) / 2))
+    .sort((first, second) => first - second)[0];
+  const coolingWeight = options.ignoreCooling ? 1 : coolingFactor(
+    nearestInWeek === undefined ? elapsedDays : Math.min(elapsedDays ?? Infinity, nearestInWeek),
+  );
   const varietyWeight = options.ignoreVariety
     ? 1
     : varietyFactor(candidate, slot.slotIndex, context);

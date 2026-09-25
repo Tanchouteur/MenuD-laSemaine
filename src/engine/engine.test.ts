@@ -97,6 +97,20 @@ describe('dates et contexte temporel', () => {
   });
 });
 
+describe('variantes liées par le refroidissement', () => {
+  it('pénalise une variante récente sans la rendre incompatible', () => {
+    const first = candidate(501, { kind: 'recipe', repeatKey: 'recipe:family' });
+    const second = candidate(502, { kind: 'recipe', repeatKey: 'recipe:family' });
+    const slot = buildWeekSlots('2026-08-10')[1];
+    const context = emptyContext();
+    context.assignedSlots.set(0, { kind: 'recipe', signature: first.signature,
+      repeatKey: first.repeatKey, name: first.name });
+    expect(isHardEligible(second, slot, context, new Set())).toBe(true);
+    expect(scoreCandidate(second, slot, context).coolingWeight).toBe(0);
+    expect(scoreCandidate(second, slot, context, { ignoreCooling: true }).coolingWeight).toBe(1);
+  });
+});
+
 describe('refroidissement', () => {
   it.each([
     [null, 1],

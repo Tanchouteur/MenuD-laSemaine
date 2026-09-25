@@ -19,6 +19,7 @@ export const ingredientInputSchema = z.object({
   subFamily: z.string().trim().max(60).nullable().optional(),
   rating: z.number().int().min(1).max(5),
   useInComposedMeals: z.boolean().optional().default(false),
+  useAsStarter: z.boolean().optional().default(false),
   portionPerPerson: z.number().positive().nullable().optional(),
   unit: z.enum(units).nullable().optional(),
   aisleId: z.string().nullable().optional(),
@@ -31,6 +32,10 @@ export const ingredientInputSchema = z.object({
 
 export const recipeInputSchema = z.object({
   name: z.string().trim().min(1).max(120),
+  role: z.enum(['MAIN', 'STARTER', 'SIDE_STARCH', 'SIDE_VEGETABLE']).default('MAIN'),
+  allowStarchSide: z.boolean().default(false),
+  allowVegetableSide: z.boolean().default(false),
+  variantOfId: z.string().nullable().optional(),
   style: z.string().trim().max(60).nullable().optional(),
   rating: z.number().int().min(1).max(5),
   prepTimeMinutes: z.number().int().nonnegative().nullable().optional(),
@@ -57,6 +62,7 @@ export const settingsSchema = z.object({
   defaultGuestsDinnerWeekday: z.number().int().min(1).max(30),
   defaultGuestsLunchWeekend: z.number().int().min(1).max(30),
   defaultGuestsDinnerWeekend: z.number().int().min(1).max(30),
+  starterTargetPerWeek: z.number().int().min(0).max(9).optional(),
   onboardingCompleted: z.boolean().optional(),
 });
 

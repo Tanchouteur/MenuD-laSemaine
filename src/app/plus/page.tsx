@@ -13,5 +13,5 @@ export default async function MorePage() {
   ]);
   const incompatibilities = rawIncompatibilities.map((item) => ({ id: item.id, firstId: item.ingredientId1, firstName: item.ingredient1.name, secondId: item.ingredientId2, secondName: item.ingredient2.name }));
   const calendarUrl = process.env.CALENDAR_TOKEN ? `/api/calendar?token=${encodeURIComponent(process.env.CALENDAR_TOKEN)}` : '/api/calendar';
-  return <MoreManager calendarUrl={calendarUrl} plans={plans} ingredients={ingredients} incompatibilities={incompatibilities} initialSettings={{ defaultGuestsLunchWeekday: settings.defaultGuestsLunchWeekday, defaultGuestsDinnerWeekday: settings.defaultGuestsDinnerWeekday, defaultGuestsLunchWeekend: settings.defaultGuestsLunchWeekend, defaultGuestsDinnerWeekend: settings.defaultGuestsDinnerWeekend }} />;
+  return <MoreManager calendarUrl={calendarUrl} plans={plans} ingredients={ingredients} incompatibilities={incompatibilities} initialSettings={{ defaultGuestsLunchWeekday: settings.defaultGuestsLunchWeekday, defaultGuestsDinnerWeekday: settings.defaultGuestsDinnerWeekday, defaultGuestsLunchWeekend: settings.defaultGuestsLunchWeekend, defaultGuestsDinnerWeekend: settings.defaultGuestsDinnerWeekend, starterTargetPerWeek: settings.starterTargetPerWeek }} />;
 }

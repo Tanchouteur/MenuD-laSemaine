@@ -19,6 +19,8 @@ export type MealSlotDto = {
   customLabel: string | null;
   leftoversFromSlotId: string | null;
   assignment: AssignedMeal | null;
+  starter: { name: string; signature: string } | null;
+  starterIsLocked: boolean;
   restoreState: {
     slotType: SlotTypeDto;
     customLabel: string | null;
@@ -29,6 +31,12 @@ export type MealSlotDto = {
     proteinId: string | null;
     starchId: string | null;
     vegetableId: string | null;
+    starchRecipeId?: string | null;
+    vegetableRecipeId?: string | null;
+    starterIngredientId?: string | null;
+    starterRecipeId?: string | null;
+    starterSnapshot?: unknown;
+    starterIsLocked?: boolean;
     isLocked: boolean;
     guestCount: number;
   };
@@ -53,6 +61,7 @@ export type IngredientDto = {
   rating: number;
   isActive: boolean;
   useInComposedMeals: boolean;
+  useAsStarter: boolean;
   portionPerPerson: number | null;
   unit: string | null;
   aisleId: string | null;
@@ -66,6 +75,10 @@ export type IngredientDto = {
 export type RecipeDto = {
   id: string;
   name: string;
+  role: 'MAIN' | 'STARTER' | 'SIDE_STARCH' | 'SIDE_VEGETABLE';
+  allowStarchSide: boolean;
+  allowVegetableSide: boolean;
+  variantOfId: string | null;
   style: string | null;
   rating: number;
   prepTimeMinutes: number | null;

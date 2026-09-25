@@ -7,7 +7,7 @@ import type { FormEvent } from 'react';
 import type { IngredientDto, WeeklyPlanDto } from '@/types/api';
 import { addDays, formatWeekRange, mondayOfCurrentWeek } from '@/lib/week';
 
-type Settings = { defaultGuestsLunchWeekday: number; defaultGuestsDinnerWeekday: number; defaultGuestsLunchWeekend: number; defaultGuestsDinnerWeekend: number };
+type Settings = { defaultGuestsLunchWeekday: number; defaultGuestsDinnerWeekday: number; defaultGuestsLunchWeekend: number; defaultGuestsDinnerWeekend: number; starterTargetPerWeek: number };
 type Incompatibility = { id: string; firstId: string; firstName: string; secondId: string; secondName: string };
 
 export function MoreManager({ plans, ingredients, incompatibilities: initialIncompatibilities, initialSettings, calendarUrl }: { plans: WeeklyPlanDto[]; ingredients: IngredientDto[]; incompatibilities: Incompatibility[]; initialSettings: Settings; calendarUrl: string }) {
@@ -39,7 +39,8 @@ export function MoreManager({ plans, ingredients, incompatibilities: initialInco
   </main>;
 }
 
-type ImportSummary = { ingredientsToCreate: string[]; ingredientsToUpdate: string[]; recipesToCreate: string[]; recipesToUpdate: string[] };
+type ImportSummary = { ingredientsToCreate: string[]; ingredientsToUpdate: string[]; ingredientsToArchive: string[]; recipesToCreate: string[]; recipesToUpdate: string[]; pendingQuantities: string[]; pendingPortions: string[] };
+type EnrichmentPreview = { ingredients?: Array<{ name: string; [key: string]: unknown }>; recipes?: Array<{ name: string; [key: string]: unknown }> };
 
 function DataExportBox({ onMessage, onError }: { onMessage: (value: string) => void; onError: (value: string) => void }) {
   const [document, setDocument] = useState<unknown>(null);
@@ -78,16 +79,25 @@ function DataExportBox({ onMessage, onError }: { onMessage: (value: string) => v
     <label>Fichier d’enrichissement JSON<input type="file" accept="application/json,.json" disabled={busy} onChange={(event) => preview(event.target.files?.[0])} /></label>
     {summary && <div className="importPreview" role="status">
       <p><strong>{summary.ingredientsToCreate.length}</strong> ingrédients à créer · <strong>{summary.ingredientsToUpdate.length}</strong> à mettre à jour</p>
+      {summary.ingredientsToArchive.length > 0 && <p>À retirer des propositions après validation : {summary.ingredientsToArchive.join(', ')}</p>}
       <p><strong>{summary.recipesToCreate.length}</strong> recettes à créer · <strong>{summary.recipesToUpdate.length}</strong> à corriger</p>
-      <button type="button" className="primaryButton" disabled={busy} onClick={apply}>{busy ? 'Application…' : 'Appliquer ces changements'}</button>
+      <details><summary>Voir les créations et modifications</summary>
+        {(['ingredients', 'recipes'] as const).map((kind) => <div key={kind}>
+          <h4>{kind === 'ingredients' ? 'Produits' : 'Recettes'}</h4>
+          {((document as EnrichmentPreview)?.[kind] ?? []).map((item) => <details key={item.name}><summary>{item.name} · {(kind === 'ingredients' ? summary.ingredientsToCreate : summary.recipesToCreate).includes(item.name) ? 'création' : 'modification'}</summary><pre>{JSON.stringify(item, null, 2)}</pre></details>)}
+        </div>)}
+      </details>
+      {summary.pendingQuantities.length > 0 && <p>Quantités à vérifier : {summary.pendingQuantities.join(' ; ')}. Complétez le fichier avant de l’appliquer.</p>}
+      {summary.pendingPortions.length > 0 && <p>Portions à vérifier : {summary.pendingPortions.join(' ; ')}.</p>}
+      <button type="button" className="primaryButton" disabled={busy || summary.pendingQuantities.length > 0 || summary.pendingPortions.length > 0} onClick={apply}>{busy ? 'Application…' : 'Appliquer ces changements'}</button>
     </div>}
   </section>;
 }
 
 function SettingsForm({ value, onMessage, onError }: { value: Settings; onMessage: (value: string) => void; onError: (value: string) => void }) {
   const [busy, setBusy] = useState(false);
-  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); const data = new FormData(event.currentTarget); const body = Object.fromEntries(['defaultGuestsLunchWeekday','defaultGuestsDinnerWeekday','defaultGuestsLunchWeekend','defaultGuestsDinnerWeekend'].map((key) => [key, Number(data.get(key))])); const response = await fetch('/api/settings', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); if (response.ok) onMessage('Les habitudes du foyer sont enregistrées. Elles s’appliqueront aux nouvelles semaines.'); else onError('Impossible d’enregistrer les réglages.'); setBusy(false); }
-  return <form className="settingsCard stackForm" onSubmit={submit}><div><h2>Nombre de personnes habituel</h2><p>Vous pourrez toujours le changer sur un repas précis.</p></div><div className="formColumns"><label>Déjeuner en semaine<input name="defaultGuestsLunchWeekday" type="number" min="1" max="30" defaultValue={value.defaultGuestsLunchWeekday} /></label><label>Dîner en semaine<input name="defaultGuestsDinnerWeekday" type="number" min="1" max="30" defaultValue={value.defaultGuestsDinnerWeekday} /></label><label>Déjeuner le week-end<input name="defaultGuestsLunchWeekend" type="number" min="1" max="30" defaultValue={value.defaultGuestsLunchWeekend} /></label><label>Dîner le week-end<input name="defaultGuestsDinnerWeekend" type="number" min="1" max="30" defaultValue={value.defaultGuestsDinnerWeekend} /></label></div><button className="primaryButton" disabled={busy}>{busy ? 'Enregistrement…' : 'Enregistrer mes habitudes'}</button></form>;
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); const data = new FormData(event.currentTarget); const body = Object.fromEntries(['defaultGuestsLunchWeekday','defaultGuestsDinnerWeekday','defaultGuestsLunchWeekend','defaultGuestsDinnerWeekend','starterTargetPerWeek'].map((key) => [key, Number(data.get(key))])); const response = await fetch('/api/settings', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); if (response.ok) onMessage('Les habitudes du foyer sont enregistrées. La fréquence des entrées s’appliquera à la prochaine génération.'); else onError('Impossible d’enregistrer les réglages.'); setBusy(false); }
+  return <form className="settingsCard stackForm" onSubmit={submit}><div><h2>Habitudes du foyer</h2><p>Vous pourrez toujours changer les personnes ou l’entrée sur un repas précis.</p></div><div className="formColumns"><label>Déjeuner en semaine<input name="defaultGuestsLunchWeekday" type="number" min="1" max="30" defaultValue={value.defaultGuestsLunchWeekday} /></label><label>Dîner en semaine<input name="defaultGuestsDinnerWeekday" type="number" min="1" max="30" defaultValue={value.defaultGuestsDinnerWeekday} /></label><label>Déjeuner le week-end<input name="defaultGuestsLunchWeekend" type="number" min="1" max="30" defaultValue={value.defaultGuestsLunchWeekend} /></label><label>Dîner le week-end<input name="defaultGuestsDinnerWeekend" type="number" min="1" max="30" defaultValue={value.defaultGuestsDinnerWeekend} /></label></div><label>Entrées à proposer par semaine<input name="starterTargetPerWeek" type="number" min="0" max="9" defaultValue={value.starterTargetPerWeek} /></label><p className="fieldHint">Jamais générées le midi en semaine. Les entrées choisies manuellement sont conservées.</p><button className="primaryButton" disabled={busy}>{busy ? 'Enregistrement…' : 'Enregistrer mes habitudes'}</button></form>;
 }
 
 function RulesEditor({ ingredients, value, onChange, onMessage, onError }: { ingredients: IngredientDto[]; value: Incompatibility[]; onChange: (items: Incompatibility[]) => void; onMessage: (value: string) => void; onError: (value: string) => void }) {

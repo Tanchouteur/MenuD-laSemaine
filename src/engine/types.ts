@@ -13,6 +13,7 @@ export type MealKind = 'recipe' | 'composed';
 export type MealCandidate = {
   kind: MealKind;
   signature: string;
+  repeatKey?: string;
   name: string;
   description?: string;
   totalMinutes?: number;
@@ -20,6 +21,8 @@ export type MealCandidate = {
   proteinId?: string;
   starchId?: string;
   vegetableId?: string;
+  starchRecipeId?: string;
+  vegetableRecipeId?: string;
   compositionType?: 'complete' | 'starch' | 'vegetable';
   ingredientIds: readonly string[];
   proteinFamily?: string;
@@ -34,6 +37,7 @@ export type MealCandidate = {
 export type AssignedMeal = {
   kind: MealKind;
   signature: string;
+  repeatKey?: string;
   name: string;
   description?: string;
   totalMinutes?: number;
@@ -55,6 +59,7 @@ export type GenerationSlot = {
 
 export type ConsumedMeal = {
   signature: string;
+  repeatKey?: string;
   mealDate: string;
 };
 

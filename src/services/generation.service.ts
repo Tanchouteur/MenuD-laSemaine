@@ -9,6 +9,7 @@ import {
   type ConsumedMeal,
   type GenerationContext,
   type GenerationSlot,
+  type MealCandidate,
   type ScoredCandidate,
 } from '@/engine';
 import { getPrisma } from '@/lib/prisma';
@@ -18,6 +19,7 @@ import {
   loadIncompatibilities,
   loadManualCandidate,
 } from '@/services/candidate.service';
+import { generateStarters } from '@/services/starter.service';
 import { rebuildShoppingList } from '@/services/shopping-list.service';
 import {
   dateToIso,
@@ -32,11 +34,11 @@ async function loadHistory(): Promise<ConsumedMeal[]> {
       weeklyPlan: { status: PlanStatus.CONFIRMED },
       mealSignature: { not: null },
     },
-    select: { mealSignature: true, mealDate: true },
+    select: { mealSignature: true, mealDate: true, recipe: { select: { id: true, variantOfId: true } } },
   });
   return slots.flatMap((slot) =>
     slot.mealSignature
-      ? [{ signature: slot.mealSignature, mealDate: dateToIso(slot.mealDate) }]
+      ? [{ signature: slot.mealSignature, repeatKey: slot.recipe ? `recipe:${slot.recipe.variantOfId ?? slot.recipe.id}` : undefined, mealDate: dateToIso(slot.mealDate) }]
       : [],
   );
 }
@@ -45,7 +47,7 @@ function slotAssignment(slot: WeeklyPlanDto['slots'][number]): AssignedMeal | nu
   return slot.assignment;
 }
 
-function asGenerationSlot(slot: WeeklyPlanDto['slots'][number]): GenerationSlot {
+function asGenerationSlot(slot: WeeklyPlanDto['slots'][number], candidates?: Map<string, MealCandidate>): GenerationSlot {
   const isFood = slot.slotType === 'recipe' || slot.slotType === 'composed';
   const isSpecial =
     slot.slotType === 'leftovers' ||
@@ -58,7 +60,10 @@ function asGenerationSlot(slot: WeeklyPlanDto['slots'][number]): GenerationSlot 
     isWeekend: slot.slotIndex >= 10,
     isLocked: isFood && slot.isLocked,
     skipGeneration: isSpecial,
-    current: isFood ? slotAssignment(slot) : null,
+    current: isFood && slot.assignment ? {
+      ...slotAssignment(slot)!,
+      repeatKey: candidates?.get(slot.assignment.signature)?.repeatKey ?? slot.assignment.repeatKey,
+    } : null,
   };
 }
 
@@ -80,11 +85,12 @@ export async function generatePersistedWeek(
     loadIncompatibilities(),
     loadHistory(),
   ]);
+  const candidateLookup = new Map(candidates.map((item) => [item.signature, item]));
   const result = generateWeek({
     candidates,
     incompatibilities,
     consumedHistory,
-    slots: plan.slots.map(asGenerationSlot),
+    slots: plan.slots.map((slot) => asGenerationSlot(slot, candidateLookup)),
     seed,
   });
   const candidateBySignature = new Map(
@@ -107,6 +113,7 @@ export async function generatePersistedWeek(
     ),
   );
 
+  const starterWarnings: string[] = [];
   await prisma.$transaction(async (transaction) => {
     const claimed = await transaction.weeklyPlan.updateMany({
       where: {
@@ -137,16 +144,19 @@ export async function generatePersistedWeek(
           proteinId: candidate.proteinId ?? null,
           starchId: candidate.starchId ?? null,
           vegetableId: candidate.vegetableId ?? null,
+          starchRecipeId: candidate.starchRecipeId ?? null,
+          vegetableRecipeId: candidate.vegetableRecipeId ?? null,
         },
       });
     }
+    starterWarnings.push(...await generateStarters(plan.id, seed, transaction));
     await rebuildShoppingList(plan.id, transaction);
   });
   const updated = await getPlanByStartDate(startDate);
   if (!updated) throw new Error('La semaine générée est introuvable.');
   return {
     ...updated,
-    generationWarnings: result.warnings.map((warning) => warning.message),
+    generationWarnings: [...result.warnings.map((warning) => warning.message), ...starterWarnings],
   };
 }
 
@@ -154,11 +164,14 @@ async function contextForSlot(
   plan: WeeklyPlanDto,
   targetSlotId: string,
   rejectedSignatures: readonly string[],
+  candidates: readonly MealCandidate[],
 ): Promise<GenerationContext> {
   const assignedSlots = new Map<number, AssignedMeal>();
+  const bySignature = new Map(candidates.map((item) => [item.signature, item]));
   for (const slot of plan.slots) {
     if (slot.id !== targetSlotId && slot.assignment) {
-      assignedSlots.set(slot.slotIndex, slot.assignment);
+      assignedSlots.set(slot.slotIndex, { ...slot.assignment,
+        repeatKey: bySignature.get(slot.assignment.signature)?.repeatKey ?? slot.assignment.repeatKey });
     }
   }
   return {
@@ -182,11 +195,11 @@ export async function alternativesForSlot(
   if (plan.status !== 'draft') throw new Error('La semaine est déjà confirmée.');
   const target = plan.slots.find((slot) => slot.id === slotId);
   if (!target) throw new Error('Créneau introuvable.');
-  const [candidates, incompatibilities, context] = await Promise.all([
+  const [candidates, incompatibilities] = await Promise.all([
     loadCandidates(),
     loadIncompatibilities(),
-    contextForSlot(plan, slotId, rejectedSignatures),
   ]);
+  const context = await contextForSlot(plan, slotId, rejectedSignatures, candidates);
   return generateAlternatives({
     candidates,
     incompatibilities,
@@ -238,6 +251,8 @@ export async function chooseCandidateForSlot(
       proteinId: candidate.proteinId ?? null,
       starchId: candidate.starchId ?? null,
       vegetableId: candidate.vegetableId ?? null,
+      starchRecipeId: candidate.starchRecipeId ?? null,
+      vegetableRecipeId: candidate.vegetableRecipeId ?? null,
       isLocked: true,
     } });
     await rebuildShoppingList(slot.weeklyPlanId, transaction);
@@ -252,6 +267,8 @@ export async function chooseManualForSlot(
     proteinId?: string;
     starchId?: string;
     vegetableId?: string;
+    starchRecipeId?: string;
+    vegetableRecipeId?: string;
   },
   expectedVersion?: number,
 ): Promise<WeeklyPlanDto> {
@@ -266,7 +283,7 @@ export async function chooseManualForSlot(
     const updatedPlan = await transaction.weeklyPlan.updateMany({
       where: {
         id: slot.weeklyPlanId,
-        status: PlanStatus.DRAFT,
+        status: { in: [PlanStatus.DRAFT, PlanStatus.CONFIRMED] },
         ...(expectedVersion === undefined ? {} : { version: expectedVersion }),
       },
       data: { version: { increment: 1 } },
@@ -286,6 +303,8 @@ export async function chooseManualForSlot(
         proteinId: candidate.proteinId ?? null,
         starchId: candidate.starchId ?? null,
         vegetableId: candidate.vegetableId ?? null,
+        starchRecipeId: candidate.starchRecipeId ?? null,
+        vegetableRecipeId: candidate.vegetableRecipeId ?? null,
         isLocked: true,
       },
     });
@@ -359,7 +378,7 @@ export async function restoreMealSlot(
     const claimed = await transaction.weeklyPlan.updateMany({
       where: {
         id: slot.weeklyPlanId,
-        status: PlanStatus.DRAFT,
+        status: { in: [PlanStatus.DRAFT, PlanStatus.CONFIRMED] },
         ...(expectedVersion === undefined ? {} : { version: expectedVersion }),
       },
       data: { version: { increment: 1 } },
@@ -381,6 +400,12 @@ export async function restoreMealSlot(
         proteinId: state.proteinId,
         starchId: state.starchId,
         vegetableId: state.vegetableId,
+        starchRecipeId: state.starchRecipeId,
+        vegetableRecipeId: state.vegetableRecipeId,
+        starterIngredientId: state.starterIngredientId,
+        starterRecipeId: state.starterRecipeId,
+        starterSnapshot: state.starterSnapshot == null ? Prisma.JsonNull : state.starterSnapshot as Prisma.InputJsonValue,
+        starterIsLocked: state.starterIsLocked,
         isLocked: state.isLocked,
         guestCount: state.guestCount,
       },
@@ -400,7 +425,7 @@ export async function updateMealSlot(
     where: { id: slotId },
     include: { weeklyPlan: true },
   });
-  if (slot.weeklyPlan.status !== PlanStatus.DRAFT) {
+  if (slot.weeklyPlan.status === PlanStatus.ARCHIVED) {
     throw new Error('La semaine est déjà confirmée.');
   }
   if (expectedVersion !== undefined && slot.weeklyPlan.version !== expectedVersion) {
@@ -408,6 +433,9 @@ export async function updateMealSlot(
   }
   if (update.guestCount !== undefined && (update.guestCount < 1 || update.guestCount > 30)) {
     throw new Error('Le nombre de personnes doit être compris entre 1 et 30.');
+  }
+  if (slot.weeklyPlan.status === PlanStatus.CONFIRMED && update.slotType === 'empty') {
+    throw new Error('Une semaine confirmée doit conserver un repas à chaque créneau.');
   }
   const data: Prisma.MealSlotUpdateInput = {};
   if (update.isLocked !== undefined) data.isLocked = update.isLocked;
@@ -430,7 +458,7 @@ export async function updateMealSlot(
     await prisma.$transaction(async (transaction) => {
       const claimed = await transaction.weeklyPlan.updateMany({ where: {
         id: slot.weeklyPlanId,
-        status: PlanStatus.DRAFT,
+        status: { in: [PlanStatus.DRAFT, PlanStatus.CONFIRMED] },
         ...(expectedVersion === undefined ? {} : { version: expectedVersion }),
       }, data: { version: { increment: 1 } } });
       if (claimed.count !== 1) throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');
@@ -444,6 +472,12 @@ export async function updateMealSlot(
         proteinId: null,
         starchId: null,
         vegetableId: null,
+        starchRecipeId: null,
+        vegetableRecipeId: null,
+        starterIngredientId: null,
+        starterRecipeId: null,
+        starterSnapshot: Prisma.JsonNull,
+        starterIsLocked: false,
         isLocked: update.isLocked,
         guestCount: update.guestCount,
       } });
@@ -455,7 +489,7 @@ export async function updateMealSlot(
   await prisma.$transaction(async (transaction) => {
     const claimed = await transaction.weeklyPlan.updateMany({ where: {
       id: slot.weeklyPlanId,
-      status: PlanStatus.DRAFT,
+      status: { in: [PlanStatus.DRAFT, PlanStatus.CONFIRMED] },
       ...(expectedVersion === undefined ? {} : { version: expectedVersion }),
     }, data: { version: { increment: 1 } } });
     if (claimed.count !== 1) throw new Error('Cette semaine a été modifiée sur un autre appareil. Rechargez la page.');

@@ -107,12 +107,13 @@ Cette commande enchaîne :
 - healthcheck SQL et réponses JSON des routes principales ;
 - création idempotente d’une semaine et de ses quatorze créneaux ;
 - propagation des valeurs par défaut semaine/week-end ;
-- confirmation, réouverture et interdiction de modifier une semaine confirmée ;
+- confirmation, réouverture et correction manuelle contrôlée d’une semaine confirmée ;
 - verrouillage optimiste et conflit entre deux écritures concurrentes ;
 - validation et persistance du catalogue ;
 - normalisation des incompatibilités ;
 - sélection des ingrédients autorisés dans les assiettes automatiques ;
 - prévisualisation et application idempotente d’un enrichissement JSON ;
+- prévisualisation et application répétée du fichier réel `Catalogue/enrichissement-repas-2026-09-25.json` ;
 - génération et persistance d’une semaine complète ;
 - création des instantanés et recalcul de la liste de courses ;
 - agrégation par ingrédient/unité et nombre de convives ;

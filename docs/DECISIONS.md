@@ -61,3 +61,20 @@ de la recette et les liens existants.
 **Statut : accepté.** Les migrations de production sont additives. Une
 sauvegarde précède le déploiement. Le rollback applicatif conserve les colonnes
 ajoutées lorsqu’une ancienne version peut les ignorer.
+
+## ADR-010 — Repas en composants et variantes souples
+
+**Statut : accepté le 25 septembre 2026.** Un produit acheté reste un ingrédient ;
+une préparation est une recette de plat, d’entrée ou d’accompagnement. Le repas
+fige leurs produits et portions dans ses instantanés. Le lien « Variante de »
+partage le refroidissement entre recettes liées, mais le moteur peut assouplir
+ce refroidissement comme pour toute autre recette et le choix manuel reste
+libre. Les entrées sont générées séparément, selon une cible hebdomadaire
+réglable, hors déjeuners de semaine.
+
+## ADR-011 — Correction après confirmation
+
+**Statut : accepté le 25 septembre 2026.** Une semaine confirmée peut recevoir
+une correction manuelle avec contrôle de version et recalcul des courses. Elle
+reste confirmée et dans l’historique. La génération et le vidage d’un créneau
+restent réservés au brouillon.

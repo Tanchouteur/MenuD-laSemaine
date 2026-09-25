@@ -34,6 +34,7 @@ function asAssignment(candidate: MealCandidate): AssignedMeal {
   return {
     kind: candidate.kind,
     signature: candidate.signature,
+    repeatKey: candidate.repeatKey,
     name: candidate.name,
     description: candidate.description,
     totalMinutes: candidate.totalMinutes,

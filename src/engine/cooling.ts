@@ -18,7 +18,7 @@ export function daysSinceLastConsumption(
   let nearest: number | null = null;
 
   for (const consumed of history) {
-    if (consumed.signature !== signature) continue;
+    if ((consumed.repeatKey ?? consumed.signature) !== signature) continue;
 
     const difference = daysBetween(consumed.mealDate, targetDate);
     if (difference < 0) continue;

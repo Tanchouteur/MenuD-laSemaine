@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { GET as healthGet } from '@/app/api/health/route';
 import { POST as ingredientPost } from '@/app/api/ingredients/route';
@@ -15,10 +16,12 @@ import {
   listIngredients,
 } from '@/services/catalog.service';
 import {
+  chooseManualForSlot,
   generatePersistedWeek,
   restoreMealSlot,
   updateMealSlot,
 } from '@/services/generation.service';
+import { setStarterForSlot } from '@/services/starter.service';
 import {
   addManualShoppingEntry,
   deleteManualShoppingEntry,
@@ -134,9 +137,9 @@ describe('plans hebdomadaires sur PostgreSQL 17', () => {
     const confirmed = await confirmPlan(plan.id, plan.version);
     expect(confirmed.status).toBe('confirmed');
     expect(confirmed.confirmedAt).not.toBeNull();
-    await expect(updateMealSlot(confirmed.slots[0].id, { guestCount: 6 }, confirmed.version))
-      .rejects.toThrow('déjà confirmée');
-    const reopened = await unconfirmPlan(plan.id, confirmed.version);
+    const corrected = await updateMealSlot(confirmed.slots[0].id, { guestCount: 6 }, confirmed.version);
+    expect(corrected.slots[0].guestCount).toBe(6);
+    const reopened = await unconfirmPlan(plan.id, corrected.version);
     expect(reopened.status).toBe('draft');
     expect(reopened.confirmedAt).toBeNull();
   });
@@ -257,9 +260,158 @@ describe('catalogue, contraintes et import transactionnel', () => {
     expect(await prisma.ingredient.count()).toBe(1);
     expect(await prisma.recipe.count()).toBe(1);
   });
+
+  it('prévisualise une conversion incomplète sans désactiver les anciens ingrédients', async () => {
+    const old = await ingredient('Poulet préparé', 'PROTEIN');
+    const document = { format: 'menu-de-la-semaine-enrichment', version: 2,
+      ingredients: [{ name: old.name, category: 'PROTEIN', useInComposedMeals: false,
+        isActive: false, portionPerPerson: null, unit: null, aisle: null }],
+      recipes: [{ name: 'Poulet préparé', role: 'MAIN', basePortions: 4,
+        ingredients: [{ name: old.name, quantity: null, unit: 'GRAM' }] }],
+    };
+    const preview = await previewCatalogEnrichment(document);
+    expect(preview.summary.pendingQuantities).toEqual(['Poulet préparé : Poulet préparé']);
+    expect(preview.summary.ingredientsToArchive).toEqual(['Poulet préparé']);
+    await expect(applyCatalogEnrichment(document)).rejects.toThrow('Quantités à vérifier');
+    expect((await prisma.ingredient.findUniqueOrThrow({ where: { id: old.id } })).isActive).toBe(true);
+  });
+
+  it('demande les portions des produits simples utilisés dans les assiettes', async () => {
+    const document = { format: 'menu-de-la-semaine-enrichment', version: 2,
+      ingredients: [{ name: 'Tenders Lidl', category: 'PROTEIN', useInComposedMeals: true,
+        portionPerPerson: null, unit: null, aisle: null }], recipes: [] };
+    const preview = await previewCatalogEnrichment(document);
+    expect(preview.summary.pendingPortions).toEqual(['Tenders Lidl']);
+    await expect(applyCatalogEnrichment(document)).rejects.toThrow('Quantités à vérifier');
+  });
+
+  it('applique deux fois le fichier du catalogue du 25 septembre sans doublons', async () => {
+    const document = JSON.parse(readFileSync('Catalogue/enrichissement-repas-2026-09-25.json', 'utf8'));
+    const existingNames = ['Tenders Lidl', 'Semoule', 'Brocolis', 'Omelette au jambon',
+      'Poulet à la crème moutarde', 'Pdt. Sauté', 'Œuf', 'Jambon', 'Poulet', 'Crème',
+      'Pommes de terre', 'Huile d’olive', 'Tomate', 'Carotte'];
+    const byName = new Map<string, Awaited<ReturnType<typeof ingredient>>>();
+    for (const name of existingNames) byName.set(name, await ingredient(name));
+    await prisma.aisle.createMany({ data: ['Épicerie', 'Fruits et légumes'].map((name, sortOrder) => ({ name, sortOrder })) });
+    await createRecipe({ name: 'Poulet curry coco et riz', rating: 3, basePortions: 4,
+      seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'], ...allMoments,
+      ingredients: [{ ingredientId: byName.get('Poulet')!.id, quantity: 600, unit: 'GRAM' }] });
+    const preview = await previewCatalogEnrichment(document);
+    expect(preview.summary.pendingQuantities).toEqual([]);
+    expect(preview.summary.pendingPortions).toEqual([]);
+    expect(preview.summary.recipesToCreate).toHaveLength(4);
+    await applyCatalogEnrichment(document);
+    await applyCatalogEnrichment(document);
+    expect(await prisma.recipe.count()).toBe(5);
+    const curry = await prisma.recipe.findUniqueOrThrow({ where: { name: 'Poulet curry coco et riz' } });
+    const mustard = await prisma.recipe.findUniqueOrThrow({ where: { name: 'Poulet à la crème moutarde' } });
+    expect(mustard.variantOfId).toBe(curry.id);
+    expect(mustard.allowStarchSide).toBe(true);
+    expect((await prisma.recipe.findUniqueOrThrow({ where: { name: 'Pommes de terre sautées' } })).role).toBe('SIDE_STARCH');
+    expect((await prisma.recipe.findUniqueOrThrow({ where: { name: 'Tomates et carottes râpées' } })).role).toBe('STARTER');
+    for (const name of ['Omelette au jambon', 'Poulet à la crème moutarde', 'Pdt. Sauté']) {
+      expect((await prisma.ingredient.findUniqueOrThrow({ where: { name } })).isActive).toBe(false);
+    }
+    expect((await prisma.ingredient.findUniqueOrThrow({ where: { name: 'Semoule' } })).portionPerPerson?.toNumber()).toBe(80);
+  });
 });
 
 describe('génération, instantanés et liste de courses', () => {
+  it('rejoue les quatre repas du week-end avec leurs vraies courses', async () => {
+    const make = async (name: string, category: 'PROTEIN' | 'STARCH' | 'VEGETABLE') => ingredient(name, category);
+    const [egg, ham, potato, oil, tournedos, pasta, tenders, rice, broccoli,
+      chicken, cream, mustard, semolina, beans, asparagus, palm, tomato, carrot] = await Promise.all([
+      make('Œuf', 'PROTEIN'), make('Jambon', 'PROTEIN'), make('Pommes de terre', 'STARCH'),
+      make('Huile', 'VEGETABLE'), make('Tournedos', 'PROTEIN'), make('Pâtes', 'STARCH'),
+      make('Tenders Lidl', 'PROTEIN'), make('Riz', 'STARCH'), make('Brocolis', 'VEGETABLE'),
+      make('Poulet', 'PROTEIN'), make('Crème', 'VEGETABLE'), make('Moutarde', 'VEGETABLE'),
+      make('Semoule', 'STARCH'), make('Haricots verts', 'VEGETABLE'), make('Asperges', 'VEGETABLE'),
+      make('Cœurs de palmiers', 'VEGETABLE'), make('Tomate', 'VEGETABLE'), make('Carotte', 'VEGETABLE'),
+    ]);
+    const common = { rating: 3, basePortions: 4,
+      seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'] as ('WINTER' | 'SPRING' | 'SUMMER' | 'AUTUMN')[], ...allMoments };
+    const omelette = await createRecipe({ ...common, name: 'Omelette et jambon grillé', allowStarchSide: true,
+      ingredients: [{ ingredientId: egg.id, quantity: 8, unit: 'PIECE' }, { ingredientId: ham.id, quantity: 240, unit: 'GRAM' }] });
+    const sauteed = await createRecipe({ ...common, name: 'Pommes de terre sautées', role: 'SIDE_STARCH',
+      ingredients: [{ ingredientId: potato.id, quantity: 1000, unit: 'GRAM' }, { ingredientId: oil.id, quantity: 40, unit: 'GRAM' }] });
+    const mustardChicken = await createRecipe({ ...common, name: 'Poulet à la crème moutarde', allowStarchSide: true, allowVegetableSide: true,
+      ingredients: [{ ingredientId: chicken.id, quantity: 600, unit: 'GRAM' }, { ingredientId: cream.id, quantity: 200, unit: 'GRAM' }, { ingredientId: mustard.id, quantity: 40, unit: 'GRAM' }] });
+    const tomatoCarrot = await createRecipe({ ...common, name: 'Tomates et carottes râpées', role: 'STARTER',
+      ingredients: [{ ingredientId: tomato.id, quantity: 300, unit: 'GRAM' }, { ingredientId: carrot.id, quantity: 300, unit: 'GRAM' }] });
+    const plan = await ensureWeeklyPlan('2026-09-21');
+    let version = plan.version;
+    const choices = [
+      { recipeId: omelette.id, starchRecipeId: sauteed.id },
+      { proteinId: tournedos.id, starchId: pasta.id },
+      { proteinId: tenders.id, starchId: rice.id, vegetableId: broccoli.id },
+      { recipeId: mustardChicken.id, starchId: semolina.id, vegetableId: beans.id },
+    ];
+    for (let offset = 0; offset < 4; offset += 1) {
+      version = (await chooseManualForSlot(plan.slots[10 + offset].id, choices[offset], version)).version;
+    }
+    version = (await setStarterForSlot(plan.slots[11].id, { ingredientId: asparagus.id }, version)).version;
+    version = (await setStarterForSlot(plan.slots[12].id, { ingredientId: palm.id }, version)).version;
+    const result = await setStarterForSlot(plan.slots[13].id, { recipeId: tomatoCarrot.id }, version);
+    expect(result.slots.slice(10).map((slot) => slot.assignment?.name)).toEqual([
+      'Omelette et jambon grillé · pommes de terre sautées', 'Tournedos · pâtes',
+      'Tenders Lidl · riz · brocolis', 'Poulet à la crème moutarde · semoule · haricots verts',
+    ]);
+    expect(result.slots.slice(10).map((slot) => slot.starter?.name ?? null)).toEqual([
+      null, 'Asperges', 'Cœurs de palmiers', 'Tomates et carottes râpées',
+    ]);
+    const labels = (await getShoppingList(plan.id)).map((entry) => entry.label);
+    expect(labels).toContain('Moutarde');
+    expect(labels).toContain('Pommes de terre');
+    expect(labels).not.toContain('Poulet à la crème moutarde');
+  });
+
+  it('associe recette, accompagnement préparé et entrée puis recalcule une semaine confirmée', async () => {
+    const egg = await ingredient('Œuf', 'PROTEIN');
+    const potatoes = await ingredient('Pommes de terre', 'STARCH');
+    const asparagus = await createIngredient({ name: 'Asperges', category: 'VEGETABLE', rating: 3,
+      useAsStarter: true, portionPerPerson: 100, unit: 'GRAM', seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'], ...allMoments });
+    const omelette = await createRecipe({ name: 'Omelette', rating: 3, basePortions: 4,
+      allowStarchSide: true, seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'],
+      ingredients: [{ ingredientId: egg.id, quantity: 8, unit: 'PIECE' }], ...allMoments });
+    const sauteed = await createRecipe({ name: 'Pommes de terre sautées', role: 'SIDE_STARCH', rating: 3,
+      basePortions: 4, seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'],
+      ingredients: [{ ingredientId: potatoes.id, quantity: 1000, unit: 'GRAM' }], ...allMoments });
+    const plan = await ensureWeeklyPlan('2026-09-21');
+    const sunday = plan.slots[13];
+    const chosen = await chooseManualForSlot(sunday.id, { recipeId: omelette.id, starchRecipeId: sauteed.id }, plan.version);
+    const withStarter = await setStarterForSlot(sunday.id, { ingredientId: asparagus.id }, chosen.version);
+    expect(withStarter.slots[13].starter?.name).toBe('Asperges');
+    expect((await getShoppingList(plan.id)).map((item) => item.label).sort()).toEqual(['Asperges', 'Pommes de terre', 'Œuf']);
+    await prisma.mealSlot.updateMany({ where: { weeklyPlanId: plan.id, slotType: 'EMPTY' }, data: { slotType: 'CUSTOM', customLabel: 'Autre repas' } });
+    const confirmed = await confirmPlan(plan.id, withStarter.version);
+    const corrected = await updateMealSlot(sunday.id, { guestCount: 5 }, confirmed.version);
+    expect(corrected.status).toBe('confirmed');
+    expect((await getShoppingList(plan.id)).find((item) => item.label === 'Pommes de terre')?.quantity).toBe(1250);
+  });
+
+  it('respecte la fréquence réglée des entrées et conserve un choix manuel', async () => {
+    const tomato = await ingredient('Tomate');
+    const starter = await createIngredient({ name: 'Cœurs de palmiers', category: 'VEGETABLE', rating: 3,
+      useAsStarter: true, portionPerPerson: 100, unit: 'GRAM', seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'], ...allMoments });
+    for (let index = 0; index < 20; index += 1) await createRecipe({ name: `Plat ${index}`, rating: 3,
+      basePortions: 2, seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN'],
+      ingredients: [{ ingredientId: tomato.id, quantity: 200, unit: 'GRAM' }], ...allMoments });
+    const initial = await ensureWeeklyPlan('2026-09-21');
+    const generated = await generatePersistedWeek('2026-09-21', 'starters-3', initial.version);
+    expect(generated.slots.filter((slot) => slot.starter).length).toBe(3);
+    expect(generated.slots.filter((slot) => slot.starter && slot.slotIndex < 10 && slot.mealTime === 'lunch')).toHaveLength(0);
+    await prisma.appSettings.update({ where: { id: 'default' }, data: { starterTargetPerWeek: 0 } });
+    const none = await generatePersistedWeek('2026-09-21', 'starters-0', generated.version);
+    expect(none.slots.filter((slot) => slot.starter)).toHaveLength(0);
+    const manual = await setStarterForSlot(none.slots[13].id, { ingredientId: starter.id }, none.version);
+    await prisma.appSettings.update({ where: { id: 'default' }, data: { starterTargetPerWeek: 2 } });
+    const two = await generatePersistedWeek('2026-09-21', 'starters-2', manual.version);
+    expect(two.slots.filter((slot) => slot.starter)).toHaveLength(2);
+    expect(two.slots[13].starter?.name).toBe('Cœurs de palmiers');
+    await prisma.appSettings.update({ where: { id: 'default' }, data: { starterTargetPerWeek: 4 } });
+    const four = await generatePersistedWeek('2026-09-21', 'starters-4', two.version);
+    expect(four.slots.filter((slot) => slot.starter)).toHaveLength(4);
+  });
   it('génère et persiste une semaine complète puis reconstruit les courses', async () => {
     const tomato = await ingredient('Tomate');
     for (let index = 0; index < 20; index += 1) {

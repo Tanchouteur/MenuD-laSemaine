@@ -1,27 +1,29 @@
 import 'server-only';
-import type { Ingredient, Season } from '../../generated/prisma/client';
-import type {
-  AllowedMoments,
-  MealCandidate,
-  Season as EngineSeason,
-} from '@/engine';
+import type { Ingredient, Recipe, RecipeIngredient, Season } from '../../generated/prisma/client';
+import type { AllowedMoments, MealCandidate, Season as EngineSeason } from '@/engine';
 import { canonicalPair } from '@/engine';
 import type { MealSnapshot } from '@/domain/meal-snapshot';
 import { getPrisma } from '@/lib/prisma';
 
 const seasonMap: Record<Season, EngineSeason> = {
-  WINTER: 'winter',
-  SPRING: 'spring',
-  SUMMER: 'summer',
-  AUTUMN: 'autumn',
+  WINTER: 'winter', SPRING: 'spring', SUMMER: 'summer', AUTUMN: 'autumn',
 };
 
-function allowedMoments(item: {
-  okLunchWeekday: boolean;
-  okDinnerWeekday: boolean;
-  okLunchWeekend: boolean;
-  okDinnerWeekend: boolean;
-}): AllowedMoments {
+type RecipeWithIngredients = Recipe & {
+  ingredients: (RecipeIngredient & { ingredient: Ingredient })[];
+};
+type Side = {
+  id: string;
+  kind: 'ingredient' | 'recipe';
+  name: string;
+  rating: number;
+  seasons: Season[];
+  moments: AllowedMoments;
+  ingredientIds: string[];
+  family?: string;
+};
+
+function moments(item: Pick<Ingredient, 'okLunchWeekday' | 'okDinnerWeekday' | 'okLunchWeekend' | 'okDinnerWeekend'>): AllowedMoments {
   return {
     lunchWeekday: item.okLunchWeekday,
     dinnerWeekday: item.okDinnerWeekday,
@@ -29,241 +31,154 @@ function allowedMoments(item: {
     dinnerWeekend: item.okDinnerWeekend,
   };
 }
-
-function intersectSeasons(items: readonly Ingredient[]): EngineSeason[] {
-  const [first, ...rest] = items;
-  if (!first) return [];
-  return first.seasons
-    .filter((season) => rest.every((item) => item.seasons.includes(season)))
-    .map((season) => seasonMap[season]);
-}
-
-function intersectMoments(items: readonly Ingredient[]): AllowedMoments {
-  const keys = [
-    'lunchWeekday',
-    'dinnerWeekday',
-    'lunchWeekend',
-    'dinnerWeekend',
-  ] as const;
-  const mapped = items.map(allowedMoments);
-  return Object.fromEntries(
-    keys.map((key) => [key, mapped.every((moments) => moments[key])]),
-  ) as unknown as AllowedMoments;
-}
-
-function geometricRating(items: readonly Ingredient[]): number {
-  const product = items.reduce((value, item) => value * item.rating, 1);
-  return Math.pow(product, 1 / items.length);
-}
-
-export async function loadCandidates(): Promise<MealCandidate[]> {
-  const prisma = getPrisma();
-  const [ingredients, recipes] = await Promise.all([
-    prisma.ingredient.findMany({ where: { isActive: true } }),
-    prisma.recipe.findMany({
-      where: { isActive: true },
-      include: { ingredients: { include: { ingredient: true } } },
-    }),
-  ]);
-  const compositionIngredients = ingredients.filter((item) => item.useInComposedMeals);
-  const proteins = compositionIngredients.filter((item) => item.category === 'PROTEIN');
-  const starches = compositionIngredients.filter((item) => item.category === 'STARCH');
-  const vegetables = compositionIngredients.filter((item) => item.category === 'VEGETABLE');
-  const composed: MealCandidate[] = [];
-
-  function addComposed(protein: Ingredient, starch?: Ingredient, vegetable?: Ingredient) {
-    const items = [protein, starch, vegetable].filter((item): item is Ingredient => Boolean(item));
-    const candidateSeasons = intersectSeasons(items);
-    if (candidateSeasons.length === 0) return;
-    const parts = [starch, vegetable].filter((item): item is Ingredient => Boolean(item));
-    composed.push({
-      kind: 'composed',
-      signature: `composed:${protein.id}:${starch?.id ?? '-'}:${vegetable?.id ?? '-'}`,
-      name: `${protein.name} et ${parts.map((item) => item.name.toLocaleLowerCase('fr-FR')).join(' avec ')}`,
-      description: parts.length === 2 ? 'Une assiette complète avec deux accompagnements.' : 'Une assiette simple avec un accompagnement.',
-      proteinId: protein.id,
-      starchId: starch?.id,
-      vegetableId: vegetable?.id,
-      compositionType: starch && vegetable ? 'complete' : starch ? 'starch' : 'vegetable',
-      ingredientIds: items.map((item) => item.id),
-      proteinFamily: protein.subFamily ?? undefined,
-      starchFamily: starch?.subFamily ?? undefined,
-      style: 'composed',
-      rating: geometricRating(items),
-      seasons: candidateSeasons,
-      allowedMoments: intersectMoments(items),
-      isActive: true,
-    });
-  }
-
-  for (const protein of proteins) {
-    for (const starch of starches) {
-      addComposed(protein, starch);
-      for (const vegetable of vegetables) {
-        addComposed(protein, starch, vegetable);
-      }
-    }
-    for (const vegetable of vegetables) addComposed(protein, undefined, vegetable);
-  }
-
-  const recipeCandidates: MealCandidate[] = recipes.map((recipe) => {
-    const recipeIngredients = recipe.ingredients.map((item) => item.ingredient);
-    const protein = recipeIngredients.find((item) => item.category === 'PROTEIN');
-    const starch = recipeIngredients.find((item) => item.category === 'STARCH');
-    return {
-      kind: 'recipe',
-      signature: `recipe:${recipe.id}`,
-      recipeId: recipe.id,
-      name: recipe.name,
-      description: recipe.style ? `Une recette de style ${recipe.style}.` : 'Une recette familiale.',
-      totalMinutes: (recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0),
-      ingredientIds: recipeIngredients.map((item) => item.id),
-      proteinFamily: protein?.subFamily ?? undefined,
-      starchFamily: starch?.subFamily ?? undefined,
-      style: recipe.style ?? undefined,
-      rating: recipe.rating,
-      seasons: recipe.seasons.map((season) => seasonMap[season]),
-      allowedMoments: allowedMoments(recipe),
-      isActive: true,
-    };
-  });
-
-  return [...composed, ...recipeCandidates];
-}
-
-export async function loadManualCandidate(input: {
-  recipeId?: string;
-  proteinId?: string;
-  starchId?: string;
-  vegetableId?: string;
-}): Promise<MealCandidate> {
-  if (input.recipeId) {
-    const recipe = (await loadCandidates()).find(
-      (candidate) => candidate.kind === 'recipe' && candidate.recipeId === input.recipeId,
-    );
-    if (!recipe) throw new Error('Cette recette n’est plus disponible.');
-    return recipe;
-  }
-
-  if (!input.proteinId || (!input.starchId && !input.vegetableId)) {
-    throw new Error('Choisissez une protéine et au moins un accompagnement.');
-  }
-  const ids = [input.proteinId, input.starchId, input.vegetableId].filter(
-    (id): id is string => Boolean(id),
-  );
-  if (new Set(ids).size !== ids.length) {
-    throw new Error('Choisissez des ingrédients différents.');
-  }
-  const ingredients = await getPrisma().ingredient.findMany({
-    where: { id: { in: ids }, isActive: true },
-  });
-  const byId = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient]));
-  const protein = byId.get(input.proteinId);
-  const starch = input.starchId ? byId.get(input.starchId) : undefined;
-  const vegetable = input.vegetableId ? byId.get(input.vegetableId) : undefined;
-  if (
-    !protein || protein.category !== 'PROTEIN' ||
-    (input.starchId && (!starch || starch.category !== 'STARCH')) ||
-    (input.vegetableId && (!vegetable || vegetable.category !== 'VEGETABLE'))
-  ) {
-    throw new Error('La composition contient un ingrédient indisponible ou du mauvais type.');
-  }
-  const items = [protein, starch, vegetable].filter(
-    (ingredient): ingredient is Ingredient => Boolean(ingredient),
-  );
-  const parts = [starch, vegetable].filter(
-    (ingredient): ingredient is Ingredient => Boolean(ingredient),
-  );
+function combineMoments(items: { moments: AllowedMoments }[]): AllowedMoments {
   return {
-    kind: 'composed',
-    signature: `composed:${protein.id}:${starch?.id ?? '-'}:${vegetable?.id ?? '-'}`,
-    name: `${protein.name} et ${parts.map((item) => item.name.toLocaleLowerCase('fr-FR')).join(' avec ')}`,
-    description: parts.length === 2
-      ? 'Assiette complète choisie par la famille.'
-      : 'Assiette choisie par la famille.',
-    proteinId: protein.id,
-    starchId: starch?.id,
-    vegetableId: vegetable?.id,
-    compositionType: starch && vegetable ? 'complete' : starch ? 'starch' : 'vegetable',
-    ingredientIds: items.map((item) => item.id),
-    proteinFamily: protein.subFamily ?? undefined,
-    starchFamily: starch?.subFamily ?? undefined,
-    style: 'composed',
-    rating: geometricRating(items),
-    seasons: intersectSeasons(items),
-    allowedMoments: intersectMoments(items),
+    lunchWeekday: items.every((item) => item.moments.lunchWeekday),
+    dinnerWeekday: items.every((item) => item.moments.dinnerWeekday),
+    lunchWeekend: items.every((item) => item.moments.lunchWeekend),
+    dinnerWeekend: items.every((item) => item.moments.dinnerWeekend),
+  };
+}
+function combineSeasons(items: { seasons: Season[] }[]): EngineSeason[] {
+  const first = items[0];
+  return first ? first.seasons.filter((season) => items.every((item) => item.seasons.includes(season))).map((season) => seasonMap[season]) : [];
+}
+function sideFromIngredient(item: Ingredient): Side {
+  return { id: item.id, kind: 'ingredient', name: item.name, rating: item.rating,
+    seasons: item.seasons, moments: moments(item), ingredientIds: [item.id], family: item.subFamily ?? undefined };
+}
+function sideFromRecipe(item: RecipeWithIngredients): Side {
+  return { id: item.id, kind: 'recipe', name: item.name, rating: item.rating,
+    seasons: item.seasons, moments: moments(item), ingredientIds: item.ingredients.map((entry) => entry.ingredientId) };
+}
+function sideToken(side?: Side) { return side ? `${side.kind === 'recipe' ? 'r' : 'i'}${side.id}` : '-'; }
+function sideOptions(ingredients: Ingredient[], recipes: RecipeWithIngredients[], category: 'STARCH' | 'VEGETABLE', automatic: boolean): Side[] {
+  const role = category === 'STARCH' ? 'SIDE_STARCH' : 'SIDE_VEGETABLE';
+  return [
+    ...ingredients.filter((item) => item.category === category && (!automatic || item.useInComposedMeals)).map(sideFromIngredient),
+    ...recipes.filter((item) => item.role === role).map(sideFromRecipe),
+  ];
+}
+function makeCandidate(main: Ingredient | RecipeWithIngredients, starch?: Side, vegetable?: Side): MealCandidate | null {
+  const isRecipe = 'ingredients' in main;
+  const items = [{ seasons: main.seasons, moments: moments(main) },
+    ...[starch, vegetable].filter((item): item is Side => Boolean(item))];
+  const seasons = combineSeasons(items);
+  if (!seasons.length) return null;
+  const allIds = isRecipe ? main.ingredients.map((entry) => entry.ingredientId) : [main.id];
+  const sides = [starch, vegetable].filter((item): item is Side => Boolean(item));
+  const root = isRecipe ? (main.variantOfId ?? main.id) : null;
+  const signature = isRecipe
+    ? `recipe:${main.id}${sides.length ? `:${sideToken(starch)}:${sideToken(vegetable)}` : ''}`
+    : `composed:${main.id}:${sideToken(starch)}:${sideToken(vegetable)}`;
+  return {
+    kind: isRecipe ? 'recipe' : 'composed',
+    signature,
+    repeatKey: root ? `recipe:${root}` : undefined,
+    name: [main.name, ...sides.map((side) => side.name.toLocaleLowerCase('fr-FR'))].join(' · '),
+    description: sides.length ? 'Plat et accompagnements choisis pour ce repas.' : 'Recette familiale.',
+    totalMinutes: isRecipe ? (main.prepTimeMinutes ?? 0) + (main.cookTimeMinutes ?? 0) : undefined,
+    recipeId: isRecipe ? main.id : undefined,
+    proteinId: isRecipe ? undefined : main.id,
+    starchId: starch?.kind === 'ingredient' ? starch.id : undefined,
+    vegetableId: vegetable?.kind === 'ingredient' ? vegetable.id : undefined,
+    starchRecipeId: starch?.kind === 'recipe' ? starch.id : undefined,
+    vegetableRecipeId: vegetable?.kind === 'recipe' ? vegetable.id : undefined,
+    compositionType: sides.length === 2 ? 'complete' : starch ? 'starch' : vegetable ? 'vegetable' : undefined,
+    ingredientIds: [...allIds, ...sides.flatMap((side) => side.ingredientIds)],
+    proteinFamily: isRecipe ? main.ingredients.find((entry) => entry.ingredient.category === 'PROTEIN')?.ingredient.subFamily ?? undefined : main.subFamily ?? undefined,
+    starchFamily: starch?.family,
+    style: isRecipe ? main.style ?? undefined : 'composed',
+    rating: Math.pow([main.rating, ...sides.map((side) => side.rating)].reduce((product, rating) => product * rating, 1), 1 / (sides.length + 1)),
+    seasons,
+    allowedMoments: combineMoments(items),
     isActive: true,
   };
 }
+async function allCandidates(automatic: boolean): Promise<MealCandidate[]> {
+  const prisma = getPrisma();
+  const [ingredients, recipes] = await Promise.all([
+    prisma.ingredient.findMany({ where: { isActive: true } }),
+    prisma.recipe.findMany({ where: { isActive: true }, include: { ingredients: { include: { ingredient: true } } } }),
+  ]);
+  const starches = sideOptions(ingredients, recipes, 'STARCH', automatic);
+  const vegetables = sideOptions(ingredients, recipes, 'VEGETABLE', automatic);
+  const result: MealCandidate[] = [];
+  function add(main: Ingredient | RecipeWithIngredients, allowStarch: boolean, allowVegetable: boolean) {
+    const starchChoices = allowStarch ? [undefined, ...starches] : [undefined];
+    const vegetableChoices = allowVegetable ? [undefined, ...vegetables] : [undefined];
+    for (const starch of starchChoices) for (const vegetable of vegetableChoices) {
+      if ((allowStarch || allowVegetable) && !starch && !vegetable) continue;
+      const candidate = makeCandidate(main, starch, vegetable);
+      if (candidate) result.push(candidate);
+    }
+  }
+  for (const protein of ingredients.filter((item) => item.category === 'PROTEIN' && (!automatic || item.useInComposedMeals))) {
+    add(protein, true, true);
+  }
+  for (const recipe of recipes.filter((item) => item.role === 'MAIN')) {
+    add(recipe, recipe.allowStarchSide, recipe.allowVegetableSide);
+  }
+  return result;
+}
+export function loadCandidates() { return allCandidates(true); }
+
+export async function loadManualCandidate(input: {
+  recipeId?: string; proteinId?: string; starchId?: string; vegetableId?: string;
+  starchRecipeId?: string; vegetableRecipeId?: string;
+}): Promise<MealCandidate> {
+  if (Boolean(input.recipeId) === Boolean(input.proteinId)) throw new Error('Choisissez un plat ou une protéine.');
+  const selected = (await allCandidates(false)).find((item) =>
+    item.recipeId === input.recipeId && item.proteinId === input.proteinId &&
+    item.starchId === input.starchId && item.vegetableId === input.vegetableId &&
+    item.starchRecipeId === input.starchRecipeId && item.vegetableRecipeId === input.vegetableRecipeId,
+  );
+  if (!selected) throw new Error('Cette composition est indisponible ou incomplète.');
+  return selected;
+}
 
 export async function loadIncompatibilities(): Promise<Set<string>> {
-  const rows = await getPrisma().incompatibility.findMany({
-    select: { ingredientId1: true, ingredientId2: true },
-  });
-  return new Set(
-    rows.map((row) => canonicalPair(row.ingredientId1, row.ingredientId2)),
-  );
+  const rows = await getPrisma().incompatibility.findMany({ select: { ingredientId1: true, ingredientId2: true } });
+  return new Set(rows.map((row) => canonicalPair(row.ingredientId1, row.ingredientId2)));
 }
-
-function snapshotItem(ingredient: Ingredient & { aisle?: { name: string } | null }) {
-  return {
-    ingredientId: ingredient.id,
-    name: ingredient.name,
+function productItem(ingredient: Ingredient & { aisle?: { name: string } | null }) {
+  return { ingredientId: ingredient.id, name: ingredient.name,
     quantityPerPerson: ingredient.portionPerPerson?.toNumber() ?? null,
-    unit: ingredient.unit,
-    aisleId: ingredient.aisleId,
-    aisleName: ingredient.aisle?.name ?? null,
+    unit: ingredient.unit, aisleId: ingredient.aisleId, aisleName: ingredient.aisle?.name ?? null };
+}
+async function recipeItems(id: string) {
+  const recipe = await getPrisma().recipe.findUniqueOrThrow({
+    where: { id }, include: { ingredients: { include: { ingredient: { include: { aisle: true } } } } },
+  });
+  return recipe.ingredients.map((entry) => ({
+    ingredientId: entry.ingredient.id, name: entry.ingredient.name,
+    quantityPerPerson: entry.quantity.toNumber() / recipe.basePortions, unit: entry.unit,
+    aisleId: entry.ingredient.aisleId, aisleName: entry.ingredient.aisle?.name ?? null,
+  }));
+}
+export async function buildSnapshot(candidate: MealCandidate): Promise<MealSnapshot> {
+  const productIds = [candidate.proteinId, candidate.starchId, candidate.vegetableId].filter((id): id is string => Boolean(id));
+  const recipeIds = [candidate.recipeId, candidate.starchRecipeId, candidate.vegetableRecipeId].filter((id): id is string => Boolean(id));
+  const [products, prepared] = await Promise.all([
+    getPrisma().ingredient.findMany({ where: { id: { in: productIds } }, include: { aisle: true } }),
+    Promise.all(recipeIds.map(recipeItems)),
+  ]);
+  return {
+    version: 1, kind: candidate.kind, signature: candidate.signature, repeatKey: candidate.repeatKey,
+    name: candidate.name, description: candidate.description, totalMinutes: candidate.totalMinutes,
+    proteinFamily: candidate.proteinFamily, starchFamily: candidate.starchFamily,
+    style: candidate.style, compositionType: candidate.compositionType,
+    items: [...products.map(productItem), ...prepared.flat()],
   };
 }
-
-export async function buildSnapshot(candidate: MealCandidate): Promise<MealSnapshot> {
-  const prisma = getPrisma();
-
-  if (candidate.kind === 'recipe' && candidate.recipeId) {
-    const recipe = await prisma.recipe.findUniqueOrThrow({
-      where: { id: candidate.recipeId },
-      include: {
-        ingredients: { include: { ingredient: { include: { aisle: true } } } },
-      },
-    });
-    const items = recipe.ingredients.map((entry) => ({
-      ingredientId: entry.ingredient.id,
-      name: entry.ingredient.name,
-      quantityPerPerson: entry.quantity.toNumber() / recipe.basePortions,
-      unit: entry.unit,
-      aisleId: entry.ingredient.aisleId,
-      aisleName: entry.ingredient.aisle?.name ?? null,
-    }));
-    return {
-      version: 1,
-      kind: candidate.kind,
-      signature: candidate.signature,
-      name: candidate.name,
-      description: candidate.description,
-      totalMinutes: candidate.totalMinutes,
-      proteinFamily: candidate.proteinFamily,
-      starchFamily: candidate.starchFamily,
-      style: candidate.style,
-      compositionType: candidate.compositionType,
-      items,
-    };
+export async function buildStarterSnapshot(input: { ingredientId?: string; recipeId?: string }): Promise<MealSnapshot> {
+  if (Boolean(input.ingredientId) === Boolean(input.recipeId)) throw new Error('Choisissez une entrée.');
+  if (input.ingredientId) {
+    const item = await getPrisma().ingredient.findUniqueOrThrow({ where: { id: input.ingredientId }, include: { aisle: true } });
+    if (!item.isActive) throw new Error('Cette entrée est indisponible.');
+    return { version: 1, kind: 'composed', signature: `starter:ingredient:${item.id}`, name: item.name, items: [productItem(item)] };
   }
-
-  const ingredients = await prisma.ingredient.findMany({
-    where: { id: { in: [...candidate.ingredientIds] } },
-    include: { aisle: true },
-  });
-  return {
-    version: 1,
-    kind: candidate.kind,
-    signature: candidate.signature,
-    name: candidate.name,
-    description: candidate.description,
-    totalMinutes: candidate.totalMinutes,
-    proteinFamily: candidate.proteinFamily,
-    starchFamily: candidate.starchFamily,
-    style: candidate.style,
-    compositionType: candidate.compositionType,
-    items: ingredients.map(snapshotItem),
-  };
+  const item = await getPrisma().recipe.findUniqueOrThrow({ where: { id: input.recipeId! } });
+  if (!item.isActive || item.role !== 'STARTER') throw new Error('Cette entrée est indisponible.');
+  return { version: 1, kind: 'recipe', signature: `starter:recipe:${item.id}`, name: item.name, items: await recipeItems(item.id) };
 }

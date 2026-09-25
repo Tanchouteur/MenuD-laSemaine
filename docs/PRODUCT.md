@@ -24,13 +24,17 @@ partir du nombre de convives. L’expérience de référence est le téléphone.
 
 ## Règles visibles
 
-- Une recette est un plat autonome avec ses propres ingrédients.
+- Un ingrédient est un produit acheté ; une recette décrit une préparation et peut être un plat, une entrée ou un accompagnement.
+- Un plat préparé peut être complet ou demander un féculent et/ou un légume choisi pour ce repas.
+- « Variante de » relie des recettes pour partager le refroidissement, sans interdire deux variantes dans la même semaine.
+- Une entrée est facultative ; la cible générée est réglable de 0 à 9 par semaine (3 par défaut), jamais le midi en semaine.
 - Une assiette automatique contient une protéine et au moins un accompagnement.
 - Les ingrédients de recette ne sont pas automatiquement des bases de repas.
 - Un choix manuel prime sur saison, moment, répétition et incompatibilité ; les
   écarts sont signalés et le choix est conservé.
 - Seules les semaines confirmées comptent comme repas consommés.
 - Les restes et repas extérieurs n’ajoutent pas de courses.
+- Une semaine confirmée accepte les corrections manuelles ; seule sa génération automatique est bloquée.
 
 ## Hors périmètre actuel
 

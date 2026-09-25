@@ -38,7 +38,7 @@ export async function buildCatalogExport() {
 
   return {
     format: 'menu-de-la-semaine-catalog',
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     settings: {
       timezone: settings.timezone,
@@ -47,6 +47,7 @@ export async function buildCatalogExport() {
       defaultGuestsLunchWeekend: settings.defaultGuestsLunchWeekend,
       defaultGuestsDinnerWeekend: settings.defaultGuestsDinnerWeekend,
       compositionSetupCompleted: settings.compositionSetupCompleted,
+      starterTargetPerWeek: settings.starterTargetPerWeek,
     },
     aisles: aisles.map((aisle) => ({
       id: aisle.id,
@@ -61,6 +62,7 @@ export async function buildCatalogExport() {
       rating: ingredient.rating,
       isActive: ingredient.isActive,
       useInComposedMeals: ingredient.useInComposedMeals,
+      useAsStarter: ingredient.useAsStarter,
       portionPerPerson: ingredient.portionPerPerson?.toNumber() ?? null,
       unit: ingredient.unit,
       aisle: ingredient.aisle?.name ?? null,
@@ -75,6 +77,11 @@ export async function buildCatalogExport() {
     recipes: recipes.map((recipe) => ({
       id: recipe.id,
       name: recipe.name,
+      role: recipe.role,
+      allowStarchSide: recipe.allowStarchSide,
+      allowVegetableSide: recipe.allowVegetableSide,
+      variantOfId: recipe.variantOfId,
+      variantOfName: recipes.find((item) => item.id === recipe.variantOfId)?.name ?? null,
       style: recipe.style,
       rating: recipe.rating,
       isActive: recipe.isActive,
@@ -108,6 +115,7 @@ export async function buildCatalogExport() {
       confirmedAt: plan.confirmedAt?.toISOString() ?? null,
       slots: plan.slots.map((slot) => {
         const snapshot = parseMealSnapshot(slot.mealSnapshot);
+        const starter = parseMealSnapshot(slot.starterSnapshot);
         return {
           date: dateToIso(slot.mealDate),
           mealTime: slot.mealTime,
@@ -115,6 +123,12 @@ export async function buildCatalogExport() {
           slotType: slot.slotType,
           name: snapshot?.name ?? slot.customLabel,
           signature: snapshot?.signature ?? slot.mealSignature,
+          repeatKey: snapshot?.repeatKey ?? null,
+          starter: starter ? { name: starter.name, signature: starter.signature,
+            ingredients: starter.items.map((item) => ({ name: item.name, quantityPerPerson: item.quantityPerPerson, unit: item.unit })) } : null,
+          starterIsLocked: slot.starterIsLocked,
+          starchRecipeId: slot.starchRecipeId,
+          vegetableRecipeId: slot.vegetableRecipeId,
           ingredients: snapshot?.items.map((item) => ({
             ingredientId: item.ingredientId,
             name: item.name,

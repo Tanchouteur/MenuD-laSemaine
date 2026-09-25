@@ -43,6 +43,13 @@ enum IngredientCategory {
   OTHER
 }
 
+enum RecipeRole {
+  MAIN
+  STARTER
+  SIDE_STARCH
+  SIDE_VEGETABLE
+}
+
 enum QuantityUnit {
   GRAM
   KILOGRAM
@@ -84,9 +91,19 @@ model MealSlot {
   customLabel   String?
   mealSignature String?
   mealSnapshot  Json?
+  starterSnapshot Json?
+  starterIsLocked Boolean @default(false)
+  starterIngredientId String?
+  starterRecipeId String?
+  starchRecipeId String?
+  vegetableRecipeId String?
 
   recipeId            String?
   recipe              Recipe?     @relation(fields: [recipeId], references: [id], onDelete: Restrict)
+  starterRecipe       Recipe?     @relation("StarterRecipe", fields: [starterRecipeId], references: [id], onDelete: Restrict)
+  starchRecipe        Recipe?     @relation("StarchRecipe", fields: [starchRecipeId], references: [id], onDelete: Restrict)
+  vegetableRecipe     Recipe?     @relation("VegetableRecipe", fields: [vegetableRecipeId], references: [id], onDelete: Restrict)
+  starterIngredient   Ingredient? @relation("StarterIngredient", fields: [starterIngredientId], references: [id], onDelete: Restrict)
   proteinId           String?
   protein             Ingredient? @relation("MealProtein", fields: [proteinId], references: [id], onDelete: Restrict)
   starchId            String?
@@ -116,6 +133,7 @@ model Ingredient {
   rating           Int                @default(3)
   isActive         Boolean            @default(true)
   useInComposedMeals Boolean           @default(false)
+  useAsStarter     Boolean              @default(false)
   portionPerPerson Decimal?           @db.Decimal(10, 3)
   unit             QuantityUnit?
   aisleId          String?
@@ -130,6 +148,7 @@ model Ingredient {
   proteinSlots              MealSlot[]         @relation("MealProtein")
   starchSlots               MealSlot[]         @relation("MealStarch")
   vegetableSlots            MealSlot[]         @relation("MealVegetable")
+  starterSlots              MealSlot[]         @relation("StarterIngredient")
   incompatibilitiesAsFirst  Incompatibility[]  @relation("IncompatibilityFirst")
   incompatibilitiesAsSecond Incompatibility[]  @relation("IncompatibilitySecond")
 
@@ -143,6 +162,12 @@ model Ingredient {
 model Recipe {
   id              String             @id @default(cuid())
   name            String             @unique
+  role            RecipeRole         @default(MAIN)
+  allowStarchSide Boolean            @default(false)
+  allowVegetableSide Boolean         @default(false)
+  variantOfId     String?
+  variantOf       Recipe?            @relation("RecipeVariants", fields: [variantOfId], references: [id], onDelete: Restrict)
+  variants        Recipe[]           @relation("RecipeVariants")
   style           String?
   rating          Int                @default(3)
   prepTimeMinutes Int?
@@ -156,11 +181,16 @@ model Recipe {
   okDinnerWeekend Boolean            @default(true)
   ingredients     RecipeIngredient[]
   mealSlots       MealSlot[]
+  starterSlots    MealSlot[]         @relation("StarterRecipe")
+  starchSlots     MealSlot[]         @relation("StarchRecipe")
+  vegetableSlots  MealSlot[]         @relation("VegetableRecipe")
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
   @@index([isActive])
   @@index([style])
+  @@index([role, isActive])
+  @@index([variantOfId])
 }
 
 model RecipeIngredient {
@@ -226,6 +256,7 @@ model AppSettings {
   timezone                   String   @default("Europe/Paris")
   onboardingCompleted        Boolean  @default(false)
   compositionSetupCompleted  Boolean  @default(false)
+  starterTargetPerWeek       Int      @default(3)
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
 }

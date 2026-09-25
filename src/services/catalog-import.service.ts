@@ -9,6 +9,8 @@ const ingredientSchema = z.object({
   name: z.string().trim().min(1).max(100),
   category: z.enum(categories),
   useInComposedMeals: z.boolean(),
+  useAsStarter: z.boolean().optional(),
+  isActive: z.boolean().optional(),
   portionPerPerson: z.number().positive().nullable(),
   unit: z.enum(units).nullable(),
   aisle: z.string().trim().min(1).max(100).nullable(),
@@ -17,6 +19,10 @@ const ingredientSchema = z.object({
 const recipeSchema = z.object({
   name: z.string().trim().min(1).max(120),
   previousName: z.string().trim().min(1).max(120).optional(),
+  role: z.enum(['MAIN', 'STARTER', 'SIDE_STARCH', 'SIDE_VEGETABLE']).optional(),
+  allowStarchSide: z.boolean().optional(),
+  allowVegetableSide: z.boolean().optional(),
+  variantOfName: z.string().trim().min(1).max(120).nullable().optional(),
   style: z.string().trim().max(60).nullable().optional(),
   rating: z.number().int().min(1).max(5).optional(),
   prepTimeMinutes: z.number().int().nonnegative().nullable().optional(),
@@ -31,14 +37,14 @@ const recipeSchema = z.object({
   }).optional(),
   ingredients: z.array(z.object({
     name: z.string().trim().min(1).max(100),
-    quantity: z.number().positive(),
+    quantity: z.number().positive().nullable(),
     unit: z.enum(units),
   })).min(1),
 });
 
 export const catalogEnrichmentSchema = z.object({
   format: z.literal('menu-de-la-semaine-enrichment'),
-  version: z.literal(1),
+  version: z.union([z.literal(1), z.literal(2)]),
   ingredients: z.array(ingredientSchema).max(500),
   recipes: z.array(recipeSchema).max(500),
 });
@@ -78,6 +84,15 @@ export async function previewCatalogEnrichment(input: unknown) {
     .filter((name) => !aisleNames.has(name));
   if (missingReferences.length) throw new Error(`Ingrédients absents : ${missingReferences.join(', ')}.`);
   if (unknownAisles.length) throw new Error(`Rayons inconnus : ${[...new Set(unknownAisles)].join(', ')}.`);
+  const pendingQuantities = document.recipes.flatMap((recipe) => recipe.ingredients
+    .filter((entry) => entry.quantity === null)
+    .map((entry) => `${recipe.name} : ${entry.name}`));
+  const pendingPortions = document.ingredients.filter((item) => document.version === 2 && item.isActive !== false &&
+    (item.useInComposedMeals || item.useAsStarter) && (item.portionPerPerson === null || item.unit === null))
+    .map((item) => item.name);
+  const missingVariants = document.recipes.filter((recipe) => recipe.variantOfName &&
+    !recipeNames.has(recipe.variantOfName) && !document.recipes.some((item) => item.name === recipe.variantOfName));
+  if (missingVariants.length) throw new Error(`Recette de référence absente : ${missingVariants.map((item) => item.variantOfName).join(', ')}.`);
   for (const recipe of document.recipes) {
     if (recipe.previousName && recipeNames.has(recipe.name) && recipe.previousName !== recipe.name) {
       throw new Error(`Impossible de renommer « ${recipe.previousName} » : « ${recipe.name} » existe déjà.`);
@@ -89,14 +104,18 @@ export async function previewCatalogEnrichment(input: unknown) {
     summary: {
       ingredientsToCreate: document.ingredients.filter((item) => !ingredientNames.has(item.name)).map((item) => item.name),
       ingredientsToUpdate: document.ingredients.filter((item) => ingredientNames.has(item.name)).map((item) => item.name),
+      ingredientsToArchive: document.ingredients.filter((item) => item.isActive === false).map((item) => item.name),
       recipesToCreate: document.recipes.filter((item) => !recipeNames.has(item.previousName ?? item.name)).map((item) => item.name),
       recipesToUpdate: document.recipes.filter((item) => recipeNames.has(item.previousName ?? item.name)).map((item) => item.name),
+      pendingQuantities,
+      pendingPortions,
     },
   };
 }
 
 export async function applyCatalogEnrichment(input: unknown) {
   const { document, summary } = await previewCatalogEnrichment(input);
+  if (summary.pendingQuantities.length || summary.pendingPortions.length) throw new Error(`Quantités à vérifier avant application : ${[...summary.pendingQuantities, ...summary.pendingPortions].join(', ')}.`);
   const prisma = getPrisma();
   await prisma.$transaction(async (transaction) => {
     const aisles = await transaction.aisle.findMany();
@@ -108,18 +127,21 @@ export async function applyCatalogEnrichment(input: unknown) {
         update: {
           category: item.category,
           useInComposedMeals: item.useInComposedMeals,
+          useAsStarter: item.useAsStarter,
           portionPerPerson: item.portionPerPerson,
           unit: item.unit,
           aisleId: item.aisle ? aisleIds.get(item.aisle) : null,
-          isActive: true,
+          isActive: item.isActive ?? true,
         },
         create: {
           name: item.name,
           category: item.category,
           useInComposedMeals: item.useInComposedMeals,
+          useAsStarter: item.useAsStarter ?? false,
           portionPerPerson: item.portionPerPerson,
           unit: item.unit,
           aisleId: item.aisle ? aisleIds.get(item.aisle) : null,
+          isActive: item.isActive ?? true,
         },
       });
     }
@@ -129,12 +151,19 @@ export async function applyCatalogEnrichment(input: unknown) {
     for (const item of document.recipes) {
       const ingredientsData = item.ingredients.map((entry) => ({
         ingredientId: ingredientIds.get(entry.name)!,
-        quantity: entry.quantity,
+        quantity: entry.quantity!,
         unit: entry.unit,
       }));
-      const recipe = await transaction.recipe.findUnique({ where: { name: item.previousName ?? item.name }, select: { id: true } });
+      const recipe = await transaction.recipe.findUnique({ where: { name: item.previousName ?? item.name }, select: { id: true, role: true } });
+      if (recipe && item.role && recipe.role !== item.role) {
+        const used = await transaction.mealSlot.count({ where: { OR: [{ recipeId: recipe.id }, { starterRecipeId: recipe.id }, { starchRecipeId: recipe.id }, { vegetableRecipeId: recipe.id }] } });
+        if (used) throw new Error(`Le rôle de « ${item.name} » ne peut pas changer car la recette est déjà utilisée.`);
+      }
       const metadata = {
         name: item.name,
+        role: item.role,
+        allowStarchSide: item.allowStarchSide,
+        allowVegetableSide: item.allowVegetableSide,
         basePortions: item.basePortions,
         style: item.style,
         rating: item.rating,
@@ -156,6 +185,20 @@ export async function applyCatalogEnrichment(input: unknown) {
         await transaction.recipe.create({
           data: { ...metadata, ingredients: { create: ingredientsData } },
         });
+      }
+    }
+    for (const item of document.recipes.filter((recipe) => recipe.variantOfName !== undefined)) {
+      const child = await transaction.recipe.findUniqueOrThrow({ where: { name: item.name } });
+      const parent = item.variantOfName ? await transaction.recipe.findUniqueOrThrow({ where: { name: item.variantOfName } }) : null;
+      if (parent && parent.role !== child.role) throw new Error('Les variantes doivent avoir le même rôle.');
+      if (parent?.id === child.id) throw new Error('Une recette ne peut pas être sa propre variante.');
+      await transaction.recipe.update({ where: { id: child.id }, data: { variantOfId: parent?.variantOfId ?? parent?.id ?? null } });
+    }
+    const linkedRecipes = await transaction.recipe.findMany({ where: { variantOfId: { not: null } }, select: { id: true, name: true, role: true, variantOfId: true } });
+    for (const child of linkedRecipes) {
+      const parent = await transaction.recipe.findUniqueOrThrow({ where: { id: child.variantOfId! }, select: { role: true, variantOfId: true } });
+      if (parent.role !== child.role || parent.variantOfId) {
+        throw new Error(`Le lien de variante de « ${child.name} » n’est plus cohérent.`);
       }
     }
   });

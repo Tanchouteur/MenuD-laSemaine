@@ -3,11 +3,13 @@ import type { MealSlot, WeeklyPlan } from '../../generated/prisma/client';
 import {
   MealTime,
   PlanStatus,
+  Prisma,
   SlotType,
 } from '../../generated/prisma/client';
 import { parseMealSnapshot, snapshotAsAssignment } from '@/domain/meal-snapshot';
 import { daysBetween } from '@/engine';
 import { getPrisma } from '@/lib/prisma';
+import { rebuildShoppingList } from '@/services/shopping-list.service';
 import { addDays } from '@/lib/week';
 import type { MealSlotDto, SlotTypeDto, WeeklyPlanDto } from '@/types/api';
 
@@ -48,6 +50,7 @@ export function planToDto(plan: PlanWithSlots): WeeklyPlanDto {
     })
     .map((slot) => {
       const snapshot = parseMealSnapshot(slot.mealSnapshot);
+      const starterSnapshot = parseMealSnapshot(slot.starterSnapshot);
       return {
         id: slot.id,
         slotIndex:
@@ -61,6 +64,8 @@ export function planToDto(plan: PlanWithSlots): WeeklyPlanDto {
         customLabel: slot.customLabel,
         leftoversFromSlotId: slot.leftoversFromSlotId,
         assignment: snapshot ? snapshotAsAssignment(snapshot) : null,
+        starter: starterSnapshot ? { name: starterSnapshot.name, signature: starterSnapshot.signature } : null,
+        starterIsLocked: slot.starterIsLocked,
         restoreState: {
           slotType: slotTypeMap[slot.slotType],
           customLabel: slot.customLabel,
@@ -71,6 +76,12 @@ export function planToDto(plan: PlanWithSlots): WeeklyPlanDto {
           proteinId: slot.proteinId,
           starchId: slot.starchId,
           vegetableId: slot.vegetableId,
+          starchRecipeId: slot.starchRecipeId,
+          vegetableRecipeId: slot.vegetableRecipeId,
+          starterIngredientId: slot.starterIngredientId,
+          starterRecipeId: slot.starterRecipeId,
+          starterSnapshot: slot.starterSnapshot,
+          starterIsLocked: slot.starterIsLocked,
           isLocked: slot.isLocked,
           guestCount: slot.guestCount,
         },
@@ -242,11 +253,11 @@ export async function reapplyPlan(
   const target = await ensureWeeklyPlan(targetStartDate);
   if (target.status !== 'draft') throw new Error('La semaine cible doit être un brouillon.');
 
-  await prisma.$transaction([
-    ...source.slots.map((sourceSlot) => {
+  await prisma.$transaction(async (transaction) => {
+    for (const sourceSlot of source.slots) {
       const sourceDay = daysBetween(dateToIso(source.startDate), dateToIso(sourceSlot.mealDate));
       const targetDate = asDate(addDays(targetStartDate, sourceDay));
-      return prisma.mealSlot.update({
+      await transaction.mealSlot.update({
         where: {
           weeklyPlanId_mealDate_mealTime: {
             weeklyPlanId: target.id,
@@ -265,15 +276,22 @@ export async function reapplyPlan(
           proteinId: sourceSlot.proteinId,
           starchId: sourceSlot.starchId,
           vegetableId: sourceSlot.vegetableId,
+          starchRecipeId: sourceSlot.starchRecipeId,
+          vegetableRecipeId: sourceSlot.vegetableRecipeId,
+          starterIngredientId: sourceSlot.starterIngredientId,
+          starterRecipeId: sourceSlot.starterRecipeId,
+          starterSnapshot: sourceSlot.starterSnapshot ?? Prisma.JsonNull,
+          starterIsLocked: sourceSlot.starterIsLocked,
           leftoversFromSlotId: null,
         },
       });
-    }),
-    prisma.weeklyPlan.update({
+    }
+    await transaction.weeklyPlan.update({
       where: { id: target.id },
       data: { duplicatedFromId: source.id, version: { increment: 1 } },
-    }),
-  ]);
+    });
+    await rebuildShoppingList(target.id, transaction);
+  });
 
   const copied = await getPlanByStartDate(targetStartDate);
   if (!copied) throw new Error('La semaine favorite n’a pas pu être copiée.');

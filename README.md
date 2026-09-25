@@ -7,9 +7,10 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - génération déterministe avec saisons, moments, historique, variété et incompatibilités ;
 - remplacement par trois idées expliquées, verrouillage et régénération partielle ;
 - repas libres, restes, repas à l’extérieur et nombre de convives par repas ;
-- confirmation, historique immuable, favoris et réapplication d’une semaine ;
+- confirmation, historique et correction manuelle d’une semaine confirmée, favoris et réapplication ;
 - liste de courses persistante, regroupée par rayon et ajustée aux portions ;
 - création, modification et archivage des ingrédients et recettes ;
+- entrées à fréquence réglable, recettes à accompagner et variantes liées par le refroidissement ;
 - réglages du foyer et associations d’aliments à éviter ;
 - export iCalendar et protection facultative par mot de passe familial ;
 - export JSON du catalogue et des menus, puis import prévisualisé d’un enrichissement ciblé ;
@@ -94,4 +95,4 @@ src/engine/      moteur métier pur et tests
 src/services/    transactions et accès métier persistants
 ```
 
-Les semaines confirmées seules influencent l’historique. Les repas sauvegardent un instantané afin qu’une modification ultérieure d’une recette ne change jamais une ancienne semaine ou sa liste de courses.
+Les semaines confirmées seules influencent l’historique. Les repas sauvegardent un instantané du plat, de ses accompagnements et de l’entrée : modifier ensuite le catalogue ne change pas les anciens repas. Une correction manuelle explicite d’une semaine confirmée recalcule ses courses et son calendrier.

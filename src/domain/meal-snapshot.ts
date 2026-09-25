@@ -14,6 +14,7 @@ export const mealSnapshotSchema = z.object({
   version: z.literal(1),
   kind: z.enum(['recipe', 'composed']),
   signature: z.string(),
+  repeatKey: z.string().optional(),
   name: z.string(),
   description: z.string().optional(),
   totalMinutes: z.number().int().nonnegative().optional(),
@@ -35,6 +36,7 @@ export function snapshotAsAssignment(snapshot: MealSnapshot): AssignedMeal {
   return {
     kind: snapshot.kind,
     signature: snapshot.signature,
+    repeatKey: snapshot.repeatKey,
     name: snapshot.name,
     description: snapshot.description,
     totalMinutes: snapshot.totalMinutes,
@@ -49,6 +51,7 @@ export function candidateAsAssignment(candidate: MealCandidate): AssignedMeal {
   return {
     kind: candidate.kind,
     signature: candidate.signature,
+    repeatKey: candidate.repeatKey,
     name: candidate.name,
     description: candidate.description,
     totalMinutes: candidate.totalMinutes,

@@ -12,6 +12,8 @@ export async function POST(
       proteinId?: string;
       starchId?: string;
       vegetableId?: string;
+      starchRecipeId?: string;
+      vegetableRecipeId?: string;
       version?: number;
     };
     if (!body.signature && !body.recipeId && !body.proteinId) {

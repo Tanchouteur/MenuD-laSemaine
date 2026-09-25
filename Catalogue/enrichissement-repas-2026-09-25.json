@@ -1,0 +1,49 @@
+{
+  "format": "menu-de-la-semaine-enrichment",
+  "version": 2,
+  "ingredients": [
+    { "name": "Moutarde", "category": "GROCERY", "useInComposedMeals": false, "portionPerPerson": null, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Asperges", "category": "VEGETABLE", "useInComposedMeals": false, "useAsStarter": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": "Fruits et légumes" },
+    { "name": "Cœurs de palmiers", "category": "VEGETABLE", "useInComposedMeals": false, "useAsStarter": true, "portionPerPerson": 100, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Tenders Lidl", "category": "PROTEIN", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": null },
+    { "name": "Semoule", "category": "STARCH", "useInComposedMeals": true, "portionPerPerson": 80, "unit": "GRAM", "aisle": "Épicerie" },
+    { "name": "Brocolis", "category": "VEGETABLE", "useInComposedMeals": true, "portionPerPerson": 150, "unit": "GRAM", "aisle": null },
+    { "name": "Omelette au jambon", "category": "PROTEIN", "useInComposedMeals": false, "isActive": false, "portionPerPerson": null, "unit": null, "aisle": null },
+    { "name": "Poulet à la crème moutarde", "category": "PROTEIN", "useInComposedMeals": false, "isActive": false, "portionPerPerson": null, "unit": null, "aisle": "Épicerie" },
+    { "name": "Pdt. Sauté", "category": "STARCH", "useInComposedMeals": false, "isActive": false, "portionPerPerson": null, "unit": null, "aisle": "Épicerie" }
+  ],
+  "recipes": [
+    {
+      "name": "Omelette et jambon grillé", "role": "MAIN", "allowStarchSide": true, "allowVegetableSide": true,
+      "basePortions": 4,
+      "ingredients": [
+        { "name": "Œuf", "quantity": 8, "unit": "PIECE" },
+        { "name": "Jambon", "quantity": 4, "unit": "SLICE" }
+      ]
+    },
+    {
+      "name": "Poulet à la crème moutarde", "role": "MAIN", "allowStarchSide": true, "allowVegetableSide": true,
+      "variantOfName": "Poulet curry coco et riz", "basePortions": 4,
+      "ingredients": [
+        { "name": "Poulet", "quantity": 600, "unit": "GRAM" },
+        { "name": "Crème", "quantity": 20, "unit": "CENTILITER" },
+        { "name": "Moutarde", "quantity": 40, "unit": "GRAM" }
+      ]
+    },
+    {
+      "name": "Pommes de terre sautées", "role": "SIDE_STARCH", "basePortions": 4,
+      "ingredients": [
+        { "name": "Pommes de terre", "quantity": 1000, "unit": "GRAM" },
+        { "name": "Huile d’olive", "quantity": 4, "unit": "CENTILITER" }
+      ]
+    },
+    {
+      "name": "Tomates et carottes râpées", "role": "STARTER", "basePortions": 4,
+      "allowedMoments": { "lunchWeekday": false, "dinnerWeekday": true, "lunchWeekend": true, "dinnerWeekend": true },
+      "ingredients": [
+        { "name": "Tomate", "quantity": 400, "unit": "GRAM" },
+        { "name": "Carotte", "quantity": 320, "unit": "GRAM" }
+      ]
+    }
+  ]
+}
