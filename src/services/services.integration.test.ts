@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { GET as healthGet } from '@/app/api/health/route';
 import { POST as ingredientPost } from '@/app/api/ingredients/route';
 import { GET as plansGet, POST as plansPost } from '@/app/api/plans/route';
+import { GET as shoppingGet, POST as shoppingPost } from '@/app/api/shopping/route';
 import { getPrisma } from '@/lib/prisma';
 import {
   applyCatalogEnrichment,
@@ -101,6 +102,24 @@ describe('frontières HTTP sur la vraie base', () => {
       method: 'POST', body: JSON.stringify({ name: '' }),
     }));
     expect(invalidIngredient.status).toBe(400);
+  });
+
+  it('réserve les courses aux semaines confirmées, y compris après réouverture', async () => {
+    const plan = await ensureWeeklyPlan('2026-09-21');
+    const url = `http://test.local/api/shopping?planId=${plan.id}`;
+    expect((await shoppingGet(new Request(url))).status).toBe(400);
+    expect((await shoppingPost(new Request('http://test.local/api/shopping', {
+      method: 'POST', body: JSON.stringify({ planId: plan.id, label: 'Pain' }),
+    }))).status).toBe(400);
+    await prisma.mealSlot.updateMany({ where: { weeklyPlanId: plan.id }, data: { slotType: 'CUSTOM', customLabel: 'Repas prévu' } });
+    const confirmed = await confirmPlan(plan.id, plan.version);
+    expect((await shoppingPost(new Request('http://test.local/api/shopping', {
+      method: 'POST', body: JSON.stringify({ planId: plan.id, label: 'Pain' }),
+    }))).status).toBe(201);
+    const confirmedEntries = await (await shoppingGet(new Request(url))).json();
+    expect(confirmedEntries).toEqual([expect.objectContaining({ label: 'Pain' })]);
+    await unconfirmPlan(plan.id, confirmed.version);
+    expect((await shoppingGet(new Request(url))).status).toBe(400);
   });
 });
 

@@ -394,6 +394,8 @@ export function WeekPlanner({
                 <div className="dayMeals">
                   {slots.map((slot) => {
                     const meal = displayMeal(slot, plan.slots);
+                    const canAddStarter = slot.slotType !== 'empty' && slot.slotType !== 'leftovers' && slot.slotType !== 'eating_out';
+                    const canKeep = isDraft && Boolean(slot.assignment);
                     return (
                       <section className="mealCard" key={slot.id}>
                         <div className="mealMeta">
@@ -406,7 +408,8 @@ export function WeekPlanner({
                         <p>{meal.description}</p>
                         {slot.starter && <p className="starterSummary"><strong>Entrée :</strong> {slot.starter.name}</p>}
                         {plan.status !== 'archived' && (
-                          <div className="mealActions threeActions">
+                          <div className="mealActions">
+                            <div className={`mealActionsRow${canAddStarter ? ' split' : ''}`}>
                             <button
                               className="secondaryButton"
                               type="button"
@@ -415,14 +418,16 @@ export function WeekPlanner({
                             >
                               {slot.slotType === 'empty' ? 'Choisir' : 'Modifier'}
                             </button>
-                            {slot.slotType !== 'empty' && slot.slotType !== 'leftovers' && slot.slotType !== 'eating_out' && <button className="secondaryButton" type="button" disabled={busy} onClick={() => setStarterSlotId(slot.id)}>{slot.starter ? 'Changer l’entrée' : 'Ajouter une entrée'}</button>}
-                            {isDraft && (
+                            {canAddStarter && <button className="secondaryButton" type="button" disabled={busy} onClick={() => setStarterSlotId(slot.id)}>{slot.starter ? 'Changer l’entrée' : 'Ajouter une entrée'}</button>}
+                            </div>
+                            <div className={`mealActionsRow${canKeep ? ' split' : ''}`}>
+                            {canKeep && (
                             <button
                               className="lockButton"
                               data-locked={slot.isLocked}
                               type="button"
                               aria-pressed={slot.isLocked}
-                              disabled={busy || !slot.assignment}
+                              disabled={busy}
                               onClick={() =>
                                 void patchSlot(
                                   slot.id,
@@ -438,6 +443,7 @@ export function WeekPlanner({
                             <button className="moreButton" type="button" onClick={() => setActionSlot(slot)}>
                               Options
                             </button>
+                            </div>
                           </div>
                         )}
                       </section>
@@ -464,7 +470,7 @@ export function WeekPlanner({
       </main>
 
       {alternativeSheet && (
-        <div className="sheetBackdrop">
+        <div className="sheetBackdrop" onClick={(event) => { if (event.target === event.currentTarget) setAlternativeSheet(null); }}>
           <section className="alternativeSheet mealChooser" role="dialog" aria-modal="true" aria-labelledby="alternative-title">
             <div className="sheetHandle" aria-hidden="true" />
             <header className="sheetHeader">
@@ -492,7 +498,7 @@ export function WeekPlanner({
       )}
 
       {starterSlotId && (
-        <div className="sheetBackdrop">
+        <div className="sheetBackdrop" onClick={(event) => { if (event.target === event.currentTarget) setStarterSlotId(null); }}>
           <section className="alternativeSheet mealChooser" role="dialog" aria-modal="true" aria-labelledby="starter-title">
             <div className="sheetHandle" aria-hidden="true" />
             <header className="sheetHeader"><h2 id="starter-title">Choisir une entrée</h2><button className="closeButton" type="button" aria-label="Fermer" onClick={() => setStarterSlotId(null)}>×</button></header>
@@ -506,7 +512,7 @@ export function WeekPlanner({
       )}
 
       {actionSlot && (
-        <div className="sheetBackdrop">
+        <div className="sheetBackdrop" onClick={(event) => { if (event.target === event.currentTarget) setActionSlot(null); }}>
           <section className="alternativeSheet actionSheet" role="dialog" aria-modal="true" aria-labelledby="action-title">
             <div className="sheetHandle" aria-hidden="true" />
             <header className="sheetHeader">

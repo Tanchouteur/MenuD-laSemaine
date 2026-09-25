@@ -34,6 +34,7 @@ partir du nombre de convives. L’expérience de référence est le téléphone.
   écarts sont signalés et le choix est conservé.
 - Seules les semaines confirmées comptent comme repas consommés.
 - Les restes et repas extérieurs n’ajoutent pas de courses.
+- Les brouillons et les semaines rouvertes ne montrent pas de liste de courses ; elle redevient accessible après confirmation.
 - Une semaine confirmée accepte les corrections manuelles ; seule sa génération automatique est bloquée.
 
 ## Hors périmètre actuel

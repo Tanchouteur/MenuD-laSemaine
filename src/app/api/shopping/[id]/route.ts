@@ -1,12 +1,14 @@
 import { apiError } from '@/lib/api';
-import { deleteManualShoppingEntry, toggleShoppingEntry } from '@/services/shopping-list.service';
+import { deleteManualShoppingEntry, requireConfirmedShoppingEntry, toggleShoppingEntry } from '@/services/shopping-list.service';
 
 export async function PATCH(
   _request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
   try {
-    await toggleShoppingEntry((await context.params).id);
+    const { id } = await context.params;
+    await requireConfirmedShoppingEntry(id);
+    await toggleShoppingEntry(id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return apiError(error);
@@ -18,7 +20,9 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> },
 ) {
   try {
-    await deleteManualShoppingEntry((await context.params).id);
+    const { id } = await context.params;
+    await requireConfirmedShoppingEntry(id);
+    await deleteManualShoppingEntry(id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return apiError(error);

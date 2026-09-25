@@ -1,5 +1,5 @@
 import 'server-only';
-import type { Prisma } from '../../generated/prisma/client';
+import { PlanStatus, type Prisma } from '../../generated/prisma/client';
 import { parseMealSnapshot } from '@/domain/meal-snapshot';
 import { getPrisma } from '@/lib/prisma';
 import type { ShoppingEntryDto } from '@/types/api';
@@ -12,6 +12,18 @@ type Aggregate = {
   aisleId: string | null;
   sourceSlotIds: string[];
 };
+
+export async function requireConfirmedShoppingPlan(planId: string): Promise<void> {
+  const plan = await getPrisma().weeklyPlan.findUniqueOrThrow({ where: { id: planId }, select: { status: true } });
+  if (plan.status !== PlanStatus.CONFIRMED) throw new Error('Confirmez la semaine pour accéder à sa liste de courses.');
+}
+
+export async function requireConfirmedShoppingEntry(entryId: string): Promise<void> {
+  const entry = await getPrisma().shoppingListEntry.findUniqueOrThrow({
+    where: { id: entryId }, select: { weeklyPlanId: true },
+  });
+  await requireConfirmedShoppingPlan(entry.weeklyPlanId);
+}
 
 export async function rebuildShoppingList(
   planId: string,

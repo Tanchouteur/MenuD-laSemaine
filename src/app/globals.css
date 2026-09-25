@@ -357,16 +357,21 @@ h1 {
 
 .mealActions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.mealActions.threeActions {
+.mealActionsRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.mealActionsRow.split {
   grid-template-columns: 1fr 1fr;
 }
 
-.mealActions.threeActions .moreButton {
-  grid-column: 1 / -1;
+.mealActionsRow > button {
+  min-width: 0;
 }
 
 .secondaryButton,
@@ -1265,8 +1270,7 @@ legend {
 @media (max-width: 520px) {
   input:not([type="checkbox"]), select, textarea { font-size: 16px !important; }
   .mealCard > p:not(.starterSummary) { display: none; }
-  .mealActions { flex-wrap: wrap; }
-  .mealActions > button { min-height: 44px; }
+  .mealActionsRow > button { min-height: 44px; }
   .formColumns,
   .choiceGrid { grid-template-columns: 1fr; }
   .recipeLine { grid-template-columns: 1fr 76px; }
