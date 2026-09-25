@@ -11,6 +11,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - liste de courses visible seulement après confirmation, regroupée par rayon et ajustée aux portions ;
 - création, modification et archivage des ingrédients et recettes ;
 - entrées à fréquence réglable, recettes à accompagner et variantes liées par le refroidissement ;
+- version imprimable des menus par semaine, enregistrable en PDF depuis le navigateur ;
 - réglages du foyer et associations d’aliments à éviter ;
 - export iCalendar et protection facultative par mot de passe familial ;
 - export JSON du catalogue et des menus, puis import prévisualisé d’un enrichissement ciblé ;

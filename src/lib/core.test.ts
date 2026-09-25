@@ -8,7 +8,7 @@ import {
   settingsSchema,
 } from '@/lib/schemas';
 import { guestCountSchema, isoDateSchema } from '@/lib/validation';
-import { addDays, buildWeekSlots, formatWeekRange, mondayOfCurrentWeek } from '@/lib/week';
+import { addDays, buildWeekSlots, formatWeekRange, mondayOfCurrentWeek, mondayOfIsoDate } from '@/lib/week';
 
 describe('utilitaires HTTP', () => {
   it('traduit les absences en 404 et les autres erreurs en 400', async () => {
@@ -117,6 +117,12 @@ describe('semaines et fuseaux', () => {
   it('gère les changements de mois et formate la plage en français', () => {
     expect(addDays('2026-01-31', 1)).toBe('2026-02-01');
     expect(formatWeekRange('2026-09-28')).toBe('Du 28 septembre au 4 octobre');
+  });
+
+  it('ramène la date choisie pour l’impression au lundi correspondant', () => {
+    expect(mondayOfIsoDate('2026-09-25')).toBe('2026-09-21');
+    expect(mondayOfIsoDate('2026-09-27')).toBe('2026-09-21');
+    expect(mondayOfIsoDate('2026-02-30')).toBeNull();
   });
 
   it('signale explicitement un fuseau invalide', () => {

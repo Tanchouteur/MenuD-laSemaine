@@ -180,7 +180,8 @@ version affectant l’interface, vérifier au minimum :
 6. changement de semaine depuis le sélecteur fixe, raccourcis vers les sept jours et retour depuis Courses vers la même semaine ;
 7. fermeture des panneaux par le fond et Échap, mise en page mobile, clavier et libellés longs ;
 8. animations normales puis avec « Réduire les animations » activé ;
-9. abonnement calendrier.
+9. choix d’une date dans la vue imprimable, impression A4 en noir et blanc et sauvegarde PDF sur téléphone ;
+10. abonnement calendrier.
 
 Une future suite Playwright pourra automatiser ces parcours. Elle devra démarrer
 l’application et PostgreSQL de manière isolée, sans viser le domaine de

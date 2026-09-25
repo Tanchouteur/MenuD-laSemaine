@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { formatDay, formatWeekRange } from '@/lib/week';
+import { displayMeal } from '@/lib/meal-display';
 import type { IngredientDto, MealSlotDto, RecipeDto, WeeklyPlanDto } from '@/types/api';
 
 type AlternativeDto = {
@@ -41,30 +42,6 @@ async function apiRequest<T>(url: string, init?: RequestInit): Promise<T> {
     throw new Error((body as { error?: string } | null)?.error ?? 'Une erreur est survenue.');
   }
   return body as T;
-}
-
-function displayMeal(slot: MealSlotDto, allSlots: MealSlotDto[]) {
-  if (slot.assignment) {
-    return {
-      name: slot.assignment.name,
-      description: slot.assignment.description ?? 'Repas choisi pour la famille.',
-      minutes: slot.assignment.totalMinutes,
-    };
-  }
-  if (slot.slotType === 'eating_out') {
-    return { name: slot.customLabel || 'Repas à l’extérieur', description: 'Aucune course à prévoir.' };
-  }
-  if (slot.slotType === 'custom') {
-    return { name: slot.customLabel || 'Repas libre', description: 'Choisi directement par la famille.' };
-  }
-  if (slot.slotType === 'leftovers') {
-    const source = allSlots.find((item) => item.id === slot.leftoversFromSlotId);
-    return {
-      name: `Restes${source?.assignment ? ` de ${source.assignment.name}` : ''}`,
-      description: 'Les quantités ne sont pas ajoutées une seconde fois aux courses.',
-    };
-  }
-  return { name: 'À choisir', description: 'Ce créneau sera rempli à la prochaine génération.' };
 }
 
 export function WeekPlanner({
@@ -367,12 +344,14 @@ export function WeekPlanner({
 
         <section className="weekActionBar" aria-label="Actions de la semaine">
           <div className="weekActionStatus"><strong>{isDraft ? `${filledCount}/14 repas choisis` : 'Semaine confirmée'}</strong><span>{isDraft ? 'Gardez les repas à conserver avant de régénérer.' : 'Les repas et les courses sont prêts.'}</span></div>
-          {isDraft ? (
+          <div className="weekActionButtons">{isDraft ? (<>
             <button className="primaryButton" type="button" onClick={regenerate} disabled={busy}>
               <span aria-hidden="true">✦</span>
               {filledCount === 0 ? 'Préparer ma semaine' : 'Régénérer les repas libres'}
             </button>
-          ) : (
+            <Link className="printWeekLink" href={`/imprimer?week=${plan.startDate}`}>Imprimer / PDF</Link>
+          </>) : (<>
+            <Link className="printWeekLink" href={`/imprimer?week=${plan.startDate}`}>Imprimer / PDF</Link>
             <div className="confirmedActions">
               <button className="primaryButton" type="button" onClick={toggleFavorite} disabled={busy}>
                 <span aria-hidden="true">★</span>
@@ -382,7 +361,7 @@ export function WeekPlanner({
                 Annuler la confirmation
               </button>
             </div>
-          )}
+          </>)}</div>
         </section>
 
         {!compositionSetupCompleted && <section className="setupBanner"><div><strong>Choisissez les aliments des assiettes automatiques</strong><p>Vos recettes restent disponibles. Tant que cette sélection n’est pas faite, seules les recettes alimentent les suggestions.</p></div><button className="secondaryButton" type="button" onClick={() => setShowCompositionSetup(true)}>Configurer</button></section>}

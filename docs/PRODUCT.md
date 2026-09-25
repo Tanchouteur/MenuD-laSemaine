@@ -21,6 +21,7 @@ partir du nombre de convives. L’expérience de référence est le téléphone.
 4. Confirmer la semaine afin qu’elle alimente l’historique et les courses.
 5. Cocher les courses, consulter l’historique et réutiliser une semaine.
 6. Exporter les données en JSON pour les relire ou préparer un enrichissement.
+7. Imprimer une semaine choisie ou l’enregistrer en PDF depuis la vue dédiée.
 
 Sur la page Semaine, le changement de semaine et les raccourcis vers les jours
 restent visibles au défilement. L’onglet Courses reprend la semaine sélectionnée

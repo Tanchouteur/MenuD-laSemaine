@@ -33,6 +33,14 @@ export function addDays(isoDate: string, numberOfDays: number): string {
   return toIsoDate(new Date(date.getTime() + numberOfDays * DAY_IN_MS));
 }
 
+export function mondayOfIsoDate(value: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const date = new Date(`${value}T12:00:00Z`);
+  if (Number.isNaN(date.getTime()) || toIsoDate(date) !== value) return null;
+  const weekday = date.getUTCDay();
+  return addDays(value, weekday === 0 ? -6 : 1 - weekday);
+}
+
 export function buildWeekSlots(monday: string): GenerationSlot[] {
   return Array.from({ length: 14 }, (_, slotIndex) => {
     const dayIndex = Math.floor(slotIndex / 2);

@@ -142,6 +142,20 @@ h1 {
 
 .weekActionStatus strong { color: var(--green-dark); }
 .weekActionStatus span { color: var(--muted); font-size: .86rem; line-height: 1.4; }
+.weekActionButtons { display: grid; gap: 8px; }
+.printWeekLink {
+  display: grid;
+  min-height: 46px;
+  place-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  background: white;
+  color: var(--green-dark);
+  font-weight: 750;
+  text-decoration: none;
+}
+.printWeekLink:hover { background: var(--green-soft); }
 
 .confirmedActions {
   display: grid;
@@ -1399,6 +1413,62 @@ legend {
     left: auto;
     width: 430px;
   }
+}
+
+.printPage { width: min(100%, 940px); margin: 0 auto; padding: 24px 18px 112px; }
+.printControls { display: grid; gap: 15px; margin-bottom: 22px; }
+.printControls h1 { margin: 0; }
+.printControls > p { max-width: 58ch; margin: 0; color: var(--muted); line-height: 1.5; }
+.printBack { color: var(--green-dark); font-weight: 750; text-decoration: none; }
+.printDateForm { display: grid; gap: 7px; }
+.printDateForm label { font-weight: 750; }
+.printDateForm div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.printDateForm input { min-width: 0; min-height: 46px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 12px; background: white; font: inherit; }
+.printWeekNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.printWeekNav a { display: grid; min-height: 46px; place-items: center; padding: 7px; border: 1px solid var(--line); border-radius: 12px; background: white; color: var(--green-dark); font-size: .84rem; font-weight: 750; text-align: center; text-decoration: none; }
+.printWeekNav a:hover { background: var(--green-soft); }
+.printEmpty { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-medium); background: white; }
+.printEmpty p { color: var(--muted); }
+.printEmpty a { color: var(--green-dark); font-weight: 750; }
+.printSheet { padding: 25px; border: 1px solid var(--line); border-radius: 16px; background: white; box-shadow: var(--shadow); }
+.printSheetHeader { display: flex; align-items: end; justify-content: space-between; gap: 12px; padding-bottom: 15px; border-bottom: 2px solid #333; }
+.printSheetHeader p { margin: 0 0 3px; font-size: .85rem; font-weight: 750; }
+.printSheetHeader h2 { margin: 0; font-size: 1.45rem; line-height: 1.2; }
+.printSheetHeader > span { font-size: .75rem; font-weight: 750; }
+.printDay { display: grid; grid-template-columns: 115px minmax(0, 1fr) minmax(0, 1fr); break-inside: avoid; border-bottom: 1px solid #b9b9b9; }
+.printDay:last-child { border-bottom: 0; }
+.printDay h3 { display: grid; align-content: start; gap: 2px; margin: 0; padding: 13px 10px 13px 0; font-size: 1rem; }
+.printDay h3 small { color: #555; font-size: .76rem; font-weight: 500; }
+.printMeal { min-width: 0; padding: 13px 12px; border-left: 1px solid #ddd; }
+.printMeal > strong { display: block; margin-bottom: 6px; font-size: .82rem; }
+.printMeal > strong small { color: #555; font-weight: 500; }
+.printMeal p { margin: 0 0 5px; font-size: .9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.printMeal p span { color: #555; font-size: .75rem; font-weight: 750; text-transform: uppercase; }
+.printMeal .printMainMeal { margin: 0; font-weight: 700; }
+
+@media (max-width: 620px) {
+  .printDay { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .printDay h3 { grid-column: 1 / -1; padding-bottom: 5px; }
+  .printMeal:first-of-type { border-left: 0; padding-left: 0; }
+  .printSheet { padding: 16px; }
+  .printDateForm input { font-size: 16px; }
+}
+
+@page { size: A4 portrait; margin: 10mm; }
+@media print {
+  html, body { width: 100%; min-width: 0; min-height: 0; margin: 0; background: white !important; color: #111; print-color-adjust: economy; }
+  .bottomNav, .printControls { display: none !important; }
+  .printPage { width: 100%; max-width: none; min-height: 0; margin: 0; padding: 0; }
+  .printSheet { padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .printSheetHeader { padding-bottom: 8mm; }
+  .printSheetHeader h2 { font-size: 19pt; }
+  .printDay { grid-template-columns: 27mm minmax(0, 1fr) minmax(0, 1fr); min-height: 30mm; }
+  .printDay h3 { grid-column: auto; padding: 4mm 2mm 3mm 0; font-size: 12pt; }
+  .printDay h3 small { font-size: 9pt; }
+  .printMeal, .printMeal:first-of-type { padding: 4mm 3mm; border-left: 1px solid #bbb; }
+  .printMeal > strong { font-size: 9pt; }
+  .printMeal p { font-size: 10pt; }
+  .printMeal p span { font-size: 8pt; }
 }
 
 @keyframes dayAppear {
