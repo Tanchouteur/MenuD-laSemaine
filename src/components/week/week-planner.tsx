@@ -22,6 +22,7 @@ type AlternativeSheet = {
 
 type WeekPlannerProps = {
   initialPlan: WeeklyPlanDto;
+  currentWeek: string;
   previousWeek: string;
   nextWeek: string;
   initialOnboardingCompleted: boolean;
@@ -68,6 +69,7 @@ function displayMeal(slot: MealSlotDto, allSlots: MealSlotDto[]) {
 
 export function WeekPlanner({
   initialPlan,
+  currentWeek,
   previousWeek,
   nextWeek,
   initialOnboardingCompleted,
@@ -99,6 +101,7 @@ export function WeekPlanner({
   const [warnings, setWarnings] = useState<string[]>([]);
   const [undoSlot, setUndoSlot] = useState<MealSlotDto | null>(null);
   const isDraft = plan.status === 'draft';
+  const isCurrentWeek = plan.startDate === currentWeek;
   const proteins = useMemo(() => ingredients.filter((item) => item.category === 'PROTEIN'), [ingredients]);
   const starches = useMemo(() => ingredients.filter((item) => item.category === 'STARCH'), [ingredients]);
   const vegetables = useMemo(() => ingredients.filter((item) => item.category === 'VEGETABLE'), [ingredients]);
@@ -340,7 +343,7 @@ export function WeekPlanner({
         <header className="weekHeader">
           <div>
             <p className="eyebrow">Notre menu</p>
-            <h1>Menus de la semaine</h1>
+            <h1>{isCurrentWeek ? 'Cette semaine' : 'Menus de la semaine'}</h1>
             <p className="weekRange">{formatWeekRange(plan.startDate)}</p>
           </div>
           <div className="familyAvatar" aria-label="Menu de la famille">
@@ -351,10 +354,11 @@ export function WeekPlanner({
         <div className="weekNavigation">
           <nav className="weekSwitcher" aria-label="Changer de semaine">
             <Link href={`/?week=${previousWeek}`} prefetch={false} aria-label="Semaine précédente">←</Link>
-            <span>{shortWeekRange}</span>
+            <span className="weekSwitcherCenter"><strong>{isCurrentWeek ? 'Cette semaine' : 'Semaine choisie'}</strong><small>{shortWeekRange}</small></span>
             <Link href={`/?week=${nextWeek}`} prefetch={false} aria-label="Semaine suivante">→</Link>
           </nav>
           <nav className="dayShortcuts" aria-label="Aller à un jour">
+            {!isCurrentWeek && <Link className="currentWeekShortcut" href={`/?week=${currentWeek}`} prefetch={false}>↩ Cette semaine</Link>}
             {days.map(({ dayIndex, slots }) => <a key={dayIndex} href={`#jour-${dayIndex}`} aria-label={`Aller à ${formatDay(slots[0].date).weekday}`}>
               <span>{formatDay(slots[0].date).weekday.slice(0, 3)}</span><strong>{Number(slots[0].date.slice(-2))}</strong>
             </a>)}

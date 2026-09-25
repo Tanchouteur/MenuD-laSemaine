@@ -12,9 +12,10 @@ export default async function HomePage({
   await connection();
   const requestedWeek = (await searchParams).week;
   const value = Array.isArray(requestedWeek) ? requestedWeek[0] : requestedWeek;
+  const currentWeek = mondayOfCurrentWeek();
   const monday = /^\d{4}-\d{2}-\d{2}$/.test(value ?? '')
     ? (value as string)
-    : mondayOfCurrentWeek();
+    : currentWeek;
   // Settings must exist before a brand-new plan is created. Running both
   // upserts concurrently can race on the singleton `default` row.
   const settings = await getSettings();
@@ -26,6 +27,7 @@ export default async function HomePage({
     <WeekPlanner
       key={monday}
       initialPlan={plan}
+      currentWeek={currentWeek}
       previousWeek={addDays(monday, -7)}
       nextWeek={addDays(monday, 7)}
       initialOnboardingCompleted={settings.onboardingCompleted}

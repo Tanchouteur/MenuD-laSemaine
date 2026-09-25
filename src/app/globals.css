@@ -275,11 +275,14 @@ h1 {
   text-decoration: none;
 }
 
-.weekSwitcher span {
+.weekSwitcherCenter {
+  display: grid;
+  gap: 2px;
   color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 700;
+  line-height: 1.2;
 }
+.weekSwitcherCenter strong { color: var(--green-dark); font-size: .83rem; }
+.weekSwitcherCenter small { font-size: .74rem; }
 
 .dayShortcuts {
   display: flex;
@@ -308,6 +311,12 @@ h1 {
 
 .dayShortcuts a strong { font-size: .89rem; }
 .dayShortcuts a:hover { background: var(--green-soft); border-color: #b8d1c1; }
+.dayShortcuts .currentWeekShortcut {
+  min-width: 132px;
+  border-color: #b8d1c1;
+  background: var(--green-soft);
+  font-weight: 750;
+}
 
 .daysList {
   display: grid;
