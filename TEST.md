@@ -129,12 +129,19 @@ Cette commande enchaîne :
 | `src/lib/core.test.ts` | validation, HTTP, auth et semaines |
 | `src/domain/meal-snapshot.test.ts` | contrat des instantanés persistés |
 | `src/app/api/auth/auth.test.ts` | routes et proxy d’authentification |
-| `src/app/api/calendar/calendar.test.ts` | protection et format iCalendar |
+| `src/app/api/calendar/calendar.test.ts` | protection, format iCalendar, horaires midi/soir, disponibilité libre et absence de rappel |
 | `src/services/services.integration.test.ts` | services, routes et PostgreSQL réel |
 | `scripts/run-integration-tests.mjs` | cycle de vie sécurisé du PostgreSQL jetable |
 
 Les fichiers `*.integration.test.ts` sont exclus de `npm test` et ne sont
 chargés que par `vitest.integration.config.ts`.
+
+Pour le calendrier, les tests du flux ne prouvent pas les réglages de
+notification d’Apple. Sur un abonnement réel, vérifier après actualisation que
+les repas conservent leurs horaires et affichent une disponibilité libre ;
+désactiver les alertes du calendrier des menus sur iPhone et Mac, puis vérifier
+l’absence de notification au prochain repas. Procédure dans
+[`docs/OPERATIONS.md`](docs/OPERATIONS.md). Validation sur appareils non effectuée.
 
 ## Règles pour ajouter un test
 

@@ -153,6 +153,7 @@ function CalendarSyncBox({ calendarUrl, hasConfirmed }: { calendarUrl: string; h
         <h3>Synchronisation Calendrier</h3>
         <p>
           Abonnez votre agenda pour voir les repas de la famille se synchroniser automatiquement.
+          {' '}Les horaires restent affichés à titre informatif, avec une disponibilité « Libre » et sans rappel ajouté par l’application.
         </p>
       </div>
       <div className="calendarActions">
@@ -163,6 +164,11 @@ function CalendarSyncBox({ calendarUrl, hasConfirmed }: { calendarUrl: string; h
           {copied ? '✓ Lien copié !' : 'Copier l’URL (Google Agenda / Outlook)'}
         </button>
       </div>
+      <p className="calendarHint">
+        <strong>Pour couper les notifications Apple :</strong> sur iPhone, ouvrez Calendrier → Calendriers → ⓘ à côté de « Menus de la famille », puis désactivez « Alertes ».
+        {' '}Sur Mac, sélectionnez ce calendrier → Édition → Lire les informations, puis cochez « Ignorer les alertes ».
+        {' '}Ces réglages concernent uniquement le calendrier des menus.
+      </p>
       {!hasConfirmed && (
         <p className="calendarHint">
           💡 <strong>Astuce :</strong> Aucune semaine n’est encore confirmée. Dès que vous cliquerez sur <em>« Confirmer la semaine »</em> dans l’onglet Menu, vos 14 repas apparaîtront automatiquement dans votre agenda.

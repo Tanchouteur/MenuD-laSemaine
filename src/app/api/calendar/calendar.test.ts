@@ -14,6 +14,26 @@ afterEach(() => {
 });
 
 describe('export iCalendar', () => {
+  it.each([
+    ['lunch', '120000', '133000'],
+    ['dinner', '190000', '203000'],
+  ])('conserve les horaires du repas %s avec une disponibilité libre et sans rappel', async (mealTime, start, end) => {
+    delete process.env.CALENDAR_TOKEN;
+    mocks.listPlans.mockResolvedValue([{ status: 'confirmed', slots: [{
+      id: 'meal-info', date: '2026-09-30', mealTime, slotType: 'custom',
+      customLabel: 'Repas informatif', guestCount: 2,
+    }] }]);
+
+    const body = await (await GET(new Request('http://test.local/api/calendar'))).text();
+    const lines = body.split('\r\n');
+    expect(lines).toContain('UID:meal-info@menu-de-la-semaine');
+    expect(lines).toContain(`DTSTART;TZID=Europe/Paris:20260930T${start}`);
+    expect(lines).toContain(`DTEND;TZID=Europe/Paris:20260930T${end}`);
+    expect(lines).toContain('TRANSP:TRANSPARENT');
+    expect(body).not.toContain('VALARM');
+    expect(body).not.toContain('TRIGGER:');
+  });
+
   it('protège le calendrier lorsque le jeton est configuré', async () => {
     process.env.CALENDAR_TOKEN = 'secret-calendrier';
     const response = await GET(new Request('http://test.local/api/calendar?token=incorrect'));

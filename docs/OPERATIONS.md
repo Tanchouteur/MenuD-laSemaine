@@ -52,6 +52,33 @@ mettre à jour son style, ses durées, ses saisons et ses moments de proposition
 
 ## Diagnostic rapide
 
+### Calendrier des menus : libre et sans notifications
+
+Le flux `/api/calendar` conserve les créneaux de 12 h à 13 h 30 et de 19 h à
+20 h 30 (Europe/Paris). Chaque repas est informatif : `TRANSP:TRANSPARENT`
+laisse la disponibilité libre, et aucun `VALARM` n’est exporté. Les identifiants
+des événements restent identiques pour mettre à jour l’abonnement existant.
+
+L’absence de rappel dans le flux ne force pas les préférences d’alerte du
+client. Pour rendre uniquement les menus silencieux dans Apple Calendrier :
+
+- **iPhone** : Calendrier → Calendriers → ⓘ à côté de « Menus de la famille »
+  → désactiver **Alertes** → OK.
+- **Mac** : sélectionner « Menus de la famille » → Édition → Lire les
+  informations → cocher **Ignorer les alertes** → OK.
+
+Vérifier le réglage sur les appareils utilisés. Après déploiement, le statut
+libre sera récupéré à la prochaine actualisation de l’abonnement ; le flux
+suggère une heure, mais le client choisit la fréquence effective. Les événements
+importés comme copie ne sont pas mis à jour par l’abonnement.
+
+Sources consultées le 30 septembre 2026 :
+[Apple iPhone](https://support.apple.com/fr-fr/guide/iphone/iph3d1110d4/ios),
+[Apple Mac](https://support.apple.com/fr-fr/guide/calendar/icl1022/mac),
+[RFC 5545, §3.8.2.7](https://datatracker.ietf.org/doc/html/rfc5545#section-3.8.2.7).
+
+### Application et base de données
+
 - `/api/health` non sain : vérifier PostgreSQL et `DATABASE_URL`.
 - erreur 502 : vérifier le port interne 3000 et les journaux du conteneur.
 - échec de migration : conserver les logs, ne pas supprimer la base, tester la
