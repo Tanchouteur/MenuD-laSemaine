@@ -77,3 +77,12 @@ y compris les éléments archivés, les réglages non secrets, les incompatibili
 et les menus. L’import d’enrichissement accepte les versions 1 et 2 ; des
 quantités `null` en version 2 permettent l’aperçu mais bloquent l’application.
 Les mots de passe, jetons, URL PostgreSQL et cookies sont exclus.
+
+## Accès machine MCP
+
+`MachineCredential` conserve une empreinte SHA-256 de jeton aléatoire, des droits
+`read`/`write` et une date de révocation. `MachineOperation` porte une contrainte
+unique par identité et clé d’idempotence, l’empreinte de requête et le résultat
+métier. Il est commité atomiquement avec les mutations ; aucun secret brut n’est
+stocké dans ces tables. Les reçus privés sont conservés sans expiration pour
+préserver l’idempotence. Voir [sécurité MCP](MCP-SECURITY.md).

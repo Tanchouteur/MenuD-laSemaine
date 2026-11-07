@@ -193,3 +193,15 @@ version affectant l’interface, vérifier au minimum :
 Une future suite Playwright pourra automatiser ces parcours. Elle devra démarrer
 l’application et PostgreSQL de manière isolée, sans viser le domaine de
 production.
+
+## MCP de l’assistant personnel
+
+Les tests PostgreSQL synthétiques de `src/mcp/mcp.integration.test.ts` couvrent
+le Bearer machine distinct du cookie familial, les droits, la révocation, le
+mode sans écriture, les champs manquants, les correspondances du catalogue,
+les doublons concurrents et la reprise par reçu persistant (réessai dans un
+nouveau processus Node). Ils vérifient également les versions, semaines protégées,
+verrous de plat et d’entrée, empreintes d’aperçu et rollback après erreur SQL
+sur le deuxième repas. Le parcours recette → import → courses et le transport
+MCP réel (initialize, tools/list, tools/call) sont exercés sans données familiales.
+Le protocole de connexion et les limites sont dans [MCP.md](docs/MCP.md).
