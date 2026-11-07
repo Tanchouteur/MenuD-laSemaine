@@ -93,9 +93,9 @@ Pour reproduire ou administrer cette configuration :
 5. Après validation explicite de l’intégration, créer un accès `read,write` et
    activer `MCP_ALLOW_WRITES=true`. Révoquer les jetons remplacés.
 
-Aucune suppression, édition générale du catalogue, confirmation de semaine,
+Aucune suppression, édition générale du catalogue,
 modification de droits ou commande d’administration n’est exposée en outil MCP.
-Un import laisse la semaine en brouillon. La confirmation se fait dans l’app.
+Par défaut, un import laisse la semaine en brouillon. Depuis le 7 novembre 2026, `import.confirmWeek=true`, présent dès l’aperçu, confirme la semaine complète dans la même transaction que l’import et son reçu. Aucun outil de confirmation isolée ni de déconfirmation n’est ajouté.
 
 ## Qualification reproductible
 

@@ -11,6 +11,7 @@ const selection = z.strictObject({
 export const weekImport = z.strictObject({
   startDate: monday,
   expectedVersion: z.number().int().positive().nullable(),
+  confirmWeek: z.boolean().optional(),
   slots: z.array(z.strictObject({
     slotIndex: z.number().int().min(0).max(13),
     guestCount: z.number().int().min(1).max(30),

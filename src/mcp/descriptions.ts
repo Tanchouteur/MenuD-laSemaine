@@ -8,6 +8,6 @@ export const descriptions: Record<ToolName, string> = {
   create_ingredient: 'Create an ingredient using explicit catalog fields. Missing portions stay unknown. Use a stable operationKey. Existing normalized names are returned as CATALOG_MATCH.',
   create_recipe: 'Create a recipe only with known basePortions, ingredient IDs, quantities and units. Never infer missing food or dietary facts. Use a stable operationKey.',
   preview_week_import: 'Read-only preview of explicit meals for a draft week. Null expectedVersion means week must not exist. No photo processing. Returns previewDigest and missing information.',
-  apply_week_import: 'Atomically apply the exact previewed import using previewDigest and operationKey. Confirmed weeks and locked slots are protected. Does not confirm a week.',
+  apply_week_import: 'Atomically apply the exact previewed import using previewDigest and operationKey. Set import.confirmWeek=true in both preview and apply to confirm the complete week in the same transaction. Default leaves a draft. Confirmed weeks and locked slots are protected.',
   get_operation: 'Read the durable receipt for this machine and operationKey after a lost response. Unknown means no committed receipt was found; retry identical arguments and key.',
 };

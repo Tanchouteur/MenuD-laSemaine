@@ -5,7 +5,7 @@ import { McpFault } from '@/mcp/errors';
 import type { WeekImport } from '@/mcp/contracts';
 import { loadManualCandidate, buildSnapshot } from './candidate.service';
 import { chooseManualForSlot, updateMealSlot } from './generation.service';
-import { ensureWeeklyPlan, getPlanByStartDate } from './weekly-plan.service';
+import { confirmPlan, ensureWeeklyPlan, getPlanByStartDate } from './weekly-plan.service';
 
 export function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
@@ -20,6 +20,9 @@ export async function previewWeekImport(input: WeekImport) {
   if ((plan?.version ?? null) !== input.expectedVersion) throw new McpFault('VERSION_CONFLICT', { currentVersion: plan?.version ?? null });
   if (plan && plan.status !== 'draft') throw new McpFault('WEEK_PROTECTED', { status: plan.status });
   if (!plan && input.slots.length !== 14) throw new McpFault('MISSING_INFORMATION', { fields: ['slots: all 14 slots with guestCount for a new week'] });
+  if (input.confirmWeek && plan?.slots.some(slot => slot.slotType === 'empty' && !input.slots.some(entry => entry.slotIndex === slot.slotIndex))) {
+    throw new McpFault('MISSING_INFORMATION', { fields: ['all empty slots must be filled before confirmation'] });
+  }
   const changes = [];
   const missingInformation: Array<{ slotIndex: number; fields: string[] }> = [];
   for (const entry of input.slots) {
@@ -38,7 +41,7 @@ export async function previewWeekImport(input: WeekImport) {
     }
     changes.push({ slotIndex: entry.slotIndex, before: current ?? null, after: entry, snapshot });
   }
-  const preview = { startDate: input.startDate, expectedVersion: input.expectedVersion, changes, missingInformation, dietaryInformation: 'Allergies and nutrition are not represented in this catalog; safety is unknown.' };
+  const preview = { startDate: input.startDate, expectedVersion: input.expectedVersion, confirmWeek: input.confirmWeek === true, changes, missingInformation, dietaryInformation: 'Allergies and nutrition are not represented in this catalog; safety is unknown.' };
   return { ...preview, previewDigest: digest({ input, preview }) };
 }
 
@@ -63,6 +66,7 @@ export async function applyWeekImport(input: WeekImport, previewDigest: string) 
       }, plan.version);
     }
   }
+  if (input.confirmWeek) plan = await confirmPlan(plan.id, plan.version);
   return { plan, missingInformation: preview.missingInformation, warnings };
 }
 

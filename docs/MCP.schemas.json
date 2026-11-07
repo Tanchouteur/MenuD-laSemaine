@@ -1810,6 +1810,9 @@
                 }
               ]
             },
+            "confirmWeek": {
+              "type": "boolean"
+            },
             "slots": {
               "minItems": 1,
               "maxItems": 14,
@@ -2211,7 +2214,7 @@
     }
   },
   "apply_week_import": {
-    "description": "Atomically apply the exact previewed import using previewDigest and operationKey. Confirmed weeks and locked slots are protected. Does not confirm a week.",
+    "description": "Atomically apply the exact previewed import using previewDigest and operationKey. Set import.confirmWeek=true in both preview and apply to confirm the complete week in the same transaction. Default leaves a draft. Confirmed weeks and locked slots are protected.",
     "inputSchema": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
@@ -2245,6 +2248,9 @@
                   "type": "null"
                 }
               ]
+            },
+            "confirmWeek": {
+              "type": "boolean"
             },
             "slots": {
               "minItems": 1,

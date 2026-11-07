@@ -140,6 +140,37 @@ describe('validation, catalog and durable idempotency', () => {
 });
 
 describe('atomic week import', () => {
+  it('confirms the whole import atomically and replays without another version change', async () => {
+    const input = { ...importFor(), confirmWeek: true };
+    const preview = await call('preview_week_import', { import: input });
+    const args = { import: input, previewDigest: preview.data.previewDigest, operationKey: 'confirm-replay' };
+    const first = await call('apply_week_import', args);
+    expect(first.ok).toBe(true);
+    const plan = await prisma.weeklyPlan.findFirstOrThrow();
+    expect(plan.status).toBe('CONFIRMED');
+    expect(plan.confirmedAt).not.toBeNull();
+    expect(await call('apply_week_import', args)).toEqual(first);
+    expect((await prisma.weeklyPlan.findFirstOrThrow()).version).toBe(plan.version);
+  });
+  it('binds confirmation to the preview and rejects incomplete existing weeks', async () => {
+    const input = importFor();
+    const preview = await call('preview_week_import', { import: input });
+    expect((await call('apply_week_import', { import: { ...input, confirmWeek: true }, previewDigest: preview.data.previewDigest, operationKey: 'confirm-not-previewed' })).error.code).toBe('PREVIEW_STALE');
+    expect(await prisma.weeklyPlan.count()).toBe(0);
+    const plan = await ensureWeeklyPlan(input.startDate);
+    expect((await call('preview_week_import', { import: { ...importFor(1), expectedVersion: plan.version, confirmWeek: true } })).error.code).toBe('MISSING_INFORMATION');
+  });
+  it('rolls back the import if confirmation fails', async () => {
+    const input = { ...importFor(), confirmWeek: true };
+    const preview = await call('preview_week_import', { import: input });
+    await prisma.$executeRawUnsafe(`ALTER TABLE "WeeklyPlan" ADD CONSTRAINT synthetic_confirmation_failure CHECK (status::text <> 'CONFIRMED')`);
+    try {
+      expect((await call('apply_week_import', { import: input, previewDigest: preview.data.previewDigest, operationKey: 'confirm-rollback' })).ok).toBe(false);
+      expect(await prisma.weeklyPlan.count()).toBe(0);
+      expect(await prisma.mealSlot.count()).toBe(0);
+    } finally { await prisma.$executeRawUnsafe('ALTER TABLE "WeeklyPlan" DROP CONSTRAINT synthetic_confirmation_failure'); }
+  });
+
   it('previews without creating a week, imports once and recovers result', async () => {
     const input = importFor();
     const preview = await call('preview_week_import', { import: input });

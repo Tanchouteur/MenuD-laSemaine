@@ -92,3 +92,7 @@ consigné dans la connexion client ; les protections globales restent en place.
 Le parcours WhatsApp → analyse photo → application réelle reste à qualifier
 avec le futur assistant avant activation des écritures. La disponibilité du MCP
 ne prouve pas cette intégration.
+
+## Confirmation atomique — 7 novembre 2026
+
+Extension autorisée par Louis : `import.confirmWeek=true` lie import et confirmation à un seul aperçu et une seule transaction/reçu. 66 tests unitaires et 45 tests PostgreSQL TEST réussis, incluant confirmation, rejeu sans version supplémentaire, refus de changement d’intention et rollback SQL de confirmation. Lint, TypeScript, validation Prisma et build Next réussis. Aucun menu familial modifié pour cette qualification. Les dépendances historiques signalées par npm audit restent hors périmètre de ce changement.
