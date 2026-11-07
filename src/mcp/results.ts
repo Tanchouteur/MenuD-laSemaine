@@ -15,7 +15,7 @@ const dataSchemas: Record<ToolName, z.ZodType> = {
   get_week: z.object({ plan: plan.nullable() }),
   create_ingredient: z.object({ ingredient, missingInformation: z.array(z.string()) }),
   create_recipe: z.object({ recipe, missingInformation: z.array(z.string()) }),
-  preview_week_import: z.object({ startDate: z.string(), expectedVersion: z.number().nullable(), previewDigest: z.string(), changes: z.array(z.object({ slotIndex: z.number(), before: slot.nullable(), after: weekImport.shape.slots.element, snapshot: z.unknown() })), missingInformation: missing, dietaryInformation: z.string() }),
+  preview_week_import: z.object({ startDate: z.string(), expectedVersion: z.number().nullable(), confirmWeek: z.boolean(), previewDigest: z.string(), changes: z.array(z.object({ slotIndex: z.number(), before: slot.nullable(), after: weekImport.shape.slots.element, snapshot: z.unknown() })), missingInformation: missing, dietaryInformation: z.string() }),
   apply_week_import: z.object({ plan, missingInformation: missing, warnings: z.array(z.string()) }),
   get_operation: z.union([z.object({ state: z.literal('unknown'), guidance: z.string() }), z.object({ state: z.literal('completed'), tool: z.string(), result: z.unknown() })]),
 };
@@ -27,3 +27,11 @@ function envelope(data: z.ZodType) {
   });
 }
 export const resultSchemas = Object.fromEntries(Object.entries(dataSchemas).map(([name, data]) => [name, envelope(data)])) as Record<ToolName, ReturnType<typeof envelope>>;
+
+/** Strip internal DTO metadata before emitting the strict advertised wire schema. */
+export function serializeToolResult(name: ToolName, result: unknown) {
+  const parsed = resultSchemas[name].safeParse(JSON.parse(JSON.stringify(result)));
+  if (parsed.success) return parsed.data as Record<string, unknown>;
+  return { ok: false, error: { code: 'RESPONSE_CONTRACT_ERROR', retryable: false,
+    details: { fields: parsed.error.issues.map(issue => ({ path: issue.path.join('.'), code: issue.code })) } } };
+}

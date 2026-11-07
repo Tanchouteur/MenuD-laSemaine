@@ -11,6 +11,7 @@ import { getPrisma, withPrismaTransaction } from '@/lib/prisma';
 import { authenticate, tokenHash } from './auth';
 import { executeTool } from './tools';
 import { schemas } from './contracts';
+import { serializeToolResult } from './results';
 import { createIngredient } from '@/services/catalog.service';
 import { ensureWeeklyPlan } from '@/services/weekly-plan.service';
 
@@ -285,5 +286,23 @@ describe('MCP HTTP transport', () => {
     expect(body.result.structuredContent.ok).toBe(true);
     await prisma.machineCredential.update({ where: { id: machine }, data: { revokedAt: new Date() } });
     expect((await rpc('tools/list')).status).toBe(401);
+  });
+});
+
+
+describe('advertised wire schema matches the real catalog DTO', () => {
+  it('strips ORM timestamps from actual database rows and keeps confirmation in preview', async () => {
+    await createIngredient(ingredient);
+    const raw = await executeTool('search_catalog', { kind: 'ingredient', query: 'synthétique' }, machine);
+    expect(JSON.stringify(raw)).toContain('createdAt');
+    const wire = serializeToolResult('search_catalog', raw);
+    expect(wire.ok).toBe(true);
+    expect(JSON.stringify(wire)).not.toContain('createdAt');
+    expect(JSON.stringify(wire)).not.toContain('updatedAt');
+    const input = { ...importFor(), confirmWeek: true };
+    const preview = serializeToolResult('preview_week_import', await executeTool('preview_week_import', { import: input }, machine));
+    expect(preview.ok).toBe(true);
+    expect((preview.data as { confirmWeek: boolean }).confirmWeek).toBe(true);
+    expect(await prisma.weeklyPlan.count()).toBe(0);
   });
 });
