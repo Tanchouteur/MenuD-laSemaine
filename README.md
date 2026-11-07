@@ -14,6 +14,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 - version imprimable des menus par semaine, enregistrable en PDF depuis le navigateur ;
 - réglages du foyer et associations d’aliments à éviter ;
 - export iCalendar et protection facultative par mot de passe familial ;
+- serveur MCP pour assistant personnel : catalogue et aperçu de semaine, identité machine révocable ; déployé en qualification lecture seule, écritures désactivées ;
 - export JSON du catalogue et des menus, puis import prévisualisé d’un enrichissement ciblé ;
 - import idempotent de l’ancienne base MariaDB, avec dry-run ;
 - interface française accessible et pensée d’abord pour le téléphone.

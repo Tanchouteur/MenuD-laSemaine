@@ -15,7 +15,7 @@ Aucun fournisseur IA, compte WhatsApp ou modèle n’est intégré au serveur.
 
 | Paramètre | Valeur |
 | --- | --- |
-| URL prévue après déploiement | `https://menus.tanchou.fr/api/mcp` |
+| URL déployée | `https://menus.tanchou.fr/api/mcp` |
 | Transport | Streamable HTTP, réponses JSON, sans session persistante ni SSE GET |
 | Méthode | `POST` pour initialize, notifications et appels JSON-RPC MCP |
 | Authentification | `Authorization: Bearer <jeton-machine>` |
@@ -25,7 +25,12 @@ Aucun fournisseur IA, compte WhatsApp ou modèle n’est intégré au serveur.
 | Cache | `no-store` |
 | Corps maximal | 256 Kio |
 
-Le client doit permettre un en-tête Bearer configuré explicitement. Les clients
+Le client doit permettre un en-tête Bearer configuré explicitement.
+Cloudflare a refusé la signature par défaut `Python-urllib` (1010) lors de la
+qualification ; un User-Agent explicite et descriptif `MenuMCP-Qualification/1.0`
+a permis les appels réels. Configurer un identifiant propre au client, sans
+imiter un navigateur ni désactiver les protections globales. Un 403 Cloudflare
+ne doit pas être confondu avec une erreur d’authentification MCP. Les clients
 qui imposent une découverte OAuth interactive nécessiteront un adaptateur OAuth
 ultérieur ; aucun faux service OAuth n’est annoncé. Ne pas placer le jeton dans
 une URL, une photo, un prompt ou un journal.
@@ -48,13 +53,21 @@ Le serveur ne lit pas `MENU_MCP_TOKEN` : il vérifie l’empreinte du Bearer en 
 Un cookie familial ne donne aucun droit MCP. Inversement, le jeton MCP ne donne
 pas accès aux autres routes de l’application.
 
-## Activation par l’opérateur
+## État déployé et administration
 
-Cette branche prépare une PR ; elle ne déploie pas l’endpoint et ne crée aucun
-accès familial réel. Les migrations et écritures de qualification portent
-uniquement sur une base PostgreSQL synthétique isolée.
+Le serveur est **déployé et qualifié en lecture/aperçu depuis le 7 novembre
+2026**, après fusion de la [PR nº 6](https://github.com/Tanchouteur/MenuD-laSemaine/pull/6).
+Les 108 tests ont été relancés avant déploiement. L’accès machine lecture seule
+est préparé dans le stockage opérateur privé ; aucune valeur de jeton n’est
+publiée. `MCP_ALLOW_WRITES=false` demeure actif. Le futur assistant n’est pas
+encore raccordé et aucun menu familial n’a été modifié pour tester.
 
-Après revue et déploiement :
+La qualification publique confirme initialize, les neuf outils, les lectures,
+l’aperçu sans création, les refus d’écriture et la révocation. Les neuf tables
+métier ont des empreintes identiques avant/après. Voir le
+[rapport de qualification](MCP-QUALIFICATION.md).
+
+Pour reproduire ou administrer cette configuration :
 
 1. Appliquer les migrations normalement (`npm run db:deploy`, déjà exécuté au
    démarrage de l’image). Aucun menu n’est modifié par la migration MCP.

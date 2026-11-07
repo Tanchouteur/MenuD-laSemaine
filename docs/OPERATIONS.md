@@ -96,3 +96,18 @@ ou migrations destructrices et doit être précédée d’une sauvegarde de l’
 courant.
 
 Le guide détaillé de Coolify se trouve dans `DEPLOIEMENT_COOLIFY.md`.
+
+
+## MCP assistant — déploiement du 7 novembre 2026
+
+Le MCP de la [PR nº 6](https://github.com/Tanchouteur/MenuD-laSemaine/pull/6) est
+déployé sur `https://menus.tanchou.fr/api/mcp`, avec Bearer machine indépendant
+et écritures désactivées (`MCP_ALLOW_WRITES=false`). Un accès lecture seule est
+préparé dans le stockage opérateur privé ; sa valeur ne doit pas être copiée
+ici. L’endpoint ne se teste pas avec le cookie familial.
+
+La qualification réelle n’applique aucun menu : initialize, tools/list, lectures,
+aperçu fictif et refus/révocation uniquement. Les neuf tables métier sont restées
+identiques, après sauvegarde préalable de la base. Voir [connexion](MCP.md),
+[sécurité/révocation](MCP-SECURITY.md) et [preuves et limites](MCP-QUALIFICATION.md).
+Le raccordement WhatsApp/photo et l’activation des écritures restent distincts.
