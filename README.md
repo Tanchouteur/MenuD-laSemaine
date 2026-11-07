@@ -21,6 +21,7 @@ Application web familiale mobile-first pour générer quatorze repas variés, le
 ## Documentation
 
 - [Produit et périmètre](docs/PRODUCT.md)
+- [MCP pour assistant personnel : connexion et qualification](docs/MCP.md)
 - [Architecture technique](docs/ARCHITECTURE.md)
 - [Décisions d’architecture](docs/DECISIONS.md)
 - [Modèle de données](docs/DATA_MODEL.md)

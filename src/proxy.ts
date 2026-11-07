@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { FAMILY_COOKIE, familyAuthConfigured, familyToken } from '@/lib/family-auth';
 
 export async function proxy(request: NextRequest) {
+  // The MCP route always enforces its own machine credential, never a family cookie.
+  if (request.nextUrl.pathname === '/api/mcp') return NextResponse.next();
   if (!familyAuthConfigured()) return NextResponse.next();
   const pathname = request.nextUrl.pathname;
   if (pathname === '/connexion' || pathname.startsWith('/api/auth/') || pathname === '/api/calendar' || pathname === '/api/health') return NextResponse.next();

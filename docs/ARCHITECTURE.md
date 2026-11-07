@@ -67,3 +67,13 @@ transaction PostgreSQL et ne modifie ni les semaines ni leurs instantanés.
 `/api/health` vérifie réellement PostgreSQL. Les journaux de démarrage indiquent
 les migrations appliquées. Il n’existe actuellement ni métriques applicatives
 personnalisées ni traçage distribué.
+
+## MCP de l’assistant personnel (V1)
+
+`/api/mcp` utilise le SDK officiel TypeScript et une identité machine distincte
+(`MachineCredential`). Les contrats et adaptateurs sont dans `src/mcp` ;
+`week-import.service.ts` orchestre les services existants, sans dupliquer les
+choix de repas, instantanés ou calculs de courses. `withPrismaTransaction` permet
+à leurs callbacks transactionnels de rejoindre la transaction externe de
+l’import et de son reçu (`MachineOperation`). Les requêtes web ordinaires ne
+changent pas de contexte. Voir [connexion et qualification MCP](MCP.md).

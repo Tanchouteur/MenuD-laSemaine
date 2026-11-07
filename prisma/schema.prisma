@@ -260,3 +260,27 @@ model AppSettings {
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
 }
+
+// Dedicated machine identities. Only SHA-256 digests of random 256-bit tokens.
+model MachineCredential {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  scopes    String[]
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  operations MachineOperation[]
+}
+
+// A receipt and its business changes commit in the same PostgreSQL transaction.
+model MachineOperation {
+  id           String @id @default(cuid())
+  credentialId String
+  credential   MachineCredential @relation(fields: [credentialId], references: [id], onDelete: Restrict)
+  key          String
+  tool         String
+  requestHash  String
+  result       Json
+  createdAt    DateTime @default(now())
+
+  @@unique([credentialId, key])
+}
