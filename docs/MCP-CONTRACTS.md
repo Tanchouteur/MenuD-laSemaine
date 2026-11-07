@@ -132,7 +132,7 @@ catalogue verrouille le plat sélectionné, comme un choix manuel dans l’app.
 Toute semaine confirmée/archivée est refusée. Tout créneau ciblé verrouillé
 (plat **ou entrée**) est refusé. Pour remplacer un repas déjà renseigné,
 `replaceExisting: true` doit être explicite ; cette option ne contourne aucun
-verrou. L’import ne confirme jamais une semaine.
+verrou. L’import laisse par défaut un brouillon. `import.confirmWeek=true` dans l’aperçu ET l’application confirme la semaine complète dans la même transaction. Le digest lie cette intention ; un échec de confirmation annule tous les repas importés. Les créneaux vides restants sont refusés avant toute écriture.
 
 L’aperçu retourne les anciennes et nouvelles données, les instantanés, les
 informations manquantes et une empreinte `previewDigest`. Il n’écrit rien, même
