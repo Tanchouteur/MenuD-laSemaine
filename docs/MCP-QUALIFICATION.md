@@ -96,3 +96,9 @@ ne prouve pas cette intégration.
 ## Confirmation atomique — 7 novembre 2026
 
 Extension autorisée par Louis : `import.confirmWeek=true` lie import et confirmation à un seul aperçu et une seule transaction/reçu. 66 tests unitaires et 45 tests PostgreSQL TEST réussis, incluant confirmation, rejeu sans version supplémentaire, refus de changement d’intention et rollback SQL de confirmation. Lint, TypeScript, validation Prisma et build Next réussis. Aucun menu familial modifié pour cette qualification. Les dépendances historiques signalées par npm audit restent hors périmètre de ce changement.
+
+## Compatibilité stricte des réponses MCP — 7 novembre 2026
+
+Incident réel : des réponses de recherche incluaient des métadonnées ORM absentes du schéma annoncé ; un client Python MCP strict les rejetait avant de pouvoir utiliser le catalogue. Le champ confirmWeek des aperçus manquait également au schéma de sortie. Les réponses sont désormais sérialisées et validées contre le contrat public avant émission, sans exposer les champs internes non déclarés. Une rupture de contrat retourne RESPONSE_CONTRACT_ERROR avec chemins de champs uniquement, sans valeurs brutes. Aucune validation de client n’est désactivée.
+
+Régression sur une vraie ligne PostgreSQL synthétique avec timestamps, aperçu confirmWeek sans écriture, erreurs métier intactes et réponse invalide expurgée. Validation : 69 tests unitaires, 46 tests d’intégration PostgreSQL TEST, lint/TypeScript/Prisma et build. Aucun menu familial modifié par cette recette. Le contrat d’idempotence, les autorisations et les données métier restent inchangés.

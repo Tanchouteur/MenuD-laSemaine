@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { descriptions } from './descriptions';
-import { resultSchemas } from './results';
+import { resultSchemas, serializeToolResult } from './results';
 import { schemas, writeTools, type ToolName } from './contracts';
 import { executeTool } from './tools';
 
@@ -14,7 +14,7 @@ export function createServer(credentialId: string) {
       annotations: { readOnlyHint: !writeTools.has(name), destructiveHint: name === 'apply_week_import', idempotentHint: true, openWorldHint: false },
     }, async (args: unknown) => {
       const result = await executeTool(name, args, credentialId);
-      const structuredContent = JSON.parse(JSON.stringify(result)) as Record<string, unknown>;
+      const structuredContent = serializeToolResult(name, result);
       return { content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }], structuredContent, isError: structuredContent.ok === false };
     });
   }
